@@ -7,5 +7,8 @@ namespace ArtSharingApp.Backend.Service
     {
         IEnumerable<User> GetUsersByName(string name);
         void AddUser(User user);
+        object? GetUserById(int id);
+        IEnumerable<User> GetAllUsers();
+        void Delete(int id);
     }
 }

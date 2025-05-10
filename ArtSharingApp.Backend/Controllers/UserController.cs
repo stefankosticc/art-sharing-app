@@ -16,6 +16,23 @@ public class UserController : Controller
         _userService = userService;
     }
     
+    [HttpGet("user/{id}")]
+    public IActionResult GetUserById(int id)
+    {
+        var user = _userService.GetUserById(id);
+        if (user == null)
+            return NotFound();
+        
+        return Ok(user);
+    }
+
+    [HttpGet("users")]
+    public IActionResult GetAllUsers()
+    {
+        IEnumerable<User> users = _userService.GetAllUsers();
+        return Ok(users);
+    }
+    
     [HttpPost("user")]
     public IActionResult AddUser([FromBody] User user)
     {
@@ -25,14 +42,25 @@ public class UserController : Controller
         _userService.AddUser(user);
         return Ok();
     }
+    
+    [HttpDelete("user/{id}")]
+    public IActionResult DeleteUser(int id)
+    {
+        var user = _userService.GetUserById(id);
+        if (user == null)
+            return NotFound();
+        
+        _userService.Delete(id);
+        return Ok();
+    }
 
     [HttpGet("users/by-name")]
     public IActionResult GetUsersByName([FromQuery] string name)
     {
-        // if (string.IsNullOrWhiteSpace(name))
-        //     return BadRequest("Name parameter is required.");
-        //
-        // var users = _userService.GetUsersByName(name);
+        if (string.IsNullOrWhiteSpace(name))
+            return BadRequest("Name parameter is required.");
+        
+        var users = _userService.GetUsersByName(name);
         return Ok();
     }
 }
