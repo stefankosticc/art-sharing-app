@@ -1,12 +1,6 @@
 using Microsoft.AspNetCore.Mvc;
-using ArtSharingApp.Backend.Models;
-using ArtSharingApp.Backend.Service;
-using System.Collections.Generic;
-using ArtSharingApp.Backend.DataAccess.Repository;
-using ArtSharingApp.Backend.DataAccess.Repository.RepositoryInterface;
-using ArtSharingApp.Backend.DTO;
 using ArtSharingApp.Backend.Service.ServiceInterface;
-using AutoMapper;
+using ArtSharingApp.Backend.DTO;
 
 namespace ArtSharingApp.Backend.Controllers;
 
@@ -15,20 +9,16 @@ namespace ArtSharingApp.Backend.Controllers;
 public class CityController : Controller
 {
     private readonly ICityService _cityService;
-    private readonly IMapper _mapper;
 
-    public CityController(ICityService cityService, IMapper mapper)
+    public CityController(ICityService cityService)
     {
         _cityService = cityService;
-        _mapper = mapper;
     }
 
     [HttpGet("cities")]
     public IActionResult GetAll()
     {
-        IEnumerable<City> cities = _cityService.GetAll();
-        var dtos = _mapper.Map<IEnumerable<CityResponseDTO>>(cities);
-        return Ok(dtos);
+        return Ok(_cityService.GetAll());
     }
 
     [HttpGet("city/{id}")]
@@ -37,8 +27,7 @@ public class CityController : Controller
         var city = _cityService.GetById(id);
         if (city == null)
             return NotFound();
-        var dto = _mapper.Map<CityResponseDTO>(city);
-        return Ok(dto);
+        return Ok(city);
     }
 
     [HttpPost("city")]
@@ -46,8 +35,7 @@ public class CityController : Controller
     {
         if (cityDto == null)
             return BadRequest("City object is null.");
-        var city = _mapper.Map<City>(cityDto);
-        _cityService.Add(city);
+        _cityService.Add(cityDto);
         return Ok();
     }
 
@@ -56,20 +44,16 @@ public class CityController : Controller
     {
         if (cityDto == null)
             return BadRequest("City object is null.");
-        var existing = _cityService.GetById(id);
-        if (existing == null)
+        if (_cityService.GetById(id) == null)
             return NotFound();
-        var city = _mapper.Map<City>(cityDto);
-        city.Id = id;
-        _cityService.Update(id, city);
+        _cityService.Update(id, cityDto);
         return Ok();
     }
 
     [HttpDelete("city/{id}")]
     public IActionResult Delete(int id)
     {
-        var city = _cityService.GetById(id);
-        if (city == null)
+        if (_cityService.GetById(id) == null)
             return NotFound();
         _cityService.Delete(id);
         return Ok();

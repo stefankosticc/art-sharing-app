@@ -1,9 +1,6 @@
 using Microsoft.AspNetCore.Mvc;
-using ArtSharingApp.Backend.Models;
-using ArtSharingApp.Backend.DataAccess.Repository;
-using ArtSharingApp.Backend.DataAccess.Repository.RepositoryInterface;
 using ArtSharingApp.Backend.DTO;
-using AutoMapper;
+using ArtSharingApp.Backend.Service.ServiceInterface;
 
 namespace ArtSharingApp.Backend.Controllers;
 
@@ -11,21 +8,17 @@ namespace ArtSharingApp.Backend.Controllers;
 [Route("api")]
 public class GalleryController : Controller
 {
-    private readonly IGenericRepository<Gallery> _galleryService;
-    private readonly IMapper _mapper;
+    private readonly IGalleryService _galleryService;
 
-    public GalleryController(IGenericRepository<Gallery> galleryService, IMapper mapper)
+    public GalleryController(IGalleryService galleryService)
     {
         _galleryService = galleryService;
-        _mapper = mapper;
     }
 
     [HttpGet("galleries")]
     public IActionResult GetAll()
     {
-        IEnumerable<Gallery> galleries = _galleryService.GetAll();
-        var dtos = _mapper.Map<IEnumerable<GalleryResponseDTO>>(galleries);
-        return Ok(dtos);
+        return Ok(_galleryService.GetAll());
     }
 
     [HttpGet("gallery/{id}")]
@@ -34,8 +27,7 @@ public class GalleryController : Controller
         var gallery = _galleryService.GetById(id);
         if (gallery == null)
             return NotFound();
-        var dto = _mapper.Map<GalleryResponseDTO>(gallery);
-        return Ok(dto);
+        return Ok(gallery);
     }
 
     [HttpPost("gallery")]
@@ -43,8 +35,7 @@ public class GalleryController : Controller
     {
         if (galleryDto == null)
             return BadRequest("Gallery object is null.");
-        var gallery = _mapper.Map<Gallery>(galleryDto);
-        _galleryService.Add(gallery);
+        _galleryService.Add(galleryDto);
         return Ok();
     }
 
@@ -53,20 +44,16 @@ public class GalleryController : Controller
     {
         if (galleryDto == null)
             return BadRequest("Gallery object is null.");
-        var existing = _galleryService.GetById(id);
-        if (existing == null)
+        if (_galleryService.GetById(id) == null)
             return NotFound();
-        var gallery = _mapper.Map<Gallery>(galleryDto);
-        gallery.Id = id;
-        _galleryService.Update(gallery);
+        _galleryService.Update(id, galleryDto);
         return Ok();
     }
 
     [HttpDelete("gallery/{id}")]
     public IActionResult Delete(int id)
     {
-        var gallery = _galleryService.GetById(id);
-        if (gallery == null)
+        if (_galleryService.GetById(id) == null)
             return NotFound();
         _galleryService.Delete(id);
         return Ok();

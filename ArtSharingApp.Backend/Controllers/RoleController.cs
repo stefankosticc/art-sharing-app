@@ -12,12 +12,10 @@ namespace ArtSharingApp.Backend.Controllers;
 public class RoleController : Controller
 {
     private readonly IRoleService _roleService;
-    private readonly IMapper _mapper;
     
-    public RoleController(IRoleService roleService, IMapper mapper)
+    public RoleController(IRoleService roleService)
     {
         _roleService = roleService;
-        _mapper = mapper;
     }
     
     [HttpPost("role")]
@@ -25,17 +23,14 @@ public class RoleController : Controller
     {
         if (roleDto == null)
             return BadRequest("Role object is null.");
-        var role = _mapper.Map<Role>(roleDto);
-        _roleService.AddRole(role);
+        _roleService.AddRole(roleDto);
         return Ok();
     }
 
     [HttpGet("roles")]
     public IActionResult GetAll()
     {
-        IEnumerable<Role> roles = _roleService.GetAll();
-        var dtos = _mapper.Map<IEnumerable<RoleResponseDTO>>(roles);
-        return Ok(dtos);
+        return Ok(_roleService.GetAll());
     }
 
     [HttpGet("role/{id}")]
@@ -44,8 +39,7 @@ public class RoleController : Controller
         var role = _roleService.GetById(id);
         if (role == null)
             return NotFound();
-        var dto = _mapper.Map<RoleResponseDTO>(role);
-        return Ok(dto);
+        return Ok(role);
     }
 
     [HttpPut("role/{id}")]
@@ -56,9 +50,7 @@ public class RoleController : Controller
         var existing = _roleService.GetById(id);
         if (existing == null)
             return NotFound();
-        var role = _mapper.Map<Role>(roleDto);
-        role.Id = id;
-        _roleService.Update(id, role);
+        _roleService.Update(id, roleDto);
         return Ok();
     }
 

@@ -1,12 +1,12 @@
-using ArtSharingApp.Backend.Models;
+using ArtSharingApp.Backend.DTO;
 
 namespace ArtSharingApp.Backend.Service.ServiceInterface;
 
 public interface ICityService
 {
-    IEnumerable<City> GetAll();
-    City? GetById(int id);
-    void Add(City city);
-    void Update(int id, City city);
+    IEnumerable<CityResponseDTO> GetAll();
+    CityResponseDTO? GetById(int id);
+    void Add(CityRequestDTO cityDto);
+    void Update(int id, CityRequestDTO cityDto);
     void Delete(int id);
 }

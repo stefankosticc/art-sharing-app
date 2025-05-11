@@ -1,9 +1,6 @@
 using Microsoft.AspNetCore.Mvc;
-using ArtSharingApp.Backend.Models;
-using ArtSharingApp.Backend.Service;
 using ArtSharingApp.Backend.Service.ServiceInterface;
 using ArtSharingApp.Backend.DTO;
-using AutoMapper;
 
 namespace ArtSharingApp.Backend.Controllers;
 
@@ -12,20 +9,16 @@ namespace ArtSharingApp.Backend.Controllers;
 public class ArtworkController : Controller
 {
     private readonly IArtworkService _artworkService;
-    private readonly IMapper _mapper;
 
-    public ArtworkController(IArtworkService artworkService, IMapper mapper)
+    public ArtworkController(IArtworkService artworkService)
     {
         _artworkService = artworkService;
-        _mapper = mapper;
     }
 
     [HttpGet("artworks")]
     public IActionResult GetAll()
     {
-        IEnumerable<Artwork> artworks = _artworkService.GetAll();
-        var dtos = _mapper.Map<IEnumerable<ArtworkResponseDTO>>(artworks);
-        return Ok(dtos);
+        return Ok(_artworkService.GetAll());
     }
 
     [HttpGet("artwork/{id}")]
@@ -34,8 +27,7 @@ public class ArtworkController : Controller
         var artwork = _artworkService.GetById(id);
         if (artwork == null)
             return NotFound();
-        var dto = _mapper.Map<ArtworkResponseDTO>(artwork);
-        return Ok(dto);
+        return Ok(artwork);
     }
 
     [HttpPost("artwork")]
@@ -43,13 +35,8 @@ public class ArtworkController : Controller
     {
         if (artworkDto == null)
             return BadRequest("Artwork object is null.");
-        var artwork = _mapper.Map<Artwork>(artworkDto);
-        _artworkService.Add(artwork);
-
-        // Fetch the saved artwork with navigation properties
-        var savedArtwork = _artworkService.GetById(artwork.Id);
-        var responseDto = _mapper.Map<ArtworkResponseDTO>(savedArtwork);
-        return Ok(responseDto);
+        _artworkService.Add(artworkDto);
+        return Ok();
     }
 
     [HttpPut("artwork/{id}")]
@@ -59,8 +46,7 @@ public class ArtworkController : Controller
             return BadRequest("Artwork object is null.");
         if (_artworkService.GetById(id) == null)
             return NotFound();
-        var artwork = _mapper.Map<Artwork>(artworkDto);
-        _artworkService.Update(id, artwork);
+        _artworkService.Update(id, artworkDto);
         return Ok();
     }
 

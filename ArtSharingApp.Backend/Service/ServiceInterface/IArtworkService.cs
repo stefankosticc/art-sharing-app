@@ -1,12 +1,12 @@
-using ArtSharingApp.Backend.Models;
+using ArtSharingApp.Backend.DTO;
 
 namespace ArtSharingApp.Backend.Service.ServiceInterface;
 
 public interface IArtworkService
 {
-    IEnumerable<Artwork> GetAll();
-    Artwork? GetById(int id);
-    void Add(Artwork artwork);
-    void Update(int id, Artwork artwork);
+    IEnumerable<ArtworkResponseDTO> GetAll();
+    ArtworkResponseDTO? GetById(int id);
+    void Add(ArtworkRequestDTO artworkDto);
+    void Update(int id, ArtworkRequestDTO artworkDto);
     void Delete(int id);
 }
