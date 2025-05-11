@@ -1,3 +1,5 @@
+using System.Text.Json.Serialization;
+
 namespace ArtSharingApp.Backend.Models;
 
 public class Role
@@ -6,4 +8,3 @@ public class Role
     public string Name { get; set; }
     public ICollection<User> Users { get; set; } = new List<User>();
 }
-

@@ -3,6 +3,10 @@ using ArtSharingApp.Backend.Models;
 using ArtSharingApp.Backend.Service;
 using System.Collections.Generic;
 using ArtSharingApp.Backend.DataAccess.Repository;
+using ArtSharingApp.Backend.DataAccess.Repository.RepositoryInterface;
+using ArtSharingApp.Backend.DTO;
+using ArtSharingApp.Backend.Service.ServiceInterface;
+using AutoMapper;
 
 namespace ArtSharingApp.Backend.Controllers;
 
@@ -10,18 +14,21 @@ namespace ArtSharingApp.Backend.Controllers;
 [Route("api")]
 public class CityController : Controller
 {
-    private readonly IGenericRepository<City> _cityService;
+    private readonly ICityService _cityService;
+    private readonly IMapper _mapper;
 
-    public CityController(IGenericRepository<City> cityService)
+    public CityController(ICityService cityService, IMapper mapper)
     {
         _cityService = cityService;
+        _mapper = mapper;
     }
 
     [HttpGet("cities")]
     public IActionResult GetAll()
     {
         IEnumerable<City> cities = _cityService.GetAll();
-        return Ok(cities);
+        var dtos = _mapper.Map<IEnumerable<CityResponseDTO>>(cities);
+        return Ok(dtos);
     }
 
     [HttpGet("city/{id}")]
@@ -30,27 +37,31 @@ public class CityController : Controller
         var city = _cityService.GetById(id);
         if (city == null)
             return NotFound();
-        return Ok(city);
+        var dto = _mapper.Map<CityResponseDTO>(city);
+        return Ok(dto);
     }
 
     [HttpPost("city")]
-    public IActionResult Add([FromBody] City city)
+    public IActionResult Add([FromBody] CityRequestDTO cityDto)
     {
-        if (city == null)
+        if (cityDto == null)
             return BadRequest("City object is null.");
+        var city = _mapper.Map<City>(cityDto);
         _cityService.Add(city);
         return Ok();
     }
 
     [HttpPut("city/{id}")]
-    public IActionResult Update(int id, [FromBody] City city)
+    public IActionResult Update(int id, [FromBody] CityRequestDTO cityDto)
     {
-        if (city == null)
+        if (cityDto == null)
             return BadRequest("City object is null.");
         var existing = _cityService.GetById(id);
         if (existing == null)
             return NotFound();
-        _cityService.Update(city);
+        var city = _mapper.Map<City>(cityDto);
+        city.Id = id;
+        _cityService.Update(id, city);
         return Ok();
     }
 

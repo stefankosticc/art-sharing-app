@@ -1,25 +1,33 @@
 using ArtSharingApp.Backend.DataAccess.Repository;
+using ArtSharingApp.Backend.DataAccess.Repository.RepositoryInterface;
+using ArtSharingApp.Backend.DTO;
 using ArtSharingApp.Backend.Models;
+using ArtSharingApp.Backend.Service.ServiceInterface;
+using AutoMapper;
 
 namespace ArtSharingApp.Backend.Service;
 
 public class UserService : IUserService
 {
     private readonly IUserRepository _userRepository;
+    private readonly IMapper _mapper;
 
-    public UserService(IUserRepository userRepository)
+    public UserService(IUserRepository userRepository, IMapper mapper)
     {
         _userRepository = userRepository;
+        _mapper = mapper;
     }
 
-    public IEnumerable<User> GetUsersByName(string name)
+    public IEnumerable<UserResponseDTO> GetUsersByName(string name)
     {
-        return _userRepository.GetUsersByName(name);
+        var users = _userRepository.GetUsersByName(name);
+        return _mapper.Map<IEnumerable<UserResponseDTO>>(users);
     }
 
-    public void AddUser(User user)
+    public void AddUser(UserRequestDTO userDto)
     {
-        _userRepository.Add(user);
+        var user = _mapper.Map<User>(userDto);
+        _userRepository.Add(user); 
         _userRepository.Save();
     }
 
@@ -28,12 +36,13 @@ public class UserService : IUserService
         var user = _userRepository.GetById(id);
         if (user == null)
             return null;
-        return user;
+        return _mapper.Map<UserResponseDTO>(user);
     }
 
-    public IEnumerable<User> GetAllUsers()
+    public IEnumerable<UserResponseDTO> GetAllUsers()
     {
-        return _userRepository.GetAll();
+        IEnumerable<User> users = _userRepository.GetAll();
+        return _mapper.Map<IEnumerable<UserResponseDTO>>(users);
     }
 
     public void Delete(int id)

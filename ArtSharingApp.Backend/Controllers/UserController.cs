@@ -2,6 +2,9 @@ using ArtSharingApp.Backend.Models;
 using ArtSharingApp.Backend.Service;
 using Microsoft.AspNetCore.Mvc;
 using System.Collections.Generic;
+using ArtSharingApp.Backend.DTO;
+using ArtSharingApp.Backend.Service.ServiceInterface;
+using AutoMapper;
 
 namespace ArtSharingApp.Backend.Controllers;
 
@@ -29,12 +32,11 @@ public class UserController : Controller
     [HttpGet("users")]
     public IActionResult GetAllUsers()
     {
-        IEnumerable<User> users = _userService.GetAllUsers();
-        return Ok(users);
+        return Ok(_userService.GetAllUsers());
     }
     
     [HttpPost("user")]
-    public IActionResult AddUser([FromBody] User user)
+    public IActionResult AddUser([FromBody] UserRequestDTO user)
     {
         if (user == null)
             return BadRequest("User object is null.");
@@ -59,9 +61,6 @@ public class UserController : Controller
     {
         if (string.IsNullOrWhiteSpace(name))
             return BadRequest("Name parameter is required.");
-        
-        var users = _userService.GetUsersByName(name);
-        return Ok();
+        return Ok(_userService.GetUsersByName(name));
     }
 }
-

@@ -12,8 +12,8 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace ArtSharingApp.Backend.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20250510114359_ConfiguredRelationships2")]
-    partial class ConfiguredRelationships2
+    [Migration("20250511033719_ConfigureRelationships")]
+    partial class ConfigureRelationships
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)

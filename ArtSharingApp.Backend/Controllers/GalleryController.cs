@@ -1,8 +1,9 @@
 using Microsoft.AspNetCore.Mvc;
 using ArtSharingApp.Backend.Models;
-using ArtSharingApp.Backend.Service;
-using System.Collections.Generic;
 using ArtSharingApp.Backend.DataAccess.Repository;
+using ArtSharingApp.Backend.DataAccess.Repository.RepositoryInterface;
+using ArtSharingApp.Backend.DTO;
+using AutoMapper;
 
 namespace ArtSharingApp.Backend.Controllers;
 
@@ -11,17 +12,20 @@ namespace ArtSharingApp.Backend.Controllers;
 public class GalleryController : Controller
 {
     private readonly IGenericRepository<Gallery> _galleryService;
+    private readonly IMapper _mapper;
 
-    public GalleryController(IGenericRepository<Gallery> galleryService)
+    public GalleryController(IGenericRepository<Gallery> galleryService, IMapper mapper)
     {
         _galleryService = galleryService;
+        _mapper = mapper;
     }
 
     [HttpGet("galleries")]
     public IActionResult GetAll()
     {
         IEnumerable<Gallery> galleries = _galleryService.GetAll();
-        return Ok(galleries);
+        var dtos = _mapper.Map<IEnumerable<GalleryResponseDTO>>(galleries);
+        return Ok(dtos);
     }
 
     [HttpGet("gallery/{id}")]
@@ -30,26 +34,30 @@ public class GalleryController : Controller
         var gallery = _galleryService.GetById(id);
         if (gallery == null)
             return NotFound();
-        return Ok(gallery);
+        var dto = _mapper.Map<GalleryResponseDTO>(gallery);
+        return Ok(dto);
     }
 
     [HttpPost("gallery")]
-    public IActionResult Add([FromBody] Gallery gallery)
+    public IActionResult Add([FromBody] GalleryRequestDTO galleryDto)
     {
-        if (gallery == null)
+        if (galleryDto == null)
             return BadRequest("Gallery object is null.");
+        var gallery = _mapper.Map<Gallery>(galleryDto);
         _galleryService.Add(gallery);
         return Ok();
     }
 
     [HttpPut("gallery/{id}")]
-    public IActionResult Update(int id, [FromBody] Gallery gallery)
+    public IActionResult Update(int id, [FromBody] GalleryRequestDTO galleryDto)
     {
-        if (gallery == null)
+        if (galleryDto == null)
             return BadRequest("Gallery object is null.");
         var existing = _galleryService.GetById(id);
         if (existing == null)
             return NotFound();
+        var gallery = _mapper.Map<Gallery>(galleryDto);
+        gallery.Id = id;
         _galleryService.Update(gallery);
         return Ok();
     }

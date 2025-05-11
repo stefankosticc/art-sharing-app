@@ -9,7 +9,7 @@ public class User
     public string Password { get; set; }
     public string? Biography { get; set; }
     public int RoleId { get; set; }
-    public Role? Role { get; set; } // Make navigation property nullable
+    public Role? Role { get; set; }
     public ICollection<Artwork> CreatedArtworks { get; set; } = new List<Artwork>();
     public ICollection<Artwork> PostedArtworks { get; set; } = new List<Artwork>();
     public ICollection<Favorites> Favorites { get; set; } = new List<Favorites>();

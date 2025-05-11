@@ -1,6 +1,8 @@
 using ArtSharingApp.Backend.DataAccess.Repository;
 using ArtSharingApp.Backend.Models;
 using System.Collections.Generic;
+using ArtSharingApp.Backend.DataAccess.Repository.RepositoryInterface;
+using ArtSharingApp.Backend.Service.ServiceInterface;
 
 namespace ArtSharingApp.Backend.Service;
 

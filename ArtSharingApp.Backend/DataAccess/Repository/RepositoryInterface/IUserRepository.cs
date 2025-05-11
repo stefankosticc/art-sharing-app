@@ -1,6 +1,6 @@
 using ArtSharingApp.Backend.Models;
 
-namespace ArtSharingApp.Backend.DataAccess.Repository;
+namespace ArtSharingApp.Backend.DataAccess.Repository.RepositoryInterface;
 
 public interface IUserRepository : IGenericRepository<User>
 {

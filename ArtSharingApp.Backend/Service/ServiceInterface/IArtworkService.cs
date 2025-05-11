@@ -1,7 +1,6 @@
 using ArtSharingApp.Backend.Models;
-using System.Collections.Generic;
 
-namespace ArtSharingApp.Backend.Service;
+namespace ArtSharingApp.Backend.Service.ServiceInterface;
 
 public interface IArtworkService
 {

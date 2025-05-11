@@ -1,7 +1,7 @@
 using Microsoft.AspNetCore.Mvc;
 using ArtSharingApp.Backend.Models;
 using ArtSharingApp.Backend.Service;
-using System.Collections.Generic;
+using ArtSharingApp.Backend.Service.ServiceInterface;
 
 namespace ArtSharingApp.Backend.Controllers;
 

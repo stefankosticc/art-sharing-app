@@ -5,7 +5,7 @@
 namespace ArtSharingApp.Backend.Migrations
 {
     /// <inheritdoc />
-    public partial class ConfiguredRelationships : Migration
+    public partial class ConfigureRelationships : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
