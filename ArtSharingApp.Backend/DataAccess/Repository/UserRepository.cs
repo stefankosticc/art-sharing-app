@@ -1,0 +1,35 @@
+using System.Linq.Expressions;
+using ArtSharingApp.Backend.DataAccess.Repository.RepositoryInterface;
+using ArtSharingApp.Backend.Models;
+using Microsoft.EntityFrameworkCore;
+
+namespace ArtSharingApp.Backend.DataAccess.Repository;
+
+public class UserRepository : GenericRepository<User>,IUserRepository
+{
+    protected Expression<Func<User, object>>[] DefaultIncludes => new Expression<Func<User, object>>[]
+    {
+        u => u.Role
+    };
+    
+    public UserRepository(ApplicationDbContext context) : base(context)
+    {
+    }
+
+    public async Task<IEnumerable<User>> GetAllAsync(params Expression<Func<User, object>>[] includes)
+    {
+        var combinedIncludes = DefaultIncludes.Concat(includes ?? Enumerable.Empty<Expression<Func<User, object>>>()).ToArray();
+        return await base.GetAllAsync(combinedIncludes);
+    }
+    
+    public async Task<User> GetByIdAsync(object id, params Expression<Func<User, object>>[] includes)
+    {
+        var combinedIncludes = DefaultIncludes.Concat(includes ?? Enumerable.Empty<Expression<Func<User, object>>>()).ToArray();
+        return await base.GetByIdAsync(id, combinedIncludes);
+    }
+    
+    public async Task<IEnumerable<User>> GetUsersByName(string name)
+    {
+        return await _dbSet.Include(u => u.Role).Where(u => u.Name.ToLower().Contains(name.ToLower())).ToListAsync();
+    }
+}
