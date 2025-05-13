@@ -19,41 +19,42 @@ public class RoleService : IRoleService
         _mapper = mapper;
     }
 
-    public void AddRole(RoleRequestDTO roleDto)
+    public async Task AddRoleAsync(RoleRequestDTO roleDto)
     {
         var role = _mapper.Map<Role>(roleDto);
-        _roleRepository.Add(role);
-        _roleRepository.Save();
+        await _roleRepository.AddAsync(role);
+        await _roleRepository.SaveAsync();
     }
 
-    public IEnumerable<RoleResponseDTO> GetAll()
+    public async Task<IEnumerable<RoleResponseDTO>> GetAllAsync()
     {
-        IEnumerable<Role> roles = _roleRepository.GetAll();
+        IEnumerable<Role> roles = await _roleRepository.GetAllAsync();
         return _mapper.Map<IEnumerable<RoleResponseDTO>>(roles);
     }
 
-    public RoleResponseDTO? GetById(int id)
+    public async Task<RoleResponseDTO?> GetByIdAsync(int id)
     {
-        var role = _roleRepository.GetById(id);
+        var role = await _roleRepository.GetByIdAsync(id);
         if (role == null)
             return null;
         return _mapper.Map<RoleResponseDTO>(role);
     }
 
-    public void Update(int id, RoleRequestDTO roleDto)
+    public async Task UpdateAsync(int id, RoleRequestDTO roleDto)
     {
-        if (_roleRepository.GetById(id) == null) return;
+        var existing = await _roleRepository.GetByIdAsync(id);
+        if (existing == null) return;
         var role = _mapper.Map<Role>(roleDto);
         role.Id = id;
         _roleRepository.Update(role);
-        _roleRepository.Save();
+        await _roleRepository.SaveAsync();
     }
 
-    public void Delete(int id)
+    public async Task DeleteAsync(int id)
     {
-        var role = _roleRepository.GetById(id);
+        var role = await _roleRepository.GetByIdAsync(id);
         if (role == null) return;
-        _roleRepository.Delete(role);
-        _roleRepository.Save();
+        await _roleRepository.DeleteAsync(id);
+        await _roleRepository.SaveAsync();
     }
 }

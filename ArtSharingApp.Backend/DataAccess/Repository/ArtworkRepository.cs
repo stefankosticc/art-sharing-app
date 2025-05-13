@@ -1,6 +1,7 @@
 using System.Linq.Expressions;
 using ArtSharingApp.Backend.DataAccess.Repository.RepositoryInterface;
 using ArtSharingApp.Backend.Models;
+using Microsoft.EntityFrameworkCore;
 
 namespace ArtSharingApp.Backend.DataAccess.Repository;
 
@@ -18,16 +19,23 @@ public class ArtworkRepository : GenericRepository<Artwork>,IArtworkRepository
     {
     }
 
-    public new IEnumerable<Artwork> GetAll(params Expression<Func<Artwork, object>>[] includes)
+    public async Task<IEnumerable<Artwork>> GetAllAsync(params Expression<Func<Artwork, object>>[] includes)
     {
         var combinedIncludes = DefaultIncludes.Concat(includes ?? Enumerable.Empty<Expression<Func<Artwork, object>>>()).ToArray();
-        return base.GetAll(combinedIncludes);
+        return await base.GetAllAsync(combinedIncludes);
     }
     
-    public new Artwork GetById(object id, params Expression<Func<Artwork, object>>[] includes)
+    public async Task<Artwork> GetByIdAsync(object id, params Expression<Func<Artwork, object>>[] includes)
     {
         var combinedIncludes = DefaultIncludes.Concat(includes ?? Enumerable.Empty<Expression<Func<Artwork, object>>>()).ToArray();
+        return await base.GetByIdAsync(id, combinedIncludes);
+    }
 
-        return base.GetById(id, combinedIncludes);
+    public async Task<IEnumerable<Artwork>?> SearchByTitle(string title)
+    {
+        if (string.IsNullOrEmpty(title))
+            return null;
+        var artworks = await _context.Artworks.Where(a => a.Title.ToLower().Contains(title.ToLower())).ToListAsync();
+        return artworks;
     }
 }

@@ -17,41 +17,41 @@ public class CityService : ICityService
         _mapper = mapper;
     }
 
-    public IEnumerable<CityResponseDTO> GetAll()
+    public async Task<IEnumerable<CityResponseDTO>> GetAllAsync()
     {
-        var cities = _cityRepository.GetAll();
+        var cities = await _cityRepository.GetAllAsync();
         return _mapper.Map<IEnumerable<CityResponseDTO>>(cities);
     }
 
-    public CityResponseDTO? GetById(int id)
+    public async Task<CityResponseDTO?> GetByIdAsync(int id)
     {
-        var city = _cityRepository.GetById(id);
+        var city = await _cityRepository.GetByIdAsync(id);
         if (city == null)
             return null;
         return _mapper.Map<CityResponseDTO>(city);
     }
 
-    public void Add(CityRequestDTO cityDto)
+    public async Task AddAsync(CityRequestDTO cityDto)
     {
         var city = _mapper.Map<City>(cityDto);
-        _cityRepository.Add(city);
-        _cityRepository.Save();
+        await _cityRepository.AddAsync(city);
+        await _cityRepository.SaveAsync();
     }
 
-    public void Update(int id, CityRequestDTO cityDto)
+    public async Task UpdateAsync(int id, CityRequestDTO cityDto)
     {
-        if (_cityRepository.GetById(id) == null) return;
+        if (await _cityRepository.GetByIdAsync(id) == null) return;
         var city = _mapper.Map<City>(cityDto);
         city.Id = id;
         _cityRepository.Update(city);
-        _cityRepository.Save();
+        await _cityRepository.SaveAsync();
     }
 
-    public void Delete(int id)
+    public async Task DeleteAsync(int id)
     {
-        var city = _cityRepository.GetById(id);
+        var city = await _cityRepository.GetByIdAsync(id);
         if (city == null) return;
-        _cityRepository.Delete(city);
-        _cityRepository.Save();
+        await _cityRepository.DeleteAsync(id);
+        await _cityRepository.SaveAsync();
     }
 }

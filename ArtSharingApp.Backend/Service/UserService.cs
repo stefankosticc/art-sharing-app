@@ -18,40 +18,40 @@ public class UserService : IUserService
         _mapper = mapper;
     }
 
-    public IEnumerable<UserResponseDTO> GetUsersByName(string name)
+    public async Task<IEnumerable<UserResponseDTO>> GetUsersByName(string name)
     {
-        var users = _userRepository.GetUsersByName(name);
+        var users = await _userRepository.GetUsersByName(name);
         return _mapper.Map<IEnumerable<UserResponseDTO>>(users);
     }
 
-    public void AddUser(UserRequestDTO userDto)
+    public async Task AddUserAsync(UserRequestDTO userDto)
     {
         var user = _mapper.Map<User>(userDto);
-        _userRepository.Add(user); 
-        _userRepository.Save();
+        await _userRepository.AddAsync(user); 
+        await _userRepository.SaveAsync();
     }
 
-    public object? GetUserById(int id)
+    public async Task<UserResponseDTO?> GetUserByIdAsync(int id)
     {
-        var user = _userRepository.GetById(id);
+        var user = await _userRepository.GetByIdAsync(id);
         if (user == null)
             return null;
         return _mapper.Map<UserResponseDTO>(user);
     }
 
-    public IEnumerable<UserResponseDTO> GetAllUsers()
+    public async Task<IEnumerable<UserResponseDTO>> GetAllUsersAsync()
     {
-        IEnumerable<User> users = _userRepository.GetAll();
+        IEnumerable<User> users = await _userRepository.GetAllAsync();
         return _mapper.Map<IEnumerable<UserResponseDTO>>(users);
     }
 
-    public void Delete(int id)
+    public async Task DeleteAsync(int id)
     {
-        var user = _userRepository.GetById(id);
+        var user = await _userRepository.GetByIdAsync(id);
         if (user != null)
         {
-            _userRepository.Delete(id);
-            _userRepository.Save();
+            await _userRepository.DeleteAsync(id);
+            await _userRepository.SaveAsync();
         }
         else
         {
@@ -59,4 +59,3 @@ public class UserService : IUserService
         }
     }
 }
-

@@ -16,46 +16,55 @@ public class ArtworkController : Controller
     }
 
     [HttpGet("artworks")]
-    public IActionResult GetAll()
+    public async Task<IActionResult> GetAll()
     {
-        return Ok(_artworkService.GetAll());
+        return Ok(await _artworkService.GetAllAsync());
     }
 
     [HttpGet("artwork/{id}")]
-    public IActionResult GetById(int id)
+    public async Task<IActionResult> GetById(int id)
     {
-        var artwork = _artworkService.GetById(id);
+        var artwork = await _artworkService.GetByIdAsync(id);
         if (artwork == null)
             return NotFound();
         return Ok(artwork);
     }
 
     [HttpPost("artwork")]
-    public IActionResult Add([FromBody] ArtworkRequestDTO artworkDto)
+    public async Task<IActionResult> Add([FromBody] ArtworkRequestDTO artworkDto)
     {
         if (artworkDto == null)
             return BadRequest("Artwork object is null.");
-        _artworkService.Add(artworkDto);
+        await _artworkService.AddAsync(artworkDto);
         return Ok();
     }
 
     [HttpPut("artwork/{id}")]
-    public IActionResult Update(int id, [FromBody] ArtworkRequestDTO artworkDto)
+    public async Task<IActionResult> Update(int id, [FromBody] ArtworkRequestDTO artworkDto)
     {
         if (artworkDto == null)
             return BadRequest("Artwork object is null.");
-        if (_artworkService.GetById(id) == null)
+        if (await _artworkService.GetByIdAsync(id) == null)
             return NotFound();
-        _artworkService.Update(id, artworkDto);
+        await _artworkService.UpdateAsync(id, artworkDto);
         return Ok();
     }
 
     [HttpDelete("artwork/{id}")]
-    public IActionResult Delete(int id)
+    public async Task<IActionResult> Delete(int id)
     {
-        if (_artworkService.GetById(id) == null)
+        if (await _artworkService.GetByIdAsync(id) == null)
             return NotFound();
-        _artworkService.Delete(id);
+        await _artworkService.DeleteAsync(id);
         return Ok();
+    }
+    
+    [HttpGet("artworks/search")]
+    public async Task<IActionResult> Search([FromQuery] string title)
+    {
+        var artworks = await _artworkService.SearchByTitle(title);
+        if (artworks == null || !artworks.Any())
+            return NotFound();
+        return Ok(artworks);
     }
 }

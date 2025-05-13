@@ -23,37 +23,37 @@ public class ApplicationDbContext : DbContext
             .HasOne(g => g.City)
             .WithMany(c => c.Galleries)
             .HasForeignKey(g => g.CityId)
-            .IsRequired(); // 1,1 to 0,Many
+            .IsRequired();
 
         modelBuilder.Entity<Artwork>()
             .HasOne(a => a.City)
             .WithMany(c => c.Artworks)
             .HasForeignKey(a => a.CityId)
-            .IsRequired(false); // 0,1 to 0,Many
+            .IsRequired(false);
 
         modelBuilder.Entity<Artwork>()
             .HasOne(a => a.Gallery)
             .WithMany(g => g.Artworks)
             .HasForeignKey(a => a.GalleryId)
-            .IsRequired(false); // 0,1 to 0,Many
+            .IsRequired(false);
 
         modelBuilder.Entity<User>()
             .HasOne(u => u.Role)
             .WithMany(r => r.Users)
             .HasForeignKey(u => u.RoleId)
-            .IsRequired(); // 1,1 to 0,Many
+            .IsRequired();
 
         modelBuilder.Entity<Artwork>()
             .HasOne(a => a.CreatedByArtist)
             .WithMany(u => u.CreatedArtworks)
             .HasForeignKey(a => a.CreatedByArtistId)
-            .IsRequired(); // 1,1 to 0,Many
+            .IsRequired();
 
         modelBuilder.Entity<Artwork>()
             .HasOne(a => a.PostedByUser)
             .WithMany(u => u.PostedArtworks)
             .HasForeignKey(a => a.PostedByUserId)
-            .IsRequired(); // 1,1 to 0,Many
+            .IsRequired();
 
         modelBuilder.Entity<Favorites>()
             .HasKey(f => new { f.UserId, f.ArtworkId });

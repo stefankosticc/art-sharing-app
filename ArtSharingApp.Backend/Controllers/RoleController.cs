@@ -19,48 +19,48 @@ public class RoleController : Controller
     }
     
     [HttpPost("role")]
-    public IActionResult AddRole([FromBody] RoleRequestDTO roleDto)
+    public async Task<IActionResult> AddRole([FromBody] RoleRequestDTO roleDto)
     {
         if (roleDto == null)
             return BadRequest("Role object is null.");
-        _roleService.AddRole(roleDto);
+        await _roleService.AddRoleAsync(roleDto);
         return Ok();
     }
 
     [HttpGet("roles")]
-    public IActionResult GetAll()
+    public async Task<IActionResult> GetAll()
     {
-        return Ok(_roleService.GetAll());
+        return Ok(await _roleService.GetAllAsync());
     }
 
     [HttpGet("role/{id}")]
-    public IActionResult GetById(int id)
+    public async Task<IActionResult> GetById(int id)
     {
-        var role = _roleService.GetById(id);
+        var role = await _roleService.GetByIdAsync(id);
         if (role == null)
             return NotFound();
         return Ok(role);
     }
 
     [HttpPut("role/{id}")]
-    public IActionResult Update(int id, [FromBody] RoleRequestDTO roleDto)
+    public async Task<IActionResult> Update(int id, [FromBody] RoleRequestDTO roleDto)
     {
         if (roleDto == null)
             return BadRequest("Role object is null.");
-        var existing = _roleService.GetById(id);
+        var existing = await _roleService.GetByIdAsync(id);
         if (existing == null)
             return NotFound();
-        _roleService.Update(id, roleDto);
+        await _roleService.UpdateAsync(id, roleDto);
         return Ok();
     }
 
     [HttpDelete("role/{id}")]
-    public IActionResult Delete(int id)
+    public async Task<IActionResult> Delete(int id)
     {
-        var role = _roleService.GetById(id);
+        var role = await _roleService.GetByIdAsync(id);
         if (role == null)
             return NotFound();
-        _roleService.Delete(id);
+        await _roleService.DeleteAsync(id);
         return Ok();
     }
 }

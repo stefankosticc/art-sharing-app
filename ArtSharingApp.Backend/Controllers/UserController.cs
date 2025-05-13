@@ -20,9 +20,9 @@ public class UserController : Controller
     }
     
     [HttpGet("user/{id}")]
-    public IActionResult GetUserById(int id)
+    public async Task<IActionResult> GetUserById(int id)
     {
-        var user = _userService.GetUserById(id);
+        var user = await _userService.GetUserByIdAsync(id);
         if (user == null)
             return NotFound();
         
@@ -30,37 +30,39 @@ public class UserController : Controller
     }
 
     [HttpGet("users")]
-    public IActionResult GetAllUsers()
+    public async Task<IActionResult> GetAllUsers()
     {
-        return Ok(_userService.GetAllUsers());
+        var users = await _userService.GetAllUsersAsync();
+        return Ok(users);
     }
     
     [HttpPost("user")]
-    public IActionResult AddUser([FromBody] UserRequestDTO user)
+    public async Task<IActionResult> AddUser([FromBody] UserRequestDTO user)
     {
         if (user == null)
             return BadRequest("User object is null.");
         
-        _userService.AddUser(user);
+        await _userService.AddUserAsync(user);
         return Ok();
     }
     
     [HttpDelete("user/{id}")]
-    public IActionResult DeleteUser(int id)
+    public async Task<IActionResult> DeleteUser(int id)
     {
-        var user = _userService.GetUserById(id);
+        var user = await _userService.GetUserByIdAsync(id);
         if (user == null)
             return NotFound();
         
-        _userService.Delete(id);
+        await _userService.DeleteAsync(id);
         return Ok();
     }
 
     [HttpGet("users/by-name")]
-    public IActionResult GetUsersByName([FromQuery] string name)
+    public async Task<IActionResult> GetUsersByName([FromQuery] string name)
     {
         if (string.IsNullOrWhiteSpace(name))
             return BadRequest("Name parameter is required.");
-        return Ok(_userService.GetUsersByName(name));
+        var users = await _userService.GetUsersByName(name);
+        return Ok(users);
     }
 }

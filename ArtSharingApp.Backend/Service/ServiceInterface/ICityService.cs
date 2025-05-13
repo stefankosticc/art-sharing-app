@@ -4,9 +4,9 @@ namespace ArtSharingApp.Backend.Service.ServiceInterface;
 
 public interface ICityService
 {
-    IEnumerable<CityResponseDTO> GetAll();
-    CityResponseDTO? GetById(int id);
-    void Add(CityRequestDTO cityDto);
-    void Update(int id, CityRequestDTO cityDto);
-    void Delete(int id);
+    Task<IEnumerable<CityResponseDTO>> GetAllAsync();
+    Task<CityResponseDTO?> GetByIdAsync(int id);
+    Task AddAsync(CityRequestDTO cityDto);
+    Task UpdateAsync(int id, CityRequestDTO cityDto);
+    Task DeleteAsync(int id);
 }

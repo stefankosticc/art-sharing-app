@@ -16,46 +16,63 @@ public class GalleryController : Controller
     }
 
     [HttpGet("galleries")]
-    public IActionResult GetAll()
+    public async Task<IActionResult> GetAll()
     {
-        return Ok(_galleryService.GetAll());
+        return Ok(await _galleryService.GetAllAsync());
     }
 
     [HttpGet("gallery/{id}")]
-    public IActionResult GetById(int id)
+    public async Task<IActionResult> GetById(int id)
     {
-        var gallery = _galleryService.GetById(id);
+        var gallery = await _galleryService.GetByIdAsync(id);
         if (gallery == null)
             return NotFound();
         return Ok(gallery);
     }
 
     [HttpPost("gallery")]
-    public IActionResult Add([FromBody] GalleryRequestDTO galleryDto)
+    public async Task<IActionResult> Add([FromBody] GalleryRequestDTO galleryDto)
     {
         if (galleryDto == null)
             return BadRequest("Gallery object is null.");
-        _galleryService.Add(galleryDto);
+        await _galleryService.AddAsync(galleryDto);
         return Ok();
     }
 
     [HttpPut("gallery/{id}")]
-    public IActionResult Update(int id, [FromBody] GalleryRequestDTO galleryDto)
+    public async Task<IActionResult> Update(int id, [FromBody] GalleryRequestDTO galleryDto)
     {
         if (galleryDto == null)
             return BadRequest("Gallery object is null.");
-        if (_galleryService.GetById(id) == null)
+        if (await _galleryService.GetByIdAsync(id) == null)
             return NotFound();
-        _galleryService.Update(id, galleryDto);
+        await _galleryService.UpdateAsync(id, galleryDto);
         return Ok();
     }
 
     [HttpDelete("gallery/{id}")]
-    public IActionResult Delete(int id)
+    public async Task<IActionResult> Delete(int id)
     {
-        if (_galleryService.GetById(id) == null)
+        if (await _galleryService.GetByIdAsync(id) == null)
             return NotFound();
-        _galleryService.Delete(id);
+        await _galleryService.DeleteAsync(id);
         return Ok();
+    }
+    
+    [HttpGet("gallery/{id}/artworks")]
+    public async Task<IActionResult> GetArtworksByGalleryId(int id)
+    {
+        var artworks = await _galleryService.GetArtworksByGalleryId(id);
+        if (artworks == null)
+            return NotFound();
+        return Ok(artworks);
+    }
+    
+    [HttpGet("galleries/search")]
+    public async Task<IActionResult> GetGalleriesByName([FromQuery] string name)
+    {
+        if (string.IsNullOrWhiteSpace(name))
+            return BadRequest("Name parameter is required.");
+        return Ok(await _galleryService.GetGalleriesByName(name));
     }
 }

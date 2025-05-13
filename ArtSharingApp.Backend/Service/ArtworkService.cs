@@ -19,41 +19,49 @@ public class ArtworkService : IArtworkService
         _mapper = mapper;
     }
 
-    public IEnumerable<ArtworkResponseDTO> GetAll()
+    public async Task<IEnumerable<ArtworkResponseDTO>> GetAllAsync()
     {
-        var artworks = _artworkRepository.GetAll();
+        var artworks = await _artworkRepository.GetAllAsync();
         return _mapper.Map<IEnumerable<ArtworkResponseDTO>>(artworks);
     }
 
-    public ArtworkResponseDTO? GetById(int id)
+    public async Task<ArtworkResponseDTO?> GetByIdAsync(int id)
     {
-        var artwork = _artworkRepository.GetById(id);
+        var artwork = await _artworkRepository.GetByIdAsync(id);
         if (artwork == null)
             return null;
         return _mapper.Map<ArtworkResponseDTO>(artwork);
     }
 
-    public void Add(ArtworkRequestDTO artworkDto)
+    public async Task AddAsync(ArtworkRequestDTO artworkDto)
     {
         var artwork = _mapper.Map<Artwork>(artworkDto);
-        _artworkRepository.Add(artwork);
-        _artworkRepository.Save();
+        await _artworkRepository.AddAsync(artwork);
+        await _artworkRepository.SaveAsync();
     }
 
-    public void Update(int id, ArtworkRequestDTO artworkDto)
+    public async Task UpdateAsync(int id, ArtworkRequestDTO artworkDto)
     {
-        if (_artworkRepository.GetById(id) == null) return;
+        if (await _artworkRepository.GetByIdAsync(id) == null) return;
         var artwork = _mapper.Map<Artwork>(artworkDto);
         artwork.Id = id;
         _artworkRepository.Update(artwork);
-        _artworkRepository.Save();
+        await _artworkRepository.SaveAsync();
     }
 
-    public void Delete(int id)
+    public async Task DeleteAsync(int id)
     {
-        var artwork = _artworkRepository.GetById(id);
+        var artwork = await _artworkRepository.GetByIdAsync(id);
         if (artwork == null) return;
-        _artworkRepository.Delete(artwork);
-        _artworkRepository.Save();
+        await _artworkRepository.DeleteAsync(id);
+        await _artworkRepository.SaveAsync();
+    }
+
+    public async Task<IEnumerable<ArtworkResponseDTO>?> SearchByTitle(string title)
+    {
+        var artworks = await _artworkRepository.SearchByTitle(title);
+        if (artworks == null)
+            return null;
+        return _mapper.Map<IEnumerable<ArtworkResponseDTO>>(artworks);
     }
 }

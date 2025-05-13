@@ -16,20 +16,20 @@ public class UserRepository : GenericRepository<User>,IUserRepository
     {
     }
 
-    public new IEnumerable<User> GetAll(params Expression<Func<User, object>>[] includes)
+    public async Task<IEnumerable<User>> GetAllAsync(params Expression<Func<User, object>>[] includes)
     {
         var combinedIncludes = DefaultIncludes.Concat(includes ?? Enumerable.Empty<Expression<Func<User, object>>>()).ToArray();
-        return base.GetAll(combinedIncludes);
+        return await base.GetAllAsync(combinedIncludes);
     }
     
-    public new User GetById(object id, params Expression<Func<User, object>>[] includes)
+    public async Task<User> GetByIdAsync(object id, params Expression<Func<User, object>>[] includes)
     {
         var combinedIncludes = DefaultIncludes.Concat(includes ?? Enumerable.Empty<Expression<Func<User, object>>>()).ToArray();
-        return base.GetById(id, combinedIncludes);
+        return await base.GetByIdAsync(id, combinedIncludes);
     }
     
-    public IEnumerable<User> GetUsersByName(string name)
+    public async Task<IEnumerable<User>> GetUsersByName(string name)
     {
-        return _dbSet.Include(u => u.Role).Where(u => u.Name.ToLower().Contains(name.ToLower())).ToList();
+        return await _dbSet.Include(u => u.Role).Where(u => u.Name.ToLower().Contains(name.ToLower())).ToListAsync();
     }
 }

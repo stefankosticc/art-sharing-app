@@ -16,46 +16,46 @@ public class CityController : Controller
     }
 
     [HttpGet("cities")]
-    public IActionResult GetAll()
+    public async Task<IActionResult> GetAll()
     {
-        return Ok(_cityService.GetAll());
+        return Ok(await _cityService.GetAllAsync());
     }
 
     [HttpGet("city/{id}")]
-    public IActionResult GetById(int id)
+    public async Task<IActionResult> GetById(int id)
     {
-        var city = _cityService.GetById(id);
+        var city = await _cityService.GetByIdAsync(id);
         if (city == null)
             return NotFound();
         return Ok(city);
     }
 
     [HttpPost("city")]
-    public IActionResult Add([FromBody] CityRequestDTO cityDto)
+    public async Task<IActionResult> Add([FromBody] CityRequestDTO cityDto)
     {
         if (cityDto == null)
             return BadRequest("City object is null.");
-        _cityService.Add(cityDto);
+        await _cityService.AddAsync(cityDto);
         return Ok();
     }
 
     [HttpPut("city/{id}")]
-    public IActionResult Update(int id, [FromBody] CityRequestDTO cityDto)
+    public async Task<IActionResult> Update(int id, [FromBody] CityRequestDTO cityDto)
     {
         if (cityDto == null)
             return BadRequest("City object is null.");
-        if (_cityService.GetById(id) == null)
+        if (await _cityService.GetByIdAsync(id) == null)
             return NotFound();
-        _cityService.Update(id, cityDto);
+        await _cityService.UpdateAsync(id, cityDto);
         return Ok();
     }
 
     [HttpDelete("city/{id}")]
-    public IActionResult Delete(int id)
+    public async Task<IActionResult> Delete(int id)
     {
-        if (_cityService.GetById(id) == null)
+        if (await _cityService.GetByIdAsync(id) == null)
             return NotFound();
-        _cityService.Delete(id);
+        await _cityService.DeleteAsync(id);
         return Ok();
     }
 }
