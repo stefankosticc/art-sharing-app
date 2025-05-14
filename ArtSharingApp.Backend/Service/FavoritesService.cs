@@ -1,5 +1,6 @@
 using ArtSharingApp.Backend.DataAccess.Repository.RepositoryInterface;
 using ArtSharingApp.Backend.DTO;
+using ArtSharingApp.Backend.Exceptions;
 using ArtSharingApp.Backend.Models;
 using ArtSharingApp.Backend.Service.ServiceInterface;
 using AutoMapper;
@@ -10,13 +11,13 @@ namespace ArtSharingApp.Backend.Service;
 public class FavoritesService : IFavoritesService
 {
     private readonly IFavoritesRepository _favoritesRepository;
-    private readonly IUserService _userRepository;
+    private readonly IUserRepository _userRepository;
     private readonly IArtworkRepository _artworkRepository;
     private readonly IMapper _mapper;
 
     public FavoritesService(
         IFavoritesRepository favoritesRepository,
-        IUserService userRepository,
+        IUserRepository userRepository,
         IArtworkRepository artworkRepository,
         IMapper mapper)
     {
@@ -31,12 +32,12 @@ public class FavoritesService : IFavoritesService
         var alreadyLiked = (await _favoritesRepository.GetAllAsync())
             .Any(f => f.UserId == userId && f.ArtworkId == artworkId);
         if (alreadyLiked)
-            throw new InvalidOperationException("Artwork already liked by this user.");
+            throw new BadRequestException("Artwork already liked by this user.");
 
-        var user = await _userRepository.GetUserByIdAsync(userId);
+        var user = await _userRepository.GetByIdAsync(userId);
         var artwork = await _artworkRepository.GetByIdAsync(artworkId);
         if (user == null || artwork == null)
-            return false;
+            throw new NotFoundException("User or artwork not found.");
 
         await _favoritesRepository.AddAsync(new Favorites(userId, artworkId));
         await _favoritesRepository.SaveAsync();
@@ -45,15 +46,15 @@ public class FavoritesService : IFavoritesService
 
     public async Task<bool> DislikeArtwork(int userId, int artworkId)
     {
+        var user = await _userRepository.GetByIdAsync(userId);
+        var artwork = await _artworkRepository.GetByIdAsync(artworkId);
+        if (user == null || artwork == null)
+            throw new NotFoundException("User or artwork not found.");
+        
         var liked = (await _favoritesRepository.GetAllAsync())
             .Any(f => f.UserId == userId && f.ArtworkId == artworkId);
         if (!liked)
-            throw new InvalidOperationException("Artwork not liked by this user.");
-
-        var user = await _userRepository.GetUserByIdAsync(userId);
-        var artwork = await _artworkRepository.GetByIdAsync(artworkId);
-        if (user == null || artwork == null)
-            return false;
+            throw new BadRequestException("Artwork not liked by this user.");
         
         await _favoritesRepository.DeleteAsync(userId, artworkId);
         await _favoritesRepository.SaveAsync();
@@ -62,12 +63,12 @@ public class FavoritesService : IFavoritesService
 
     public async Task<IEnumerable<FavoritesDTO>?> GetLikedArtworks(int userId)
     {
-        if (await _userRepository.GetUserByIdAsync(userId) == null)
-            return null;
+        if (await _userRepository.GetByIdAsync(userId) == null)
+            throw new NotFoundException($"User with id {userId} not found.");
         
         var likedArtworks = await _favoritesRepository.GetLikedArtworks(userId);
         if (likedArtworks == null || !likedArtworks.Any())
-            return null;
+            throw new NotFoundException($"No liked artworks found for user with id {userId}.");
         var likedArtworksDto = _mapper.Map<List<FavoritesDTO>>(likedArtworks);
         return likedArtworksDto;
     }

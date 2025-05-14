@@ -1,6 +1,5 @@
+using ArtSharingApp.Backend.Exceptions;
 using Microsoft.AspNetCore.Mvc;
-using ArtSharingApp.Backend.Models;
-using ArtSharingApp.Backend.Service;
 using ArtSharingApp.Backend.Service.ServiceInterface;
 
 namespace ArtSharingApp.Backend.Controllers;
@@ -46,6 +45,6 @@ public class FavoritesController : Controller
         {
             return Ok(likedArtworks);
         }
-        return NotFound(new { message = "No liked artworks found." });
+        throw new NotFoundException("No liked artworks found.");
     }
 }

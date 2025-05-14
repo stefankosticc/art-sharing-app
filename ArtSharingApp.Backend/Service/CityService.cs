@@ -2,6 +2,7 @@ using ArtSharingApp.Backend.DataAccess.Repository.RepositoryInterface;
 using ArtSharingApp.Backend.Models;
 using ArtSharingApp.Backend.Service.ServiceInterface;
 using ArtSharingApp.Backend.DTO;
+using ArtSharingApp.Backend.Exceptions;
 using AutoMapper;
 
 namespace ArtSharingApp.Backend.Service;
@@ -27,12 +28,14 @@ public class CityService : ICityService
     {
         var city = await _cityRepository.GetByIdAsync(id);
         if (city == null)
-            return null;
+            throw new NotFoundException("City with id {id} not found");
         return _mapper.Map<CityResponseDTO>(city);
     }
 
     public async Task AddAsync(CityRequestDTO cityDto)
     {
+        if (cityDto == null || string.IsNullOrWhiteSpace(cityDto.Name) || string.IsNullOrWhiteSpace(cityDto.Country))
+            throw new BadRequestException("City parameters not provided correctly.");
         var city = _mapper.Map<City>(cityDto);
         await _cityRepository.AddAsync(city);
         await _cityRepository.SaveAsync();
@@ -40,9 +43,14 @@ public class CityService : ICityService
 
     public async Task UpdateAsync(int id, CityRequestDTO cityDto)
     {
-        if (await _cityRepository.GetByIdAsync(id) == null) return;
-        var city = _mapper.Map<City>(cityDto);
-        city.Id = id;
+        if (cityDto == null || string.IsNullOrWhiteSpace(cityDto.Name) || string.IsNullOrWhiteSpace(cityDto.Country))
+            throw new BadRequestException("City parameters not provided correctly.");
+        
+        var city = await _cityRepository.GetByIdAsync(id);
+        if (city == null)
+            throw new NotFoundException($"City with id {id} not found.");
+        
+        _mapper.Map(cityDto, city);
         _cityRepository.Update(city);
         await _cityRepository.SaveAsync();
     }
@@ -50,7 +58,8 @@ public class CityService : ICityService
     public async Task DeleteAsync(int id)
     {
         var city = await _cityRepository.GetByIdAsync(id);
-        if (city == null) return;
+        if (city == null) 
+            throw new NotFoundException($"City with id {id} not found.");
         await _cityRepository.DeleteAsync(id);
         await _cityRepository.SaveAsync();
     }

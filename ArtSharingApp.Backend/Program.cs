@@ -2,6 +2,8 @@ using ArtSharingApp.Backend.DataAccess.Repository;
 using ArtSharingApp.Backend.Service;
 using ArtSharingApp.Backend.DataAccess;
 using ArtSharingApp.Backend.DataAccess.Repository.RepositoryInterface;
+using ArtSharingApp.Backend.Exceptions;
+using ArtSharingApp.Backend.Exceptions.ErrorHandler;
 using ArtSharingApp.Backend.Profile;
 using ArtSharingApp.Backend.Service.ServiceInterface;
 using Microsoft.EntityFrameworkCore;
@@ -34,6 +36,8 @@ builder.Services.AddScoped<IGalleryService, GalleryService>();
 builder.Services.AddScoped<IFavoritesService, FavoritesService>();
 
 var app = builder.Build();
+
+app.UseMiddleware<ErrorHandler>();
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())

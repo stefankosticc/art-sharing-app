@@ -12,6 +12,7 @@ public class GalleryRepository : GenericRepository<Gallery>, IGalleryRepository
 
     public async Task<IEnumerable<Gallery>> GetGalleriesByName(string name)
     {
-        return await _dbSet.Where(g => g.Name.ToLower().Contains(name.ToLower())).ToListAsync();
+        return await _dbSet.Where(g => g.Name.ToLower().Contains(name.ToLower()))
+            .Include(g => g.City).ToListAsync();
     }
 }

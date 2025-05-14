@@ -21,10 +21,8 @@ public class RoleController : Controller
     [HttpPost("role")]
     public async Task<IActionResult> AddRole([FromBody] RoleRequestDTO roleDto)
     {
-        if (roleDto == null)
-            return BadRequest("Role object is null.");
         await _roleService.AddRoleAsync(roleDto);
-        return Ok();
+        return Ok(new {message = "Role added successfully"});
     }
 
     [HttpGet("roles")]
@@ -37,30 +35,20 @@ public class RoleController : Controller
     public async Task<IActionResult> GetById(int id)
     {
         var role = await _roleService.GetByIdAsync(id);
-        if (role == null)
-            return NotFound();
         return Ok(role);
     }
 
     [HttpPut("role/{id}")]
     public async Task<IActionResult> Update(int id, [FromBody] RoleRequestDTO roleDto)
     {
-        if (roleDto == null)
-            return BadRequest("Role object is null.");
-        var existing = await _roleService.GetByIdAsync(id);
-        if (existing == null)
-            return NotFound();
         await _roleService.UpdateAsync(id, roleDto);
-        return Ok();
+        return Ok(new {message = "Role updated successfully"});
     }
 
     [HttpDelete("role/{id}")]
     public async Task<IActionResult> Delete(int id)
     {
-        var role = await _roleService.GetByIdAsync(id);
-        if (role == null)
-            return NotFound();
         await _roleService.DeleteAsync(id);
-        return Ok();
+        return Ok(new {message = "Role deleted successfully"});
     }
 }

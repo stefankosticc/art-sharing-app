@@ -25,46 +25,34 @@ public class ArtworkController : Controller
     public async Task<IActionResult> GetById(int id)
     {
         var artwork = await _artworkService.GetByIdAsync(id);
-        if (artwork == null)
-            return NotFound();
         return Ok(artwork);
     }
 
     [HttpPost("artwork")]
     public async Task<IActionResult> Add([FromBody] ArtworkRequestDTO artworkDto)
     {
-        if (artworkDto == null)
-            return BadRequest("Artwork object is null.");
         await _artworkService.AddAsync(artworkDto);
-        return Ok();
+        return Ok(new {message = "Artwork added successfully."});
     }
 
     [HttpPut("artwork/{id}")]
     public async Task<IActionResult> Update(int id, [FromBody] ArtworkRequestDTO artworkDto)
     {
-        if (artworkDto == null)
-            return BadRequest("Artwork object is null.");
-        if (await _artworkService.GetByIdAsync(id) == null)
-            return NotFound();
         await _artworkService.UpdateAsync(id, artworkDto);
-        return Ok();
+        return Ok(new {message = "Artwork updated successfully."});
     }
 
     [HttpDelete("artwork/{id}")]
     public async Task<IActionResult> Delete(int id)
     {
-        if (await _artworkService.GetByIdAsync(id) == null)
-            return NotFound();
         await _artworkService.DeleteAsync(id);
-        return Ok();
+        return Ok(new {message = "Artwork deleted successfully."});
     }
     
     [HttpGet("artworks/search")]
     public async Task<IActionResult> Search([FromQuery] string title)
     {
         var artworks = await _artworkService.SearchByTitle(title);
-        if (artworks == null || !artworks.Any())
-            return NotFound();
         return Ok(artworks);
     }
 }

@@ -1,10 +1,9 @@
 using ArtSharingApp.Backend.Models;
-using ArtSharingApp.Backend.DataAccess.Repository;
-using System.Collections.Generic;
 using ArtSharingApp.Backend.DataAccess.Repository.RepositoryInterface;
 using ArtSharingApp.Backend.Service.ServiceInterface;
 using ArtSharingApp.Backend.DTO;
 using AutoMapper;
+using ArtSharingApp.Backend.Exceptions;
 
 namespace ArtSharingApp.Backend.Service;
 
@@ -29,12 +28,14 @@ public class ArtworkService : IArtworkService
     {
         var artwork = await _artworkRepository.GetByIdAsync(id);
         if (artwork == null)
-            return null;
+            throw new NotFoundException($"Artwork with id {id} not found.");
         return _mapper.Map<ArtworkResponseDTO>(artwork);
     }
 
     public async Task AddAsync(ArtworkRequestDTO artworkDto)
     {
+        if (artworkDto == null)
+            throw new BadRequestException("Artwork parameters not provided correctly.");
         var artwork = _mapper.Map<Artwork>(artworkDto);
         await _artworkRepository.AddAsync(artwork);
         await _artworkRepository.SaveAsync();
@@ -42,9 +43,12 @@ public class ArtworkService : IArtworkService
 
     public async Task UpdateAsync(int id, ArtworkRequestDTO artworkDto)
     {
-        if (await _artworkRepository.GetByIdAsync(id) == null) return;
-        var artwork = _mapper.Map<Artwork>(artworkDto);
-        artwork.Id = id;
+        if (artworkDto == null)
+            throw new BadRequestException("Artwork parameters not provided correctly.");
+        var artwork = await _artworkRepository.GetByIdAsync(id);
+        if (artwork == null)
+            throw new NotFoundException($"Artwork with id {id} not found.");
+        _mapper.Map(artworkDto, artwork);
         _artworkRepository.Update(artwork);
         await _artworkRepository.SaveAsync();
     }
@@ -52,16 +56,19 @@ public class ArtworkService : IArtworkService
     public async Task DeleteAsync(int id)
     {
         var artwork = await _artworkRepository.GetByIdAsync(id);
-        if (artwork == null) return;
+        if (artwork == null)
+            throw new NotFoundException($"Artwork with id {id} not found.");
         await _artworkRepository.DeleteAsync(id);
         await _artworkRepository.SaveAsync();
     }
 
     public async Task<IEnumerable<ArtworkResponseDTO>?> SearchByTitle(string title)
     {
+        if (string.IsNullOrWhiteSpace(title))
+            throw new BadRequestException("Title parameter is required.");
         var artworks = await _artworkRepository.SearchByTitle(title);
-        if (artworks == null)
-            return null;
+        if (artworks == null || !artworks.Any())
+            throw new NotFoundException($"No artworks found with this title.");
         return _mapper.Map<IEnumerable<ArtworkResponseDTO>>(artworks);
     }
 }

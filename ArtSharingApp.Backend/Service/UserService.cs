@@ -4,6 +4,7 @@ using ArtSharingApp.Backend.DTO;
 using ArtSharingApp.Backend.Models;
 using ArtSharingApp.Backend.Service.ServiceInterface;
 using AutoMapper;
+using ArtSharingApp.Backend.Exceptions;
 
 namespace ArtSharingApp.Backend.Service;
 
@@ -20,12 +21,16 @@ public class UserService : IUserService
 
     public async Task<IEnumerable<UserResponseDTO>> GetUsersByName(string name)
     {
+        if (string.IsNullOrWhiteSpace(name))
+            throw new BadRequestException("Name parameter is required.");
         var users = await _userRepository.GetUsersByName(name);
         return _mapper.Map<IEnumerable<UserResponseDTO>>(users);
     }
 
     public async Task AddUserAsync(UserRequestDTO userDto)
     {
+        if (userDto == null)
+            throw new BadRequestException("User parameters not provided correctly.");
         var user = _mapper.Map<User>(userDto);
         await _userRepository.AddAsync(user); 
         await _userRepository.SaveAsync();
@@ -35,7 +40,7 @@ public class UserService : IUserService
     {
         var user = await _userRepository.GetByIdAsync(id);
         if (user == null)
-            return null;
+            throw new NotFoundException($"User with id {id} not found.");
         return _mapper.Map<UserResponseDTO>(user);
     }
 
@@ -48,14 +53,9 @@ public class UserService : IUserService
     public async Task DeleteAsync(int id)
     {
         var user = await _userRepository.GetByIdAsync(id);
-        if (user != null)
-        {
-            await _userRepository.DeleteAsync(id);
-            await _userRepository.SaveAsync();
-        }
-        else
-        {
-            throw new Exception("User not found");
-        }
+        if (user == null)
+            throw new NotFoundException($"User with id {id} not found.");
+        await _userRepository.DeleteAsync(id);
+        await _userRepository.SaveAsync();
     }
 }

@@ -1,10 +1,6 @@
-using ArtSharingApp.Backend.Models;
-using ArtSharingApp.Backend.Service;
 using Microsoft.AspNetCore.Mvc;
-using System.Collections.Generic;
 using ArtSharingApp.Backend.DTO;
 using ArtSharingApp.Backend.Service.ServiceInterface;
-using AutoMapper;
 
 namespace ArtSharingApp.Backend.Controllers;
 
@@ -23,9 +19,6 @@ public class UserController : Controller
     public async Task<IActionResult> GetUserById(int id)
     {
         var user = await _userService.GetUserByIdAsync(id);
-        if (user == null)
-            return NotFound();
-        
         return Ok(user);
     }
 
@@ -39,29 +32,20 @@ public class UserController : Controller
     [HttpPost("user")]
     public async Task<IActionResult> AddUser([FromBody] UserRequestDTO user)
     {
-        if (user == null)
-            return BadRequest("User object is null.");
-        
         await _userService.AddUserAsync(user);
-        return Ok();
+        return Ok(new {message = "User added successfully"});
     }
     
     [HttpDelete("user/{id}")]
     public async Task<IActionResult> DeleteUser(int id)
     {
-        var user = await _userService.GetUserByIdAsync(id);
-        if (user == null)
-            return NotFound();
-        
         await _userService.DeleteAsync(id);
-        return Ok();
+        return Ok(new {message = "User deleted successfully"});
     }
 
     [HttpGet("users/by-name")]
     public async Task<IActionResult> GetUsersByName([FromQuery] string name)
     {
-        if (string.IsNullOrWhiteSpace(name))
-            return BadRequest("Name parameter is required.");
         var users = await _userService.GetUsersByName(name);
         return Ok(users);
     }
