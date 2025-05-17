@@ -2,6 +2,8 @@ using ArtSharingApp.Backend.Exceptions;
 using Microsoft.AspNetCore.Mvc;
 using ArtSharingApp.Backend.Service.ServiceInterface;
 using Microsoft.AspNetCore.Authorization;
+using System.Security.Claims;
+using UnauthorizedAccessException = ArtSharingApp.Backend.Exceptions.UnauthorizedAccessException;
 
 namespace ArtSharingApp.Backend.Controllers;
 
@@ -16,10 +18,19 @@ public class FavoritesController : Controller
     {
         _favoritesService = favoritesService;
     }
-    
-    [HttpPost("user/{userId}/artwork/{artworkId}/like")]
-    public async Task<IActionResult> LikeArtwork(int userId, int artworkId)
+
+    private int GetLoggedInUserId()
     {
+        var userIdClaim = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+        if (string.IsNullOrEmpty(userIdClaim) || !int.TryParse(userIdClaim, out var userId))
+            throw new UnauthorizedAccessException("User not authenticated.");
+        return userId;
+    }
+
+    [HttpPost("artwork/{artworkId}/like")]
+    public async Task<IActionResult> LikeArtwork(int artworkId)
+    {
+        var userId = GetLoggedInUserId();
         var liked = await _favoritesService.LikeArtwork(userId, artworkId);
         if (liked)
         {
@@ -27,10 +38,11 @@ public class FavoritesController : Controller
         }
         return BadRequest(new { message = "Failed to like artwork." });
     }
-    
-    [HttpDelete("user/{userId}/artwork/{artworkId}/dislike")]
-    public async Task<IActionResult> DislikeArtwork(int userId, int artworkId)
+
+    [HttpDelete("artwork/{artworkId}/dislike")]
+    public async Task<IActionResult> DislikeArtwork(int artworkId)
     {
+        var userId = GetLoggedInUserId();
         var disliked = await _favoritesService.DislikeArtwork(userId, artworkId);
         if (disliked)
         {
@@ -38,10 +50,11 @@ public class FavoritesController : Controller
         }
         return BadRequest(new { message = "Failed to dislike artwork." });
     }
-    
-    [HttpGet("user/{userId}/liked-artworks")]
-    public async Task<IActionResult> GetLikedArtworks(int userId)
+
+    [HttpGet("user/liked-artworks")]
+    public async Task<IActionResult> GetLikedArtworks()
     {
+        var userId = GetLoggedInUserId();
         var likedArtworks = await _favoritesService.GetLikedArtworks(userId);
         if (likedArtworks != null)
         {
