@@ -6,7 +6,7 @@ public class UserResponseDTO
     public int Id { get; set; }
     public string Name { get; set; }
     public string Email { get; set; }
-    public string Username { get; set; }
+    public string UserName { get; set; }
     public string? Biography { get; set; }
     public int RoleId { get; set; }
     public string? RoleName { get; set; }
@@ -17,8 +17,25 @@ public class UserRequestDTO
 {
     public string Name { get; set; }
     public string Email { get; set; }
-    public string Username { get; set; }
+    public string UserName { get; set; }
     public string Password { get; set; }
     public string? Biography { get; set; }
+    public int RoleId { get; set; }
+}
+
+// DTO for user login
+public class UserLoginDTO
+{
+    public string Email { get; set; }
+    public string Password { get; set; }
+}
+
+// DTO for user registration
+public class UserRegisterDTO
+{
+    public string Name { get; set; }
+    public string Email { get; set; }
+    public string UserName { get; set; }
+    public string Password { get; set; }
     public int RoleId { get; set; }
 }

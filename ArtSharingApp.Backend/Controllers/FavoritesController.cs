@@ -1,10 +1,12 @@
 using ArtSharingApp.Backend.Exceptions;
 using Microsoft.AspNetCore.Mvc;
 using ArtSharingApp.Backend.Service.ServiceInterface;
+using Microsoft.AspNetCore.Authorization;
 
 namespace ArtSharingApp.Backend.Controllers;
 
 [ApiController]
+[Authorize]
 [Route("api")]
 public class FavoritesController : Controller
 {
