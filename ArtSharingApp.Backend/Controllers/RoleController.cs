@@ -4,10 +4,12 @@ using ArtSharingApp.Backend.Service.ServiceInterface;
 using Microsoft.AspNetCore.Mvc;
 using ArtSharingApp.Backend.DTO;
 using AutoMapper;
+using Microsoft.AspNetCore.Authorization;
 
 namespace ArtSharingApp.Backend.Controllers;
 
 [ApiController]
+[Authorize(Roles = "Admin")]
 [Route("api")]
 public class RoleController : Controller
 {
@@ -25,6 +27,7 @@ public class RoleController : Controller
         return Ok(new {message = "Role added successfully"});
     }
 
+    [AllowAnonymous]
     [HttpGet("roles")]
     public async Task<IActionResult> GetAll()
     {

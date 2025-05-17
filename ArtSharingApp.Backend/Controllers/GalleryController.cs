@@ -1,10 +1,12 @@
 using Microsoft.AspNetCore.Mvc;
 using ArtSharingApp.Backend.DTO;
 using ArtSharingApp.Backend.Service.ServiceInterface;
+using Microsoft.AspNetCore.Authorization;
 
 namespace ArtSharingApp.Backend.Controllers;
 
 [ApiController]
+[Authorize]
 [Route("api")]
 public class GalleryController : Controller
 {

@@ -34,6 +34,7 @@ public class AuthController : Controller
         return BadRequest(result);
     }
     
+    [Authorize]
     [HttpPost("refresh-token")]
     public async Task<IActionResult> RefreshToken([FromBody] RefreshTokenRequestDTO request)
     {

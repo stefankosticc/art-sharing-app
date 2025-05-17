@@ -1,10 +1,12 @@
 using Microsoft.AspNetCore.Mvc;
 using ArtSharingApp.Backend.Service.ServiceInterface;
 using ArtSharingApp.Backend.DTO;
+using Microsoft.AspNetCore.Authorization;
 
 namespace ArtSharingApp.Backend.Controllers;
 
 [ApiController]
+[Authorize]
 [Route("api")]
 public class ArtworkController : Controller
 {
@@ -28,6 +30,7 @@ public class ArtworkController : Controller
         return Ok(artwork);
     }
 
+    [Authorize(Roles = "Admin, Artist")]
     [HttpPost("artwork")]
     public async Task<IActionResult> Add([FromBody] ArtworkRequestDTO artworkDto)
     {
@@ -35,6 +38,7 @@ public class ArtworkController : Controller
         return Ok(new {message = "Artwork added successfully."});
     }
 
+    [Authorize(Roles = "Admin, Artist")]
     [HttpPut("artwork/{id}")]
     public async Task<IActionResult> Update(int id, [FromBody] ArtworkRequestDTO artworkDto)
     {
@@ -42,6 +46,7 @@ public class ArtworkController : Controller
         return Ok(new {message = "Artwork updated successfully."});
     }
 
+    [Authorize(Roles = "Admin, Artist")]
     [HttpDelete("artwork/{id}")]
     public async Task<IActionResult> Delete(int id)
     {
