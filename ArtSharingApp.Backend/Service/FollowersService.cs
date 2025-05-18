@@ -1,0 +1,80 @@
+using ArtSharingApp.Backend.DataAccess.Repository.RepositoryInterface;
+using ArtSharingApp.Backend.DTO;
+using ArtSharingApp.Backend.Exceptions;
+using ArtSharingApp.Backend.Models;
+using ArtSharingApp.Backend.Service.ServiceInterface;
+using AutoMapper;
+
+namespace ArtSharingApp.Backend.Service;
+
+public class FollowersService : IFollowersService
+{
+    private readonly IFollowersRepository _followersRepository;
+    private readonly IUserRepository _userRepository;
+    private readonly IMapper _mapper;
+    
+    public FollowersService(IFollowersRepository followersRepository, IUserRepository userRepository, IMapper mapper)
+    {
+        _followersRepository = followersRepository;
+        _userRepository = userRepository;
+        _mapper = mapper;
+    }
+    
+    public async Task<bool> FollowUserAsync(int loggedInUserId, int userId)
+    {
+        var isFollowing = await _followersRepository.IsFollowing(loggedInUserId, userId);
+        if (isFollowing)
+            throw new BadRequestException("You are already following this user.");
+
+        if (loggedInUserId == userId)
+            throw new BadRequestException("You cannot follow yourself.");
+        
+        var user = await _userRepository.GetByIdAsync(userId);
+        if (user == null)
+            throw new NotFoundException("User not found.");
+        
+        await _followersRepository.AddAsync(new Followers(loggedInUserId, userId));
+        await _followersRepository.SaveAsync();
+        return true;
+    }
+
+    public async Task<bool> UnfollowUserAsync(int loggedInUserId, int userId)
+    {
+        if (loggedInUserId == userId)
+            throw new BadRequestException("You cannot unfollow yourself.");
+        
+        var user = await _userRepository.GetByIdAsync(userId);
+        if (user == null)
+            throw new NotFoundException("User not found.");
+        
+        var isFollowing = await _followersRepository.IsFollowing(loggedInUserId, userId);
+        if (!isFollowing)
+            throw new BadRequestException("You are not following this user.");
+        
+        await _followersRepository.DeleteAsync(loggedInUserId, userId);
+        await _followersRepository.SaveAsync();
+        return true;
+    }
+
+    // Get followers of the logged-in user
+    public async Task<IEnumerable<FollowersDTO>?> GetFollowersAsync(int loggedInUserId)
+    {
+        var followers = await _followersRepository.GetFollowersAsync(loggedInUserId);
+        if (followers == null || !followers.Any())
+            throw new NotFoundException("No followers found.");
+        
+        var followersDto = _mapper.Map<IEnumerable<FollowersDTO>>(followers);
+        return followersDto;
+    }
+
+    // Get users that the logged-in user is following
+    public async Task<IEnumerable<FollowingDTO>?> GetFollowingAsync(int loggedInUserId)
+    {
+        var following = await _followersRepository.GetFollowingAsync(loggedInUserId);
+        if (following == null || !following.Any())
+            throw new NotFoundException("You are not following anyone.");
+        
+        var followingDto = _mapper.Map<IEnumerable<FollowingDTO>>(following);
+        return followingDto;
+    }
+}

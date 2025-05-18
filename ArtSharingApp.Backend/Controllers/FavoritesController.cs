@@ -2,29 +2,20 @@ using ArtSharingApp.Backend.Exceptions;
 using Microsoft.AspNetCore.Mvc;
 using ArtSharingApp.Backend.Service.ServiceInterface;
 using Microsoft.AspNetCore.Authorization;
-using System.Security.Claims;
-using UnauthorizedAccessException = ArtSharingApp.Backend.Exceptions.UnauthorizedAccessException;
+using ArtSharingApp.Backend.Controllers.Common;
 
 namespace ArtSharingApp.Backend.Controllers;
 
 [ApiController]
 [Authorize]
 [Route("api")]
-public class FavoritesController : Controller
+public class FavoritesController : AuthenticatedUserBaseController
 {
     private readonly IFavoritesService _favoritesService;
 
     public FavoritesController(IFavoritesService favoritesService)
     {
         _favoritesService = favoritesService;
-    }
-
-    private int GetLoggedInUserId()
-    {
-        var userIdClaim = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
-        if (string.IsNullOrEmpty(userIdClaim) || !int.TryParse(userIdClaim, out var userId))
-            throw new UnauthorizedAccessException("User not authenticated.");
-        return userId;
     }
 
     [HttpPost("artwork/{artworkId}/like")]

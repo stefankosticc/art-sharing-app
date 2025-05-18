@@ -8,6 +8,7 @@ public class Artwork
     public string Image { get; set; }
     public DateOnly Date { get; set; }
     public string TipsAndTricks { get; set; }
+    public bool IsPrivate { get; set; }
     public int? CityId { get; set; }
     public City? City { get; set; }
     public int? GalleryId { get; set; }

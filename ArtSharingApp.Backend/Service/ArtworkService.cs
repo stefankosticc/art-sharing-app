@@ -71,4 +71,14 @@ public class ArtworkService : IArtworkService
             throw new NotFoundException($"No artworks found with this title.");
         return _mapper.Map<IEnumerable<ArtworkResponseDTO>>(artworks);
     }
+
+    public async Task ChangeVisibilityAsync(int id, bool isPrivate)
+    {
+        var artwork = await _artworkRepository.GetByIdAsync(id);
+        if (artwork == null)
+            throw new NotFoundException($"Artwork with id {id} not found.");
+        artwork.IsPrivate = isPrivate;
+        _artworkRepository.UpdateIsPrivate(artwork);
+        await _artworkRepository.SaveAsync();
+    }
 }

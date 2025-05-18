@@ -18,6 +18,7 @@ public class ApplicationDbContext : IdentityDbContext<User, Role, int>
     public DbSet<Artwork> Artworks { get; set; }
     public DbSet<Role> Roles { get; set; }
     public DbSet<Favorites> Favorites { get; set; }
+    public DbSet<Followers> Followers { get; set; }
     
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -53,7 +54,8 @@ public class ApplicationDbContext : IdentityDbContext<User, Role, int>
             .HasOne(u => u.Role)
             .WithMany(r => r.Users)
             .HasForeignKey(u => u.RoleId)
-            .IsRequired();
+            .IsRequired()
+            .OnDelete(DeleteBehavior.Restrict);
 
         modelBuilder.Entity<Artwork>()
             .HasOne(a => a.CreatedByArtist)
@@ -80,6 +82,21 @@ public class ApplicationDbContext : IdentityDbContext<User, Role, int>
             .HasOne(f => f.Artwork)
             .WithMany(a => a.Favorites)
             .HasForeignKey(f => f.ArtworkId)
+            .IsRequired();
+        
+        modelBuilder.Entity<Followers>()
+            .HasKey(f => new { f.UserId, f.FollowerId });
+        
+        modelBuilder.Entity<Followers>()
+            .HasOne(f => f.User)
+            .WithMany(u => u.Followers)
+            .HasForeignKey(f => f.UserId)
+            .IsRequired();
+        
+        modelBuilder.Entity<Followers>()
+            .HasOne(f => f.Follower)
+            .WithMany(u => u.Following)
+            .HasForeignKey(f => f.FollowerId)
             .IsRequired();
     }
 }

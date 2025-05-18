@@ -13,4 +13,6 @@ public class User : IdentityUser<int>
     public ICollection<Artwork> CreatedArtworks { get; set; } = new List<Artwork>();
     public ICollection<Artwork> PostedArtworks { get; set; } = new List<Artwork>();
     public ICollection<Favorites> Favorites { get; set; } = new List<Favorites>();
+    public ICollection<Followers> Followers { get; set; } = new List<Followers>();
+    public ICollection<Followers> Following { get; set; } = new List<Followers>();
 }

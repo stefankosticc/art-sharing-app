@@ -38,4 +38,10 @@ public class ArtworkRepository : GenericRepository<Artwork>,IArtworkRepository
         var artworks = await _context.Artworks.Where(a => a.Title.ToLower().Contains(title.ToLower())).ToListAsync();
         return artworks;
     }
+
+    public void UpdateIsPrivate(Artwork artwork)
+    {
+        _context.Attach(artwork);
+        _context.Entry(artwork).Property(a => a.IsPrivate).IsModified = true;
+    }
 }
