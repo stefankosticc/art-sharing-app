@@ -1,0 +1,43 @@
+using ArtSharingApp.Backend.DataAccess.Repository.RepositoryInterface;
+using ArtSharingApp.Backend.Models;
+using Microsoft.EntityFrameworkCore;
+
+namespace ArtSharingApp.Backend.DataAccess.Repository;
+
+public class FollowersRepository : GenericRepository<Followers>, IFollowersRepository
+{
+    public FollowersRepository(ApplicationDbContext context) : base(context)
+    {
+    }
+
+    public async Task<bool> IsFollowing(int loggedInUserId, int userId)
+    {
+        return await _dbSet.AnyAsync(f => f.UserId == loggedInUserId && f.FollowerId == userId);
+    }
+    
+    public async Task DeleteAsync(int loggedInUserId, int userId)
+    {
+        var follower = await _dbSet.FirstOrDefaultAsync(f => f.UserId == loggedInUserId && f.FollowerId == userId);
+        if (follower != null)
+        {
+            _dbSet.Remove(follower);
+        }
+    }
+
+    public async Task<IEnumerable<Followers>> GetFollowersAsync(int loggedInUserId)
+    {
+        return await _dbSet
+            .Where(f => f.FollowerId == loggedInUserId)
+            .Include(f => f.User)
+            .ToListAsync();
+        
+    }
+
+    public async Task<IEnumerable<Followers>> GetFollowingAsync(int loggedInUserId)
+    {
+        return await _dbSet
+            .Where(f => f.UserId == loggedInUserId)
+            .Include(f => f.Follower)
+            .ToListAsync();
+    }
+}

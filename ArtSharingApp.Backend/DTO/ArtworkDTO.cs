@@ -8,6 +8,7 @@ public class ArtworkResponseDTO
     public string Image { get; set; }
     public DateOnly Date { get; set; }
     public string TipsAndTricks { get; set; }
+    public bool IsPrivate { get; set; }
     public int CreatedByArtistId { get; set; }
     public string CreatedByArtistName { get; set; }
     public int PostedByUserId { get; set; }
@@ -25,8 +26,14 @@ public class ArtworkRequestDTO
     public string Image { get; set; }
     public DateOnly Date { get; set; }
     public string TipsAndTricks { get; set; }
+    public bool IsPrivate { get; set; }
     public int CreatedByArtistId { get; set; }
     public int PostedByUserId { get; set; }
     public int? CityId { get; set; }
     public int? GalleryId { get; set; }
+}
+
+public class ChangeArtworkVisibilityDTO
+{
+    public bool IsPrivate { get; set; }
 }

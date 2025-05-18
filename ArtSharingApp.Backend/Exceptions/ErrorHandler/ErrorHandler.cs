@@ -29,6 +29,12 @@ public class ErrorHandler
             context.Response.StatusCode = StatusCodes.Status400BadRequest;
             await context.Response.WriteAsync(JsonSerializer.Serialize(new { error = ex.Message }));
         }
+        catch (UnauthorizedAccessException ex)
+        {
+            context.Response.ContentType = "application/json";
+            context.Response.StatusCode = StatusCodes.Status401Unauthorized;
+            await context.Response.WriteAsync(JsonSerializer.Serialize(new { error = ex.Message }));
+        }
         catch (Exception ex)
         {
             context.Response.ContentType = "application/json";

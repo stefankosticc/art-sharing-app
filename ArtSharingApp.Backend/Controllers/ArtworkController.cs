@@ -60,4 +60,13 @@ public class ArtworkController : Controller
         var artworks = await _artworkService.SearchByTitle(title);
         return Ok(artworks);
     }
+    
+    [Authorize(Roles = "Admin, Artist")]
+    [HttpPut("artwork/{id}/change-visibility")]
+    public async Task<IActionResult> ChangeVisibility(int id, [FromBody] ChangeArtworkVisibilityDTO request)
+    {
+        var isPrivate = request.IsPrivate;
+        await _artworkService.ChangeVisibilityAsync(id, isPrivate);
+        return Ok(new {message = $"Artwork visibility changed successfully to {(isPrivate ? "private" : "public")}."});
+    }
 }
