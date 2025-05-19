@@ -3,6 +3,7 @@ using ArtSharingApp.Backend.DTO;
 using ArtSharingApp.Backend.Exceptions;
 using ArtSharingApp.Backend.Models;
 using ArtSharingApp.Backend.Service;
+using ArtSharingApp.Backend.Service.ServiceInterface;
 using AutoMapper;
 using Moq;
 
@@ -15,6 +16,7 @@ public class FavoritesServiceTests
     private readonly Mock<IUserRepository> _mockUserRepository;
     private readonly Mock<IArtworkRepository> _mockArtworkRepository;
     private readonly Mock<IMapper> _mockMapper;
+    private readonly Mock<INotificationService> _mockNotificationService;
     
     public FavoritesServiceTests()
     {
@@ -22,12 +24,14 @@ public class FavoritesServiceTests
         _mockUserRepository = new Mock<IUserRepository>();
         _mockArtworkRepository = new Mock<IArtworkRepository>();
         _mockMapper = new Mock<IMapper>();
+        _mockNotificationService = new Mock<INotificationService>();
 
         _favoritesService = new FavoritesService(
             _mockFavoritesRepository.Object,
             _mockUserRepository.Object,
             _mockArtworkRepository.Object,
-            _mockMapper.Object);
+            _mockMapper.Object,
+            _mockNotificationService.Object);
     }
 
     [Fact]
@@ -36,11 +40,12 @@ public class FavoritesServiceTests
         // Arrange
         int userId = 1;
         int artworkId = 1;
+        int postedByUserId = 2;
 
         _mockUserRepository.Setup(repo => repo.GetByIdAsync(userId))
             .ReturnsAsync(new User { Id = userId });
         _mockArtworkRepository.Setup(repo => repo.GetByIdAsync(artworkId))
-            .ReturnsAsync(new Artwork { Id = artworkId });
+            .ReturnsAsync(new Artwork { Id = artworkId, PostedByUserId = postedByUserId});
         _mockFavoritesRepository.Setup(repo => repo.GetAllAsync())
             .ReturnsAsync(new List<Favorites>());
         
@@ -52,6 +57,8 @@ public class FavoritesServiceTests
         _mockFavoritesRepository.Verify(repo => repo.AddAsync(
                 It.Is<Favorites>(f => f.UserId == userId && f.ArtworkId == artworkId)),
             Times.Once);
+        _mockNotificationService.Verify(service => service.CreateNotificationAsync(
+            It.Is<NotificationRequestDTO>(n => n.RecipientId == postedByUserId)), Times.Once);
     }
 
     [Fact]

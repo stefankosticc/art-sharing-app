@@ -13,18 +13,22 @@ public class FavoritesService : IFavoritesService
     private readonly IFavoritesRepository _favoritesRepository;
     private readonly IUserRepository _userRepository;
     private readonly IArtworkRepository _artworkRepository;
+    
     private readonly IMapper _mapper;
+    private readonly INotificationService _notificationService;
 
     public FavoritesService(
         IFavoritesRepository favoritesRepository,
         IUserRepository userRepository,
         IArtworkRepository artworkRepository,
-        IMapper mapper)
+        IMapper mapper,
+        INotificationService notificationService)
     {
         _favoritesRepository = favoritesRepository;
         _userRepository = userRepository;
         _artworkRepository = artworkRepository;
         _mapper = mapper;
+        _notificationService = notificationService;
     }
 
     public async Task<bool> LikeArtwork(int userId, int artworkId)
@@ -41,6 +45,18 @@ public class FavoritesService : IFavoritesService
 
         await _favoritesRepository.AddAsync(new Favorites(userId, artworkId));
         await _favoritesRepository.SaveAsync();
+
+        // Create notification
+        if (artwork.PostedByUserId != userId)
+        {
+            var notification = new NotificationRequestDTO
+            {
+                RecipientId = artwork.PostedByUserId,
+                Text = $"@{user.UserName} liked '{artwork.Title}'."
+            };
+            await _notificationService.CreateNotificationAsync(notification);
+        }
+
         return true;
     }
 
@@ -73,4 +89,3 @@ public class FavoritesService : IFavoritesService
         return likedArtworksDto;
     }
 }
-
