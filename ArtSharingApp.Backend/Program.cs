@@ -57,6 +57,7 @@ builder.Services.AddScoped<IArtworkRepository, ArtworkRepository>();
 builder.Services.AddScoped<IGalleryRepository, GalleryRepository>();
 builder.Services.AddScoped<IFavoritesRepository, FavoritesRepository>();
 builder.Services.AddScoped<IFollowersRepository, FollowersRepository>();
+builder.Services.AddScoped<INotificationRepository, NotificationRepository>();
 
 builder.Services.AddScoped<IUserService, UserService>();
 builder.Services.AddScoped<IRoleService, RoleService>();
@@ -66,6 +67,7 @@ builder.Services.AddScoped<IGalleryService, GalleryService>();
 builder.Services.AddScoped<IFavoritesService, FavoritesService>();
 builder.Services.AddScoped<IAuthService, AuthService>();
 builder.Services.AddScoped<IFollowersService, FollowersService>();
+builder.Services.AddScoped<INotificationService, NotificationService>();
 
 var app = builder.Build();
 

@@ -19,6 +19,7 @@ public class ApplicationDbContext : IdentityDbContext<User, Role, int>
     public DbSet<Role> Roles { get; set; }
     public DbSet<Favorites> Favorites { get; set; }
     public DbSet<Followers> Followers { get; set; }
+    public DbSet<Notification> Notifications { get; set; }
     
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -97,6 +98,12 @@ public class ApplicationDbContext : IdentityDbContext<User, Role, int>
             .HasOne(f => f.Follower)
             .WithMany(u => u.Following)
             .HasForeignKey(f => f.FollowerId)
+            .IsRequired();
+
+        modelBuilder.Entity<Notification>()
+            .HasOne(n => n.Recipient)
+            .WithMany(u => u.Notifications)
+            .HasForeignKey(n => n.RecipientId)
             .IsRequired();
     }
 }

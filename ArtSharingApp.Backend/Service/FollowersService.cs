@@ -12,12 +12,18 @@ public class FollowersService : IFollowersService
     private readonly IFollowersRepository _followersRepository;
     private readonly IUserRepository _userRepository;
     private readonly IMapper _mapper;
+    private readonly INotificationService _notificationService;
     
-    public FollowersService(IFollowersRepository followersRepository, IUserRepository userRepository, IMapper mapper)
+    public FollowersService(
+        IFollowersRepository followersRepository,
+        IUserRepository userRepository,
+        IMapper mapper,
+        INotificationService notificationService)
     {
         _followersRepository = followersRepository;
         _userRepository = userRepository;
         _mapper = mapper;
+        _notificationService = notificationService;
     }
     
     public async Task<bool> FollowUserAsync(int loggedInUserId, int userId)
@@ -35,6 +41,16 @@ public class FollowersService : IFollowersService
         
         await _followersRepository.AddAsync(new Followers(loggedInUserId, userId));
         await _followersRepository.SaveAsync();
+        
+        // Send notification to the user being followed
+        var loggedInUser = await _userRepository.GetByIdAsync(loggedInUserId);
+        var notification = new NotificationRequestDTO
+        {
+            RecipientId = userId,
+            Text = $"@{loggedInUser.UserName} started following you."
+        };
+        await _notificationService.CreateNotificationAsync(notification);
+        
         return true;
     }
 
