@@ -1,3 +1,5 @@
+using ArtSharingApp.Backend.Models.Enums;
+
 namespace ArtSharingApp.Backend.DTO;
 
 public class ArtworkResponseDTO
@@ -36,4 +38,11 @@ public class ArtworkRequestDTO
 public class ChangeArtworkVisibilityDTO
 {
     public bool IsPrivate { get; set; }
+}
+
+public class PutArtworkOnSaleDTO
+{
+    public bool IsOnSale { get; set; }
+    public decimal Price { get; set; }
+    public Currency Currency { get; set; }
 }

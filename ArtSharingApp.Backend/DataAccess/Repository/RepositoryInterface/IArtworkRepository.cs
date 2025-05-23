@@ -6,4 +6,5 @@ public interface IArtworkRepository : IGenericRepository<Artwork>
 {
     Task<IEnumerable<Artwork>?> SearchByTitle(string title);
     void UpdateIsPrivate(Artwork artwork);
+    void UpdateSaleProperties(Artwork artwork);
 }

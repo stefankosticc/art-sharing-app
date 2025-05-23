@@ -11,4 +11,6 @@ public interface IArtworkService
     Task DeleteAsync(int id);
     Task<IEnumerable<ArtworkResponseDTO>?> SearchByTitle(string title);
     Task ChangeVisibilityAsync(int id, bool isPrivate);
+    Task PutOnSaleAsync(int id, int loggedInUserId, PutArtworkOnSaleDTO request);
+    Task RemoveFromSaleAsync(int id, int loggedInUserId);
 }

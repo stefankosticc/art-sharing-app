@@ -44,4 +44,12 @@ public class ArtworkRepository : GenericRepository<Artwork>,IArtworkRepository
         _context.Attach(artwork);
         _context.Entry(artwork).Property(a => a.IsPrivate).IsModified = true;
     }
+
+    public void UpdateSaleProperties(Artwork artwork)
+    {
+        _context.Attach(artwork);
+        _context.Entry(artwork).Property(a => a.IsOnSale).IsModified = true;
+        _context.Entry(artwork).Property(a => a.Price).IsModified = true;
+        _context.Entry(artwork).Property(a => a.Currency).IsModified = true;
+    }
 }

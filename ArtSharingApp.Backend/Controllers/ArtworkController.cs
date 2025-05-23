@@ -1,3 +1,4 @@
+using ArtSharingApp.Backend.Controllers.Common;
 using Microsoft.AspNetCore.Mvc;
 using ArtSharingApp.Backend.Service.ServiceInterface;
 using ArtSharingApp.Backend.DTO;
@@ -8,7 +9,7 @@ namespace ArtSharingApp.Backend.Controllers;
 [ApiController]
 [Authorize]
 [Route("api")]
-public class ArtworkController : Controller
+public class ArtworkController : AuthenticatedUserBaseController
 {
     private readonly IArtworkService _artworkService;
 
@@ -68,5 +69,21 @@ public class ArtworkController : Controller
         var isPrivate = request.IsPrivate;
         await _artworkService.ChangeVisibilityAsync(id, isPrivate);
         return Ok(new {message = $"Artwork visibility changed successfully to {(isPrivate ? "private" : "public")}."});
+    }
+    
+    [HttpPut("artwork/{id}/put-on-sale")]
+    public async Task<IActionResult> PutOnSale(int id, [FromBody] PutArtworkOnSaleDTO request)
+    {
+        var loggedInUserId = GetLoggedInUserId();
+        await _artworkService.PutOnSaleAsync(id, loggedInUserId, request);
+        return Ok(new {message = "Artwork put on sale successfully."});
+    }
+    
+    [HttpPut("artwork/{id}/remove-from-sale")]
+    public async Task<IActionResult> RemoveFromSale(int id)
+    {
+        var loggedInUserId = GetLoggedInUserId();
+        await _artworkService.RemoveFromSaleAsync(id, loggedInUserId);
+        return Ok(new {message = "Artwork removed from sale successfully."});
     }
 }
