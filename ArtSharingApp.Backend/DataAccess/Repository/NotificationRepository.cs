@@ -1,5 +1,6 @@
 using ArtSharingApp.Backend.DataAccess.Repository.RepositoryInterface;
 using ArtSharingApp.Backend.Models;
+using ArtSharingApp.Backend.Models.Enums;
 using Microsoft.EntityFrameworkCore;
 
 namespace ArtSharingApp.Backend.DataAccess.Repository;

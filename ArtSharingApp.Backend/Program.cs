@@ -58,6 +58,8 @@ builder.Services.AddScoped<IGalleryRepository, GalleryRepository>();
 builder.Services.AddScoped<IFavoritesRepository, FavoritesRepository>();
 builder.Services.AddScoped<IFollowersRepository, FollowersRepository>();
 builder.Services.AddScoped<INotificationRepository, NotificationRepository>();
+builder.Services.AddScoped<IAuctionRepository, AuctionRepository>();
+builder.Services.AddScoped<IOfferRepository, OfferRepository>();
 
 builder.Services.AddScoped<IUserService, UserService>();
 builder.Services.AddScoped<IRoleService, RoleService>();
@@ -68,6 +70,7 @@ builder.Services.AddScoped<IFavoritesService, FavoritesService>();
 builder.Services.AddScoped<IAuthService, AuthService>();
 builder.Services.AddScoped<IFollowersService, FollowersService>();
 builder.Services.AddScoped<INotificationService, NotificationService>();
+builder.Services.AddScoped<IAuctionService, AuctionService>();
 
 var app = builder.Build();
 
