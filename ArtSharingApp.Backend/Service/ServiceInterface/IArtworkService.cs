@@ -13,4 +13,5 @@ public interface IArtworkService
     Task ChangeVisibilityAsync(int id, bool isPrivate);
     Task PutOnSaleAsync(int id, int loggedInUserId, PutArtworkOnSaleDTO request);
     Task RemoveFromSaleAsync(int id, int loggedInUserId);
+    Task TransferToUserAsync(int artworkId, int fromUserId, int toUserId);
 }

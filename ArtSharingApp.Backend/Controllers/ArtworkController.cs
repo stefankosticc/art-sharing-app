@@ -71,6 +71,7 @@ public class ArtworkController : AuthenticatedUserBaseController
         return Ok(new {message = $"Artwork visibility changed successfully to {(isPrivate ? "private" : "public")}."});
     }
     
+    [Authorize(Roles = "Admin, Artist")]
     [HttpPut("artwork/{id}/put-on-sale")]
     public async Task<IActionResult> PutOnSale(int id, [FromBody] PutArtworkOnSaleDTO request)
     {
@@ -79,6 +80,7 @@ public class ArtworkController : AuthenticatedUserBaseController
         return Ok(new {message = "Artwork put on sale successfully."});
     }
     
+    [Authorize(Roles = "Admin, Artist")]
     [HttpPut("artwork/{id}/remove-from-sale")]
     public async Task<IActionResult> RemoveFromSale(int id)
     {
@@ -86,4 +88,13 @@ public class ArtworkController : AuthenticatedUserBaseController
         await _artworkService.RemoveFromSaleAsync(id, loggedInUserId);
         return Ok(new {message = "Artwork removed from sale successfully."});
     }
+    
+    [HttpPut("artwork/{artworkId}/transfer/to-user/{userId}")]
+    public async Task<IActionResult> TransferToUser(int artworkId, int userId)
+    {
+        var loggedInUserId = GetLoggedInUserId();
+        await _artworkService.TransferToUserAsync(artworkId, loggedInUserId, userId);
+        return Ok(new {message = "Artwork transferred successfully."});
+    }
+    
 }
