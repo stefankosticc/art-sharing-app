@@ -1,4 +1,4 @@
-namespace ArtSharingApp.Backend.Models;
+namespace ArtSharingApp.Backend.Models.Enums;
 
 public enum NotificationStatus
 {

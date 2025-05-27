@@ -20,6 +20,8 @@ public class ApplicationDbContext : IdentityDbContext<User, Role, int>
     public DbSet<Favorites> Favorites { get; set; }
     public DbSet<Followers> Followers { get; set; }
     public DbSet<Notification> Notifications { get; set; }
+    public DbSet<Auction> Auctions { get; set; }
+    public DbSet<Offer> Offers { get; set; }
     
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -105,5 +107,32 @@ public class ApplicationDbContext : IdentityDbContext<User, Role, int>
             .WithMany(u => u.Notifications)
             .HasForeignKey(n => n.RecipientId)
             .IsRequired();
+
+        modelBuilder.Entity<Auction>()
+            .HasOne(ac => ac.Artwork)
+            .WithMany(a => a.Auctions)
+            .HasForeignKey(ac => ac.ArtworkId)
+            .IsRequired()
+            .OnDelete(DeleteBehavior.Cascade);
+
+        modelBuilder.Entity<Offer>()
+            .HasOne(o => o.Auction)
+            .WithMany(ac => ac.Offers)
+            .HasForeignKey(o => o.AuctionId)
+            .IsRequired();
+        
+        modelBuilder.Entity<Offer>()
+            .HasOne(o => o.User)
+            .WithMany(u => u.Offers)
+            .HasForeignKey(o => o.UserId)
+            .IsRequired();
+
+        modelBuilder.Entity<Artwork>()
+            .Property(a => a.Currency)
+            .HasConversion<string>();
+
+        modelBuilder.Entity<Auction>()
+            .Property(ac => ac.Currency)
+            .HasConversion<string>();
     }
 }

@@ -16,4 +16,5 @@ public class User : IdentityUser<int>
     public ICollection<Followers> Followers { get; set; } = new List<Followers>();
     public ICollection<Followers> Following { get; set; } = new List<Followers>();
     public ICollection<Notification> Notifications { get; set; } = new List<Notification>();
+    public ICollection<Offer> Offers { get; set; } = new List<Offer>();
 }

@@ -4,17 +4,21 @@ using ArtSharingApp.Backend.Service.ServiceInterface;
 using ArtSharingApp.Backend.DTO;
 using AutoMapper;
 using ArtSharingApp.Backend.Exceptions;
+using ArtSharingApp.Backend.Models.Enums;
+using UnauthorizedAccessException = ArtSharingApp.Backend.Exceptions.UnauthorizedAccessException;
 
 namespace ArtSharingApp.Backend.Service;
 
 public class ArtworkService : IArtworkService
 {
     private readonly IArtworkRepository _artworkRepository;
+    private readonly IUserRepository _userRepository;
     private readonly IMapper _mapper;
 
-    public ArtworkService(IArtworkRepository artworkRepository, IMapper mapper)
+    public ArtworkService(IArtworkRepository artworkRepository, IUserRepository userRepository, IMapper mapper)
     {
         _artworkRepository = artworkRepository;
+        _userRepository = userRepository;
         _mapper = mapper;
     }
 
@@ -79,6 +83,57 @@ public class ArtworkService : IArtworkService
             throw new NotFoundException($"Artwork with id {id} not found.");
         artwork.IsPrivate = isPrivate;
         _artworkRepository.UpdateIsPrivate(artwork);
+        await _artworkRepository.SaveAsync();
+    }
+
+    public async Task PutOnSaleAsync(int id, int loggedInUserId, PutArtworkOnSaleDTO request)
+    {
+        var artwork = await _artworkRepository.GetByIdAsync(id);
+        if (artwork == null)
+            throw new NotFoundException($"Artwork with id {id} not found.");
+        
+        if (artwork.PostedByUserId != loggedInUserId)
+            throw new UnauthorizedAccessException("You are not authorized to put this artwork on sale.");
+        
+        artwork.IsOnSale = request.IsOnSale;
+        artwork.Price = request.Price;
+        artwork.Currency = request.Currency;
+        _artworkRepository.UpdateSaleProperties(artwork);
+        await _artworkRepository.SaveAsync();
+    }
+
+    public async Task RemoveFromSaleAsync(int id, int loggedInUserId)
+    {
+        var artwork = await _artworkRepository.GetByIdAsync(id);
+        if (artwork == null)
+            throw new NotFoundException($"Artwork with id {id} not found.");
+        
+        if (artwork.PostedByUserId != loggedInUserId)
+            throw new UnauthorizedAccessException("You are not authorized to remove this artwork from sale.");
+        
+        artwork.IsOnSale = false;
+        _artworkRepository.UpdateSaleProperties(artwork);
+        await _artworkRepository.SaveAsync();
+    }
+
+    public async Task TransferToUserAsync(int artworkId, int fromUserId, int toUserId)
+    {
+        var artwork = await _artworkRepository.GetByIdAsync(artworkId);
+        if (artwork == null)
+            throw new NotFoundException($"Artwork with id {artworkId} not found.");
+        
+        if (artwork.PostedByUserId != fromUserId)
+            throw new UnauthorizedAccessException("You are not authorized to transfer this artwork.");
+        
+        var toUser = await _userRepository.GetByIdAsync(toUserId);
+        if (toUser == null)
+            throw new NotFoundException($"User with id {toUserId} not found.");
+        
+        if (fromUserId == toUserId)
+            throw new BadRequestException("You already own this artwork, no transfer needed.");
+        
+        artwork.PostedByUserId = toUserId;
+        _artworkRepository.UpdateOwner(artwork);
         await _artworkRepository.SaveAsync();
     }
 }

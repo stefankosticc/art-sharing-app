@@ -2,6 +2,7 @@ using ArtSharingApp.Backend.DataAccess.Repository.RepositoryInterface;
 using ArtSharingApp.Backend.DTO;
 using ArtSharingApp.Backend.Exceptions;
 using ArtSharingApp.Backend.Models;
+using ArtSharingApp.Backend.Models.Enums;
 using ArtSharingApp.Backend.Service.ServiceInterface;
 using AutoMapper;
 using UnauthorizedAccessException = ArtSharingApp.Backend.Exceptions.UnauthorizedAccessException;

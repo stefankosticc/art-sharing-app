@@ -1,3 +1,5 @@
+using ArtSharingApp.Backend.Models.Enums;
+
 namespace ArtSharingApp.Backend.Models;
 
 public class Notification
