@@ -1,3 +1,4 @@
+using ArtSharingApp.Backend.Controllers.Common;
 using ArtSharingApp.Backend.DTO;
 using ArtSharingApp.Backend.Service.ServiceInterface;
 using Microsoft.AspNetCore.Authorization;
@@ -7,13 +8,15 @@ namespace ArtSharingApp.Backend.Controllers;
 
 [ApiController]
 [Route("api/auth")]
-public class AuthController : Controller
+public class AuthController : AuthenticatedUserBaseController
 {
     private readonly IAuthService _authService;
+    private readonly IUserService _userService;
     
-    public AuthController(IAuthService authService)
+    public AuthController(IAuthService authService, IUserService userService)
     {
         _authService = authService;
+        _userService = userService;
     }
     
     [HttpPost("register")]
@@ -48,5 +51,14 @@ public class AuthController : Controller
     {
         await _authService.LogoutAsync(User);
         return Ok(new { message = "User logged out successfully" });
+    }
+    
+    [Authorize]
+    [HttpGet("loggedin-user")]
+    public async Task<IActionResult> GetLoggedInUser()
+    {
+        var loggedInUserId = GetLoggedInUserId();
+        var loggedInUser = await _userService.GetUserByIdAsync(loggedInUserId);
+        return Ok(loggedInUser);
     }
 }
