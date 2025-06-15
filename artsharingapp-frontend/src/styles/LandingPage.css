@@ -1,0 +1,116 @@
+.landing-page {
+    background-color: #fafafa;
+    min-height: 100vh;
+}
+
+.landing-page-header {
+    width: 100%;
+    height: 80vh;
+    background-color: var(--black);
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+}
+
+.lp-header-content {
+    display: flex;
+    flex-direction: column;
+    align-items: start;
+    justify-content: center;
+    height: 100%;
+    color: var(--white);
+    padding-left: 6rem;
+}
+
+.lp-header-content h1 {
+    font-size: 2.4rem;
+    margin-bottom: 2rem;
+    font-family: var(--art-font);
+}
+
+#get-started-btn {
+    background-color: var(--purple);
+    color: var(--black);
+    width: 34%;
+    border-radius: 1rem;
+    cursor: pointer;
+    padding: 0.4rem 1.5rem;
+    text-decoration: none;
+    border: none;
+    text-align: center;
+    font-size: 1rem;
+}
+
+.lp-header-image {
+    width: 100%;
+    height: 100%;
+    position: relative;
+}
+
+.lp-header-image img {
+    width: 80%;
+    height: auto;
+    object-fit: contain;
+    object-position: center;
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -35%);
+    z-index: 2;
+    pointer-events: none;
+    /* filter: grayscale(1) brightness(0.8) sepia(1) hue-rotate(130deg) saturate(1); */
+}
+
+.landing-page-contact {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    height: 40vh;
+}
+
+.contact-content {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 2rem;
+}
+
+.social-icons {
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+    margin-top: 1rem;
+}
+
+.social-icons a {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 1rem;
+    border: solid 1px rgba(61, 61, 61, 0.5);
+    border-radius: 50%;
+    margin: 0.5rem;
+    background: none;
+    text-decoration: none;
+}
+
+.social-icons a:hover {
+    border-color: var(--purple);
+}
+
+.social-icon {
+    color: var(--gray);
+}
+
+.contact-us {
+    background-color: var(--black);
+    color: var(--white);
+}
+
+.contact-us h2 {
+    margin-bottom: 1.5rem;
+}
+
+.contact-info {
+    margin-top: 0.5rem;
+}

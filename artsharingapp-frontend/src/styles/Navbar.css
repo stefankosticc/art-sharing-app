@@ -1,0 +1,59 @@
+.navbar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    width: 90vw;
+    background-color: var(--black);
+    color: var(--white);
+    position: fixed;
+    top: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 1000;
+    margin: 1.6rem auto;
+    padding: 0.6rem 2rem;
+    border-radius: 1rem;
+}
+
+.navbar-links a {
+    color: var(--white);
+    text-decoration: none;
+}
+
+.navbar-links a:hover {
+    color: var(--purple);
+    text-decoration: underline;
+    text-underline-offset: 0.4rem;
+}
+
+.navbar-links {
+    display: flex;
+    gap: 2rem;
+}
+
+.navbar-center {
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+}
+
+.navbar-login {
+    display: flex;
+    align-items: center;
+}
+
+.navbar-btn {
+    background-color: var(--black);
+    color: var(--white);
+    padding: 0.4rem 0.6rem;
+    border: none;
+    border-radius: 0.6rem;
+    cursor: pointer;
+    text-decoration: none;
+}
+
+.navbar-btn:hover {
+    background-color: var(--purple);
+    color: var(--black);
+}
