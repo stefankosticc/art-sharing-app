@@ -46,15 +46,14 @@ public class AuthServiceTests
             UserName = "testuser",
             Email = "test@gmail.com",
             Name = "Test User",
-            Password = "Test.1234",
-            RoleId = 1
+            Password = "Test.1234"
         };
 
         var role = new Role() { Id = 1, Name = "User" };
 
         _mockUserManager.Setup(um => um.FindByEmailAsync(request.Email))
             .ReturnsAsync((User)null);
-        _mockRoleManager.Setup(rm => rm.FindByIdAsync(request.RoleId.ToString()))
+        _mockRoleManager.Setup(rm => rm.FindByNameAsync("User"))
             .ReturnsAsync(role);
         _mockUserManager.Setup(um => um.CreateAsync(It.IsAny<User>(), request.Password))
             .ReturnsAsync(IdentityResult.Success);
@@ -70,7 +69,7 @@ public class AuthServiceTests
                 u => u.UserName == request.UserName &&
                      u.Email == request.Email &&
                      u.Name == request.Name &&
-                     u.RoleId == request.RoleId
+                     u.RoleId == role.Id
             ), request.Password), Times.Once);
         _mockUserManager.Verify(um => um.AddToRoleAsync(
             It.Is<User>(
@@ -88,8 +87,7 @@ public class AuthServiceTests
             UserName = "testuser",
             Email = "test@gmail.com",
             Name = "Test User",
-            Password = "Test.1234",
-            RoleId = 1
+            Password = "Test.1234"
         };
         var existingUser = new User() { Email = request.Email };
         _mockUserManager.Setup(um => um.FindByEmailAsync(request.Email))
@@ -110,19 +108,18 @@ public class AuthServiceTests
             UserName = "testuser2",
             Email = "test2@gmail.com",
             Name = "Test User2",
-            Password = "Test.1234",
-            RoleId = 2
+            Password = "Test.1234"
         };
 
         _mockUserManager.Setup(um => um.FindByEmailAsync(request.Email))
             .ReturnsAsync((User)null);
-        _mockRoleManager.Setup(rm => rm.FindByIdAsync(request.RoleId.ToString()))
+        _mockRoleManager.Setup(rm => rm.FindByNameAsync("User"))
             .ReturnsAsync((Role)null);
 
         // Act & Assert
         var ex = await Assert.ThrowsAsync<NotFoundException>(() => _authService.Register(request));
         Assert.Equal("Role not found", ex.Message);
-        _mockRoleManager.Verify(rm => rm.FindByIdAsync(request.RoleId.ToString()), Times.Once);
+        _mockRoleManager.Verify(rm => rm.FindByNameAsync("User"), Times.Once);
     }
 
     [Fact]
@@ -134,8 +131,7 @@ public class AuthServiceTests
             UserName = "testuser3",
             Email = "test3@gmail.com",
             Name = "Test User3",
-            Password = "Test.1234",
-            RoleId = 3
+            Password = "Test.1234"
         };
 
         var role = new Role() { Id = 3, Name = "User" };
@@ -143,7 +139,7 @@ public class AuthServiceTests
 
         _mockUserManager.Setup(um => um.FindByEmailAsync(request.Email))
             .ReturnsAsync((User)null);
-        _mockRoleManager.Setup(rm => rm.FindByIdAsync(request.RoleId.ToString()))
+        _mockRoleManager.Setup(rm => rm.FindByNameAsync("User"))
             .ReturnsAsync(role);
         _mockUserManager.Setup(um => um.CreateAsync(It.IsAny<User>(), request.Password))
             .ReturnsAsync(identityResult);
@@ -162,15 +158,14 @@ public class AuthServiceTests
             UserName = "testuser4",
             Email = "test4@gmail.com",
             Name = "Test User4",
-            Password = "Test.1234",
-            RoleId = 4
+            Password = "Test.1234"
         };
 
         var role = new Role() { Id = 4, Name = "User" };
 
         _mockUserManager.Setup(um => um.FindByEmailAsync(request.Email))
             .ReturnsAsync((User)null);
-        _mockRoleManager.Setup(rm => rm.FindByIdAsync(request.RoleId.ToString()))
+        _mockRoleManager.Setup(rm => rm.FindByNameAsync("User"))
             .ReturnsAsync(role);
         _mockUserManager.Setup(um => um.CreateAsync(It.IsAny<User>(), request.Password))
             .ReturnsAsync(IdentityResult.Success);
