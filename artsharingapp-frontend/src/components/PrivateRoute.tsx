@@ -1,6 +1,7 @@
 import { JSX, useEffect, useState } from "react";
 import { Navigate } from "react-router-dom";
 import axios from "axios";
+import Loading from "../pages/Loading";
 
 function PrivateRoute({ children }: { children: JSX.Element }) {
   const [auth, setAuth] = useState<boolean | null>(null);
@@ -17,20 +18,21 @@ function PrivateRoute({ children }: { children: JSX.Element }) {
         })
         .then(() => {
           setAuth(true);
-          setLoading(false);
+          // TODO: DELETE DELAYS LATER
+          setTimeout(() => setLoading(false), 1500);
         })
         .catch(() => {
           setAuth(false);
-          setLoading(false);
+          setTimeout(() => setLoading(false), 1500);
         });
     } else {
       setAuth(false);
-      setLoading(false);
+      setTimeout(() => setLoading(false), 1500);
     }
   }, []);
 
   if (loading) {
-    return <p>Loading...</p>;
+    return <Loading />;
   }
 
   return auth ? children : <Navigate to="/login" />;
