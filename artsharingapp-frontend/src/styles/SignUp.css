@@ -110,3 +110,15 @@
     background-color: var(--purple);
     color: var(--black);
 }
+
+.sign-up-error {
+    width: 100%;
+    padding: 0.2rem;
+    background-color: var(--red-light);
+    color: var(--red);
+    border-radius: 0.4rem;
+    font-weight: bold;
+    text-align: center;
+    font-size: 0.9rem;
+    margin: 0.6rem 0;
+}

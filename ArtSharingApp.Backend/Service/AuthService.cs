@@ -31,17 +31,17 @@ public class AuthService : IAuthService
         if (existingUser != null)
             throw new BadRequestException("User already exists");
 
+        var role = await _roleManager.FindByNameAsync("User");
+        if (role == null)
+            throw new NotFoundException("Role not found");
+        
         var user = new User()
         {
             UserName = request.UserName,
             Email = request.Email,
             Name = request.Name,
-            RoleId = request.RoleId
+            RoleId = role.Id
         };
-        
-        var role = await _roleManager.FindByIdAsync(request.RoleId.ToString());
-        if (role == null)
-            throw new NotFoundException("Role not found");
         
         // Create user
         var result = await _userManager.CreateAsync(user, request.Password);

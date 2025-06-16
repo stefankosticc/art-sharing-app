@@ -11,10 +11,20 @@ export interface LoginResponse {
     accessToken: string;
     refreshToken: string;
 }
+export interface SignUpRequest {
+    name: string;
+    email: string;
+    userName: string;
+    password: string;
+}
 
 export async function login(request: LoginRequest): Promise<LoginResponse> {
     const response = await axios.post(`${API_BASE_URL}/auth/login`, request);
     return response.data;
+}
+
+export async function signUp(request: SignUpRequest): Promise<void> {
+    await axios.post(`${API_BASE_URL}/auth/register`, request);
 }
 
 
