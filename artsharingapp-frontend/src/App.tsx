@@ -4,6 +4,7 @@ import LandingPage from "./pages/LandingPage";
 import Login from "./pages/Login";
 import SignUp from "./pages/SignUp";
 import PrivateRoute from "./components/PrivateRoute";
+import Profile from "./pages/Profile";
 
 function App() {
   return (
@@ -17,10 +18,11 @@ function App() {
             path="/profile"
             element={
               <PrivateRoute>
-                <LandingPage />
+                <Profile />
               </PrivateRoute>
             }
           />
+          <Route path="*" element={<LandingPage />} />
         </Routes>
       </div>
     </BrowserRouter>
