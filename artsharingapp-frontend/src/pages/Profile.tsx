@@ -1,6 +1,7 @@
 import { useState } from "react";
 import "../styles/Profile.css";
 import { useLoggedInUser } from "../hooks/useLoggedInUser";
+import { formatFollowCount } from "../utils/formatting";
 
 const TABS: {
   key: string;
@@ -47,10 +48,30 @@ const Profile = () => {
 
         <div className="profile-following">
           <p className="profile-follow-count">
-            <span>100K</span> Followers
+            <span>
+              {loading ? (
+                <span
+                  className="skeleton skeleton-text"
+                  style={{ width: "3rem", height: "1.2rem" }}
+                />
+              ) : (
+                formatFollowCount(loggedInUser?.followersCount)
+              )}
+            </span>{" "}
+            Followers
           </p>
           <p className="profile-follow-count">
-            <span>50K</span> Following
+            <span>
+              {loading ? (
+                <span
+                  className="skeleton skeleton-text"
+                  style={{ width: "3rem", height: "1.2rem" }}
+                />
+              ) : (
+                formatFollowCount(loggedInUser?.followingCount)
+              )}
+            </span>{" "}
+            Following
           </p>
         </div>
       </div>

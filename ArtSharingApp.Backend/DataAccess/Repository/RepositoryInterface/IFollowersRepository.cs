@@ -8,4 +8,6 @@ public interface IFollowersRepository : IGenericRepository<Followers>
     Task DeleteAsync(int loggedInUserId, int userId);
     Task<IEnumerable<Followers>> GetFollowersAsync(int loggedInUserId);
     Task<IEnumerable<Followers>> GetFollowingAsync(int loggedInUserId);
+    Task<int> GetFollowersCountAsync(int loggedInUserId);
+    Task<int> GetFollowingCountAsync(int loggedInUserId);
 }
