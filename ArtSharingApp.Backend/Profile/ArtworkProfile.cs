@@ -22,5 +22,9 @@ public class ArtworkProfile : AutoMapper.Profile
             .ForMember(dest => dest.PostedByUser, opt => opt.Ignore())
             .ForMember(dest => dest.Gallery, opt => opt.Ignore())
             .ForMember(dest => dest.City, opt => opt.Ignore());
+
+        CreateMap<Artwork, ArtworkPreviewDTO>()            
+            .ForMember(dest => dest.PostedByUserName, opt =>
+            opt.MapFrom(src => src.PostedByUser != null ? src.PostedByUser.UserName : null));
     }
 }

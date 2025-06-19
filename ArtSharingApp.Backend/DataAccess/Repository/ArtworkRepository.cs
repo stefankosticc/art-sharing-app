@@ -58,4 +58,12 @@ public class ArtworkRepository : GenericRepository<Artwork>,IArtworkRepository
         _context.Attach(artwork);
         _context.Entry(artwork).Property(a => a.PostedByUserId).IsModified = true;
     }
+
+    public async Task<IEnumerable<Artwork>?> GetMyArtworksAsync(int postedByUserId)
+    {
+        return await _dbSet
+            .Where(a => a.PostedByUserId == postedByUserId)
+            .Include(a => a.PostedByUser)
+            .ToListAsync();
+    }
 }

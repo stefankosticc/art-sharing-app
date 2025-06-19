@@ -1,7 +1,9 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import "../styles/Profile.css";
 import { useLoggedInUser } from "../hooks/useLoggedInUser";
 import { formatFollowCount } from "../utils/formatting";
+import ArtworkCard from "../components/ArtworkCard";
+import { ArtworkCardData, getMyArtworks } from "../services/artwork";
 
 const TABS: {
   key: string;
@@ -14,8 +16,27 @@ const TABS: {
 
 const Profile = () => {
   const [activeTab, setActiveTab] = useState<string>("artworks");
+  const [artworks, setArtworks] = useState<ArtworkCardData[] | null>(null);
+  const [loadingArtwork, setLoadingArtwork] = useState<boolean>(true);
 
   const { loggedInUser, loading, error } = useLoggedInUser();
+
+  useEffect(() => {
+    const fetchArtworks = async () => {
+      try {
+        const response = await getMyArtworks();
+        setArtworks(response);
+      } catch (err) {
+        setLoadingArtwork(true);
+      } finally {
+        setTimeout(() => {
+          setLoadingArtwork(false);
+        }, 2000); //TODO: Simulate a delay for loading state DELETE THIS LATER
+      }
+    };
+
+    fetchArtworks();
+  }, []);
 
   return (
     <div className="profile-page">
@@ -97,9 +118,21 @@ const Profile = () => {
             activeTab === "artworks" ? " active" : ""
           }`}
         >
-          <p className="profile-content-text not-found">
-            You have no artworks yet.
-          </p>
+          {artworks && artworks.length !== 0 ? (
+            <div className="profile-artwork-grid">
+              {artworks.map((artwork) => (
+                <ArtworkCard
+                  key={artwork.id}
+                  artwork={artwork}
+                  loading={loadingArtwork}
+                />
+              ))}
+            </div>
+          ) : (
+            <p className="profile-content-text not-found">
+              You have no artworks yet.
+            </p>
+          )}
         </div>
 
         <div
@@ -117,10 +150,16 @@ const Profile = () => {
             activeTab === "biography" ? " active" : ""
           }`}
         >
-          <p className="profile-content-text not-found">
-            You haven't added a biography yet. <br />
-            You can add your biography here.
-          </p>
+          {loggedInUser?.biography ? (
+            <p className="profile-content-biography">
+              {loggedInUser.biography}
+            </p>
+          ) : (
+            <p className="profile-content-text not-found">
+              You haven't added a biography yet. <br />
+              You can add your biography here.
+            </p>
+          )}
         </div>
       </div>
     </div>

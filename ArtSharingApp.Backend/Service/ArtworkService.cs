@@ -136,4 +136,10 @@ public class ArtworkService : IArtworkService
         _artworkRepository.UpdateOwner(artwork);
         await _artworkRepository.SaveAsync();
     }
+
+    public async Task<IEnumerable<ArtworkPreviewDTO>?> GetMyArtworksAsync(int loggedInUserId)
+    {
+        var artworks = await _artworkRepository.GetMyArtworksAsync(loggedInUserId);
+        return _mapper.Map<IEnumerable<ArtworkPreviewDTO>>(artworks);
+    }
 }

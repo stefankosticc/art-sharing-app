@@ -96,5 +96,11 @@ public class ArtworkController : AuthenticatedUserBaseController
         await _artworkService.TransferToUserAsync(artworkId, loggedInUserId, userId);
         return Ok(new {message = "Artwork transferred successfully."});
     }
-    
+
+    [HttpGet("artworks/mine")]
+    public async Task<IActionResult> GetMyArtworks()
+    {
+        var loggedInUserId = GetLoggedInUserId();
+        return Ok(await _artworkService.GetMyArtworksAsync(loggedInUserId));
+    }
 }
