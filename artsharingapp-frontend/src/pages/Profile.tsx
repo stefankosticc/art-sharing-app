@@ -4,6 +4,7 @@ import { useLoggedInUser } from "../hooks/useLoggedInUser";
 import { formatFollowCount } from "../utils/formatting";
 import ArtworkCard from "../components/ArtworkCard";
 import { ArtworkCardData, getMyArtworks } from "../services/artwork";
+import { useFavoriteArtworks } from "../hooks/useFavoriteArtworks";
 
 const TABS: {
   key: string;
@@ -37,6 +38,11 @@ const Profile = () => {
 
     fetchArtworks();
   }, []);
+
+  const { favorites, loadingFavorites } = useFavoriteArtworks({
+    likedByUser: loggedInUser,
+    activeTab,
+  });
 
   return (
     <div className="profile-page">
@@ -99,6 +105,7 @@ const Profile = () => {
 
       <div className="profile-divider"></div>
 
+      {/* TABS */}
       <div className="profile-content-container">
         <div className="profile-tabs">
           {TABS.map((tab) => (
@@ -113,6 +120,7 @@ const Profile = () => {
           ))}
         </div>
 
+        {/* MY ARTWORKS */}
         <div
           className={`profile-content${
             activeTab === "artworks" ? " active" : ""
@@ -135,16 +143,30 @@ const Profile = () => {
           )}
         </div>
 
+        {/* FAVORITES */}
         <div
           className={`profile-content${
             activeTab === "favorites" ? " active" : ""
           }`}
         >
-          <p className="profile-content-text not-found">
-            You have no favorites yet.
-          </p>
+          {favorites && favorites.length !== 0 ? (
+            <div className="profile-artwork-grid">
+              {favorites.map((favorite) => (
+                <ArtworkCard
+                  key={favorite.artworkId}
+                  artwork={favorite}
+                  loading={loadingFavorites}
+                />
+              ))}
+            </div>
+          ) : (
+            <p className="profile-content-text not-found">
+              You have no favorites yet.
+            </p>
+          )}
         </div>
 
+        {/* BIOPGRAPHY */}
         <div
           className={`profile-content${
             activeTab === "biography" ? " active" : ""

@@ -1,9 +1,9 @@
 import { useState } from "react";
-import { ArtworkCardData } from "../services/artwork";
+import { ArtworkCardData, FavoriteArtwork } from "../services/artwork";
 import "../styles/ArtworkCard.css";
 
 type ArtworkCardProps = {
-  artwork: ArtworkCardData | null;
+  artwork: ArtworkCardData | FavoriteArtwork | null;
   loading?: boolean;
 };
 
@@ -11,7 +11,17 @@ const ArtworkCard = ({ artwork, loading = false }: ArtworkCardProps) => {
   const fallbackImage =
     "https://upload.wikimedia.org/wikipedia/commons/a/a3/Image-not-found.png?20210521171500";
 
-  const [imgSrc, setImgSrc] = useState(artwork?.image || fallbackImage);
+  const getTitle = (): string | null => {
+    if (!artwork) return null;
+    return "title" in artwork ? artwork.title : artwork.artworkTitle;
+  };
+
+  const getImage = (): string | null => {
+    if (!artwork) return null;
+    return "image" in artwork ? artwork.image : artwork.artworkImage;
+  };
+
+  const [imgSrc, setImgSrc] = useState(getImage() || fallbackImage);
 
   if (loading) {
     return (
@@ -23,15 +33,15 @@ const ArtworkCard = ({ artwork, loading = false }: ArtworkCardProps) => {
   }
 
   return (
-    <div className="artwork-card" title={artwork?.title || ""}>
+    <div className="artwork-card" title={getTitle() || ""}>
       <img
         className="artwork-card-image"
         src={imgSrc}
-        alt={artwork?.title || "artwork image not found"}
+        alt={getTitle() || "artwork image not found"}
         onError={() => setImgSrc(fallbackImage)}
       />
       <div className="artwork-card-details">
-        <p>{artwork?.title || "Error: Title Not Found"}</p>
+        <p>{getTitle() || "Error: Title Not Found"}</p>
       </div>
     </div>
   );

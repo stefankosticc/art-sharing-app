@@ -42,10 +42,9 @@ public class FavoritesController : AuthenticatedUserBaseController
         return BadRequest(new { message = "Failed to dislike artwork." });
     }
 
-    [HttpGet("user/liked-artworks")]
-    public async Task<IActionResult> GetLikedArtworks()
+    [HttpGet("user/{userId}/liked-artworks")]
+    public async Task<IActionResult> GetLikedArtworks(int userId)
     {
-        var userId = GetLoggedInUserId();
         var likedArtworks = await _favoritesService.GetLikedArtworks(userId);
         if (likedArtworks != null)
         {

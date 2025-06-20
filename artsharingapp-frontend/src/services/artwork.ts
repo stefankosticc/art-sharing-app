@@ -12,6 +12,13 @@ export interface ArtworkCardData {
   date: Date;
 }
 
+export interface FavoriteArtwork {
+  userId: number;
+  artworkId: number;
+  artworkTitle: string | null;
+  artworkImage: string | null;
+}
+
 export async function getMyArtworks(): Promise<ArtworkCardData[]> {
   var accessToken = localStorage.getItem("accessToken");
   const response = await axios.get(`${API_BASE_URL}/artworks/mine`, {
@@ -19,5 +26,20 @@ export async function getMyArtworks(): Promise<ArtworkCardData[]> {
       Authorization: `Bearer ${accessToken}`,
     },
   });
+  return response.data;
+}
+
+export async function getFavoriteArtworks(
+  userId: number
+): Promise<FavoriteArtwork[]> {
+  var accessToken = localStorage.getItem("accessToken");
+  const response = await axios.get(
+    `${API_BASE_URL}/user/${userId}/liked-artworks`,
+    {
+      headers: {
+        Authorization: `Bearer ${accessToken}`,
+      },
+    }
+  );
   return response.data;
 }
