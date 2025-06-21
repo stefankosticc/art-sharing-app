@@ -5,6 +5,7 @@ import { formatFollowCount } from "../utils/formatting";
 import ArtworkCard from "../components/ArtworkCard";
 import { ArtworkCardData, getMyArtworks } from "../services/artwork";
 import { useFavoriteArtworks } from "../hooks/useFavoriteArtworks";
+import Dock from "../components/Dock";
 
 const TABS: {
   key: string;
@@ -184,6 +185,8 @@ const Profile = () => {
           )}
         </div>
       </div>
+
+      <Dock />
     </div>
   );
 };
