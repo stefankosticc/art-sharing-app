@@ -19,7 +19,8 @@ const Dock = () => {
       <NavLink to={"/profile"} title="Profile">
         <FaUser />
       </NavLink>
-      <NavLink to={"/map"} title="Map">
+      {/* TODO: Change back to map when artwork page is done*/}
+      <NavLink to={"/artwork"} title="Map">
         <FaMap />
       </NavLink>
     </div>

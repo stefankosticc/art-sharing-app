@@ -1,0 +1,120 @@
+.artwork-page {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.ap-image-container {
+    background-color: royalblue;
+    border-radius: 0 1rem 1rem 0;
+}
+
+.ap-image {
+    width: 50vw;
+    max-height: 80vh;
+    margin: 2rem;
+    object-fit: cover;
+    border-radius: 0.6rem;
+}
+
+.ap-info {
+    overflow-y: scroll;
+    height: 100%;
+    padding: 6rem 6rem 6rem 4rem;
+    display: flex;
+    flex-direction: column;
+    gap: 2rem;
+    background-color: var(--black);
+    scrollbar-color: var(--purple);
+}
+
+.ap-info-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.ap-info-header-right-group {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.8rem;
+}
+
+.ap-info-header-icon {
+    color: var(--gray-light);
+    cursor: pointer;
+    font-size: 1.2rem;
+}
+
+.ap-info-header-icon:hover {
+    color: var(--white);
+}
+
+.ap-on-sale {
+    border: 1px solid var(--purple);
+    padding: 0.2rem 0.4rem;
+    font-size: 0.8rem;
+    color: var(--purple);
+    border-radius: 0.15rem;
+}
+
+.ap-details {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    color: var(--gray-light);
+}
+
+.ap-details-label {
+    font-size: 0.8rem;
+    margin-bottom: 0.2rem;
+    color: var(--gray);
+}
+
+.ap-details-text {
+    font-size: 0.9rem;
+}
+
+.ap-user-info {
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+    font-size: 0.9rem;
+}
+
+.ap-user-profile-picture {
+    width: 1.2rem;
+    aspect-ratio: 1/1;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 1px solid var(--gray-light);
+}
+
+.ap-info-edit-btns {
+    display: flex;
+    align-items: center;
+    justify-content: end;
+    gap: 0.6rem;
+}
+
+.ap-info-edit-btns button {
+    width: 18%;
+    padding: 0.4rem 0.6rem;
+    border: none;
+    font-weight: bold;
+    cursor: pointer;
+    border-radius: 0.2rem;
+}
+
+.ap-cancel-edit-btn {
+    background-color: var(--gray-light);
+}
+
+.ap-cancel-edit-btn:hover {
+    background-color: var(--white);
+}
+
+.ap-save-edit-btn {
+    background-color: var(--purple);
+}

@@ -11,6 +11,7 @@ public class ArtworkResponseDTO
     public DateOnly Date { get; set; }
     public string TipsAndTricks { get; set; }
     public bool IsPrivate { get; set; }
+    public bool IsOnSale { get; set; }
     public int CreatedByArtistId { get; set; }
     public string CreatedByArtistName { get; set; }
     public int PostedByUserId { get; set; }

@@ -5,7 +5,7 @@ import Login from "./pages/Login";
 import SignUp from "./pages/SignUp";
 import PrivateRoute from "./components/PrivateRoute";
 import Profile from "./pages/Profile";
-import Loading from "./pages/Loading";
+import ArtworkPage from "./pages/ArtworkPage";
 
 function App() {
   return (
@@ -20,6 +20,14 @@ function App() {
             element={
               <PrivateRoute>
                 <Profile />
+              </PrivateRoute>
+            }
+          />
+          <Route
+            path="/artwork"
+            element={
+              <PrivateRoute>
+                <ArtworkPage />
               </PrivateRoute>
             }
           />
