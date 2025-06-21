@@ -14,4 +14,5 @@ public interface IArtworkService
     Task PutOnSaleAsync(int id, int loggedInUserId, PutArtworkOnSaleDTO request);
     Task RemoveFromSaleAsync(int id, int loggedInUserId);
     Task TransferToUserAsync(int artworkId, int fromUserId, int toUserId);
+    Task<IEnumerable<ArtworkPreviewDTO>?>  GetMyArtworksAsync(int loggedInUserId);
 }

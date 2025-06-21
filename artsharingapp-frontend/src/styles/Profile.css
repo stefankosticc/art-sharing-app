@@ -1,0 +1,154 @@
+.profile-page {
+    background-color: var(--black);
+    width: 100%;
+    height: 100vh;
+    color: var(--white);
+    display: flex;
+    top: 0;
+    left: 0;
+    position: fixed;
+}
+
+.profile-info {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin: 4rem 0 4rem 2rem;
+    white-space: nowrap;
+    max-width: 20%;
+    min-width: 15%;
+    overflow-wrap: anywhere;
+}
+
+.profile-picture {
+    width: 4rem;
+    height: 4rem;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 1px solid var(--gray-light);
+}
+
+.profile-name {
+    font-size: 1rem;
+    white-space: wrap;
+    text-align: center;
+    margin: 1rem 0 0.5rem 0;
+}
+
+.profile-username {
+    font-size: 0.9rem;
+    margin-top: 0.5rem;
+}
+
+.profile-following {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: center;
+    gap: 2rem;
+    margin-top: 1rem;
+    width: 100%;
+}
+
+.profile-follow-count {
+    font-size: 0.8rem;
+    margin-top: 0.5rem;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    cursor: pointer;
+}
+
+.profile-divider {
+    height: 94vh;
+    align-self: center;
+    margin: 0 2rem;
+    border: solid 1px var(--gray);
+    border-radius: 2px;
+}
+
+.profile-content-container {
+    padding: 4rem 2rem 4rem 0;
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    overflow-y: scroll;
+}
+
+.profile-tabs {
+    display: flex;
+    gap: 1.2rem;
+    margin-bottom: 2rem;
+}
+
+.profile-tab {
+    cursor: pointer;
+    padding: 0.5rem 1rem;
+    border-radius: 1rem;
+    border: none;
+    background-color: var(--gray-light);
+    color: var(--white);
+    font-weight: 500;
+}
+
+.profile-tab:hover,
+.profile-tab.active {
+    background-color: var(--purple);
+    color: var(--black);
+    font-weight: bold;
+}
+
+.profile-content {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+
+.profile-content:not(.active) {
+    display: none;
+}
+
+.profile-content:has(.profile-content-text.not-found) {
+    height: 100%;
+}
+
+.profile-content-text.not-found {
+    color: var(--gray-light);
+    width: 100%;
+    text-align: center;
+}
+
+.profile-content-biography {
+    height: 100%;
+}
+
+.skeleton {
+    display: inline-block;
+    background: linear-gradient(-60deg, var(--gray-light) 25%, #f8f8f8 50%, var(--gray-light) 75%);
+    background-size: 200% 100%;
+    animation: skeleton-loading 3s infinite linear;
+    border-radius: 0.4rem;
+}
+
+@keyframes skeleton-loading {
+    0% {
+        background-position: 200% 0;
+    }
+
+    100% {
+        background-position: -200% 0;
+    }
+}
+
+.skeleton-text {
+    height: 1em;
+}
+
+.profile-artwork-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(15rem, 1fr));
+    gap: 1rem;
+    justify-items: center;
+    height: 100%;
+    box-sizing: border-box;
+}

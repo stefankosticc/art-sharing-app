@@ -40,4 +40,14 @@ public class FollowersRepository : GenericRepository<Followers>, IFollowersRepos
             .Include(f => f.Follower)
             .ToListAsync();
     }
+
+    public async Task<int> GetFollowersCountAsync(int loggedInUserId)
+    {
+        return await _dbSet.CountAsync(f => f.FollowerId == loggedInUserId);
+    }
+
+    public Task<int> GetFollowingCountAsync(int loggedInUserId)
+    {
+        return _dbSet.CountAsync(f => f.UserId == loggedInUserId);
+    }
 }

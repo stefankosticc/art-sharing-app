@@ -46,3 +46,14 @@ public class PutArtworkOnSaleDTO
     public decimal Price { get; set; }
     public Currency Currency { get; set; }
 }
+
+public class ArtworkPreviewDTO
+{
+    public int Id { get; set; }
+    public string Title { get; set; }
+    public string Image { get; set; }
+    public DateOnly Date { get; set; }
+    public bool IsPrivate { get; set; }
+    public int PostedByUserId { get; set; }
+    public string PostedByUserName { get; set; }
+}

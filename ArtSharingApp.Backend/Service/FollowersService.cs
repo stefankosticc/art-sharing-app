@@ -4,6 +4,7 @@ using ArtSharingApp.Backend.Exceptions;
 using ArtSharingApp.Backend.Models;
 using ArtSharingApp.Backend.Service.ServiceInterface;
 using AutoMapper;
+using AutoMapper.Configuration.Annotations;
 
 namespace ArtSharingApp.Backend.Service;
 
@@ -13,7 +14,7 @@ public class FollowersService : IFollowersService
     private readonly IUserRepository _userRepository;
     private readonly IMapper _mapper;
     private readonly INotificationService _notificationService;
-    
+
     public FollowersService(
         IFollowersRepository followersRepository,
         IUserRepository userRepository,
@@ -25,7 +26,7 @@ public class FollowersService : IFollowersService
         _mapper = mapper;
         _notificationService = notificationService;
     }
-    
+
     public async Task<bool> FollowUserAsync(int loggedInUserId, int userId)
     {
         var isFollowing = await _followersRepository.IsFollowing(loggedInUserId, userId);
@@ -34,14 +35,14 @@ public class FollowersService : IFollowersService
 
         if (loggedInUserId == userId)
             throw new BadRequestException("You cannot follow yourself.");
-        
+
         var user = await _userRepository.GetByIdAsync(userId);
         if (user == null)
             throw new NotFoundException("User not found.");
-        
+
         await _followersRepository.AddAsync(new Followers(loggedInUserId, userId));
         await _followersRepository.SaveAsync();
-        
+
         // Send notification to the user being followed
         var loggedInUser = await _userRepository.GetByIdAsync(loggedInUserId);
         var notification = new NotificationRequestDTO
@@ -50,7 +51,7 @@ public class FollowersService : IFollowersService
             Text = $"@{loggedInUser.UserName} started following you."
         };
         await _notificationService.CreateNotificationAsync(notification);
-        
+
         return true;
     }
 
@@ -58,15 +59,15 @@ public class FollowersService : IFollowersService
     {
         if (loggedInUserId == userId)
             throw new BadRequestException("You cannot unfollow yourself.");
-        
+
         var user = await _userRepository.GetByIdAsync(userId);
         if (user == null)
             throw new NotFoundException("User not found.");
-        
+
         var isFollowing = await _followersRepository.IsFollowing(loggedInUserId, userId);
         if (!isFollowing)
             throw new BadRequestException("You are not following this user.");
-        
+
         await _followersRepository.DeleteAsync(loggedInUserId, userId);
         await _followersRepository.SaveAsync();
         return true;
@@ -78,7 +79,7 @@ public class FollowersService : IFollowersService
         var followers = await _followersRepository.GetFollowersAsync(loggedInUserId);
         if (followers == null || !followers.Any())
             throw new NotFoundException("No followers found.");
-        
+
         var followersDto = _mapper.Map<IEnumerable<FollowersDTO>>(followers);
         return followersDto;
     }
@@ -89,8 +90,20 @@ public class FollowersService : IFollowersService
         var following = await _followersRepository.GetFollowingAsync(loggedInUserId);
         if (following == null || !following.Any())
             throw new NotFoundException("You are not following anyone.");
-        
+
         var followingDto = _mapper.Map<IEnumerable<FollowingDTO>>(following);
         return followingDto;
+    }
+
+    public async Task<int> GetFollowersCountAsync(int loggedInUserId)
+    {
+        var followersCount = await _followersRepository.GetFollowersCountAsync(loggedInUserId);
+        return followersCount;
+    }
+
+    public async Task<int> GetFollowingCountAsync(int loggedInUserId)
+    {
+        var followingCount = await _followersRepository.GetFollowingCountAsync(loggedInUserId);
+        return followingCount;
     }
 }

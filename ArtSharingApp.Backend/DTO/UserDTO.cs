@@ -38,3 +38,9 @@ public class UserRegisterDTO
     public string UserName { get; set; }
     public string Password { get; set; }
 }
+
+public class LoggedInUserDTO : UserResponseDTO 
+{
+    public int FollowersCount { get; set; }
+    public int FollowingCount { get; set; }
+}

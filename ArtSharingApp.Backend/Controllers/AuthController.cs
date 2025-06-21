@@ -12,11 +12,13 @@ public class AuthController : AuthenticatedUserBaseController
 {
     private readonly IAuthService _authService;
     private readonly IUserService _userService;
+    private readonly IFollowersService _followersService;
     
-    public AuthController(IAuthService authService, IUserService userService)
+    public AuthController(IAuthService authService, IUserService userService, IFollowersService followersService)
     {
         _authService = authService;
         _userService = userService;
+        _followersService = followersService;
     }
     
     [HttpPost("register")]
@@ -59,6 +61,22 @@ public class AuthController : AuthenticatedUserBaseController
     {
         var loggedInUserId = GetLoggedInUserId();
         var loggedInUser = await _userService.GetUserByIdAsync(loggedInUserId);
-        return Ok(loggedInUser);
+        var followersCount = await _followersService.GetFollowersCountAsync(loggedInUserId);
+        var followingCount = await _followersService.GetFollowingCountAsync(loggedInUserId);
+
+        var response = new LoggedInUserDTO()
+        {
+            Id = loggedInUser.Id,
+            Name = loggedInUser.Name,
+            Email = loggedInUser.Email,
+            UserName = loggedInUser.UserName,
+            Biography = loggedInUser.Biography,
+            RoleId = loggedInUser.RoleId,
+            RoleName = loggedInUser.RoleName,
+            FollowersCount = followersCount,
+            FollowingCount = followingCount
+        };
+        
+        return Ok(response);
     }
 }
