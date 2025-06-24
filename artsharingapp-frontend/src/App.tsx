@@ -6,6 +6,7 @@ import SignUp from "./pages/SignUp";
 import PrivateRoute from "./components/PrivateRoute";
 import Profile from "./pages/Profile";
 import ArtworkPage from "./pages/ArtworkPage";
+import NotFound from "./pages/NotFound";
 
 function App() {
   return (
@@ -31,7 +32,7 @@ function App() {
               </PrivateRoute>
             }
           />
-          <Route path="*" element={<LandingPage />} />
+          <Route path="*" element={<NotFound />} />
         </Routes>
       </div>
     </BrowserRouter>
