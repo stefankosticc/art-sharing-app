@@ -37,9 +37,7 @@ export const useFavoriteArtworks = ({
         }
       } finally {
         if (!isCancelled) {
-          setTimeout(() => {
-            setLoadingFavorites(false);
-          }, 2000); //TODO: Simulate a delay for loading state DELETE THIS LATER
+          setLoadingFavorites(false);
         }
       }
     };

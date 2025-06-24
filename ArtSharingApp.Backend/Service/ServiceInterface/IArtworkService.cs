@@ -5,7 +5,7 @@ namespace ArtSharingApp.Backend.Service.ServiceInterface;
 public interface IArtworkService
 {
     Task<IEnumerable<ArtworkResponseDTO>> GetAllAsync();
-    Task<ArtworkResponseDTO?> GetByIdAsync(int id);
+    Task<ArtworkResponseDTO?> GetByIdAsync(int id, int loggedInUserId);
     Task AddAsync(ArtworkRequestDTO artworkDto);
     Task UpdateAsync(int id, ArtworkRequestDTO artworkDto);
     Task DeleteAsync(int id);

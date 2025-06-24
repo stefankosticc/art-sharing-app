@@ -3,12 +3,17 @@ import { FaMap, FaUser } from "react-icons/fa";
 import { NavLink } from "react-router-dom";
 import "../styles/Dock.css";
 import { FaHouse, FaWindowMaximize } from "react-icons/fa6";
+import { MdOutlineChatBubble } from "react-icons/md";
+import { IoNotifications } from "react-icons/io5";
 
 const Dock = () => {
   return (
     <div className="dock">
-      <NavLink to={"/home"} title="Home">
-        <FaHouse />
+      <NavLink to={"/notifications"} title="Notifications">
+        <IoNotifications />
+      </NavLink>
+      <NavLink to={"/map"} title="Map">
+        <FaMap />
       </NavLink>
       <NavLink to={"/feed"} title="Feed">
         <FaWindowMaximize />
@@ -19,9 +24,11 @@ const Dock = () => {
       <NavLink to={"/profile"} title="Profile">
         <FaUser />
       </NavLink>
-      {/* TODO: Change back to map when artwork page is done*/}
-      <NavLink to={"/artwork"} title="Map">
-        <FaMap />
+      <NavLink to={"/home"} title="Home">
+        <FaHouse />
+      </NavLink>
+      <NavLink to={"/chat"} title="Chat">
+        <MdOutlineChatBubble />
       </NavLink>
     </div>
   );

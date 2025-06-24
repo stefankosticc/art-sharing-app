@@ -31,9 +31,7 @@ const Profile = () => {
       } catch (err) {
         setLoadingArtwork(true);
       } finally {
-        setTimeout(() => {
-          setLoadingArtwork(false);
-        }, 2000); //TODO: Simulate a delay for loading state DELETE THIS LATER
+        setLoadingArtwork(false);
       }
     };
 

@@ -27,7 +27,8 @@ public class ArtworkController : AuthenticatedUserBaseController
     [HttpGet("artwork/{id}")]
     public async Task<IActionResult> GetById(int id)
     {
-        var artwork = await _artworkService.GetByIdAsync(id);
+        var loggedInUserId = GetLoggedInUserId();
+        var artwork = await _artworkService.GetByIdAsync(id, loggedInUserId);
         return Ok(artwork);
     }
 

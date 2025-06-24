@@ -24,7 +24,7 @@ function App() {
             }
           />
           <Route
-            path="/artwork"
+            path="/artwork/:artworkId"
             element={
               <PrivateRoute>
                 <ArtworkPage />

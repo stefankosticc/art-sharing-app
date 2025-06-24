@@ -20,6 +20,7 @@ public class ArtworkResponseDTO
     public string? CityName { get; set; }
     public int? GalleryId { get; set; }
     public string? GalleryName { get; set; }
+    public bool? IsLikedByLoggedInUser { get; set; }
 }
 
 public class ArtworkRequestDTO

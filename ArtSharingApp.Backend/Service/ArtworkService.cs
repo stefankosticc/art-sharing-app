@@ -14,12 +14,14 @@ public class ArtworkService : IArtworkService
     private readonly IArtworkRepository _artworkRepository;
     private readonly IUserRepository _userRepository;
     private readonly IMapper _mapper;
+    private readonly IFavoritesRepository _favoritesRepository;
 
-    public ArtworkService(IArtworkRepository artworkRepository, IUserRepository userRepository, IMapper mapper)
+    public ArtworkService(IArtworkRepository artworkRepository, IUserRepository userRepository, IMapper mapper, IFavoritesRepository favoritesRepository)
     {
         _artworkRepository = artworkRepository;
         _userRepository = userRepository;
         _mapper = mapper;
+        _favoritesRepository = favoritesRepository;
     }
 
     public async Task<IEnumerable<ArtworkResponseDTO>> GetAllAsync()
@@ -28,12 +30,15 @@ public class ArtworkService : IArtworkService
         return _mapper.Map<IEnumerable<ArtworkResponseDTO>>(artworks);
     }
 
-    public async Task<ArtworkResponseDTO?> GetByIdAsync(int id)
+    public async Task<ArtworkResponseDTO?> GetByIdAsync(int id, int loggedInUserId)
     {
         var artwork = await _artworkRepository.GetByIdAsync(id);
         if (artwork == null)
             throw new NotFoundException($"Artwork with id {id} not found.");
-        return _mapper.Map<ArtworkResponseDTO>(artwork);
+        var response = _mapper.Map<ArtworkResponseDTO>(artwork);
+        response.IsLikedByLoggedInUser = (await _favoritesRepository.GetAllAsync())
+            .Any(f => f.UserId == loggedInUserId && f.ArtworkId == id);
+        return response;
     }
 
     public async Task AddAsync(ArtworkRequestDTO artworkDto)

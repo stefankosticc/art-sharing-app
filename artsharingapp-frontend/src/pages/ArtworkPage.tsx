@@ -4,22 +4,48 @@ import { useArtwork } from "../hooks/useArtwork";
 import { PiDotsThreeOutlineVerticalFill } from "react-icons/pi";
 import { useLoggedInUser } from "../hooks/useLoggedInUser";
 import { MdEdit } from "react-icons/md";
-import { useState } from "react";
+import { IoMdHeartEmpty, IoMdHeart } from "react-icons/io";
+import { useEffect, useState } from "react";
+import { dislikeArtwork, likeArtwork } from "../services/artwork";
+import { useParams } from "react-router-dom";
 
 const ArtworkPage = () => {
+  const { artworkId } = useParams();
+
   const [isEditing, setIsEditing] = useState<boolean>(false);
+  const [isLiked, setIsLiked] = useState<boolean>(false);
   const fallbackImage =
     "https://cdn.shopify.com/s/files/1/0047/4231/6066/files/The_Scream_by_Edvard_Munch_1893_800x.png";
   // "https://www.theartist.me/wp-content/uploads/2021/02/famous-micheal-angeleo-paintings.jpg";
   // "https://upload.wikimedia.org/wikipedia/commons/a/a3/Image-not-found.png?20210521171500";
 
-  const { artwork } = useArtwork(10);
+  const { artwork } = useArtwork(artworkId ? parseInt(artworkId) : -1);
   const { loggedInUser } = useLoggedInUser();
+
+  const [imgSrc, setImgSrc] = useState<string>("");
+
+  useEffect(() => {
+    if (artwork?.image) {
+      setImgSrc(artwork.image);
+    }
+    if (artwork?.isLikedByLoggedInUser) {
+      setIsLiked(artwork.isLikedByLoggedInUser);
+    }
+  }, [artwork]);
 
   return (
     <div className="artwork-page fixed-page">
       <div className="ap-image-container">
-        <img src={fallbackImage} alt="artwork image" className="ap-image" />
+        {imgSrc ? (
+          <img
+            src={imgSrc}
+            alt={artwork?.title || "artwork image"}
+            className="ap-image"
+            onError={() => setImgSrc(fallbackImage)}
+          />
+        ) : (
+          <div className="ap-image ap-image-placeholder skeleton"></div>
+        )}
       </div>
 
       <div className="ap-info">
@@ -27,6 +53,31 @@ const ArtworkPage = () => {
           <h1 className="ap-title">{artwork?.title || "Artwork Title"}</h1>
           <div className="ap-info-header-right-group">
             {artwork?.isOnSale && <div className="ap-on-sale">ON SALE</div>}
+
+            {isLiked ? (
+              <IoMdHeart
+                className="ap-info-header-icon"
+                id="ap-liked-artwork-icon"
+                title="Dislike"
+                onClick={async () => {
+                  if (artwork) {
+                    await dislikeArtwork(artwork.id);
+                    setIsLiked(false);
+                  }
+                }}
+              />
+            ) : (
+              <IoMdHeartEmpty
+                className="ap-info-header-icon"
+                title="Like"
+                onClick={async () => {
+                  if (artwork) {
+                    setIsLiked(await likeArtwork(artwork.id));
+                  }
+                }}
+              />
+            )}
+
             {artwork?.postedByUserId === loggedInUser?.id && (
               <div className="ap-info-header-right-group">
                 <MdEdit
