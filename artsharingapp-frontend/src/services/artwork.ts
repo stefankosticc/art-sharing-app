@@ -1,6 +1,4 @@
-import axios, { AxiosError } from "axios";
-
-const API_BASE_URL = "http://localhost:5125/api";
+import authAxios from "./authAxios";
 
 export interface ArtworkCardData {
   id: number;
@@ -40,52 +38,25 @@ export interface Artwork {
 }
 
 export async function getMyArtworks(): Promise<ArtworkCardData[]> {
-  var accessToken = localStorage.getItem("accessToken");
-  const response = await axios.get(`${API_BASE_URL}/artworks/mine`, {
-    headers: {
-      Authorization: `Bearer ${accessToken}`,
-    },
-  });
+  const response = await authAxios.get(`/artworks/mine`);
   return response.data;
 }
 
 export async function getFavoriteArtworks(
   userId: number
 ): Promise<FavoriteArtwork[]> {
-  var accessToken = localStorage.getItem("accessToken");
-  const response = await axios.get(
-    `${API_BASE_URL}/user/${userId}/liked-artworks`,
-    {
-      headers: {
-        Authorization: `Bearer ${accessToken}`,
-      },
-    }
-  );
+  const response = await authAxios.get(`/user/${userId}/liked-artworks`);
   return response.data;
 }
 
 export async function getArtwork(artworkId: number): Promise<Artwork> {
-  var accessToken = localStorage.getItem("accessToken");
-  const response = await axios.get(`${API_BASE_URL}/artwork/${artworkId}`, {
-    headers: {
-      Authorization: `Bearer ${accessToken}`,
-    },
-  });
+  const response = await authAxios.get(`/artwork/${artworkId}`);
   return response.data;
 }
 
 export async function likeArtwork(artworkId: number): Promise<boolean> {
-  var accessToken = localStorage.getItem("accessToken");
   try {
-    await axios.post(
-      `${API_BASE_URL}/artwork/${artworkId}/like`,
-      {},
-      {
-        headers: {
-          Authorization: `Bearer ${accessToken}`,
-        },
-      }
-    );
+    await authAxios.post(`/artwork/${artworkId}/like`);
     return true;
   } catch (error: any) {
     const message =
@@ -98,13 +69,8 @@ export async function likeArtwork(artworkId: number): Promise<boolean> {
 }
 
 export async function dislikeArtwork(artworkId: number): Promise<void> {
-  var accessToken = localStorage.getItem("accessToken");
   try {
-    await axios.delete(`${API_BASE_URL}/artwork/${artworkId}/dislike`, {
-      headers: {
-        Authorization: `Bearer ${accessToken}`,
-      },
-    });
+    await authAxios.delete(`/artwork/${artworkId}/dislike`);
   } catch (error: any) {
     const message =
       error?.response?.data?.error ||
