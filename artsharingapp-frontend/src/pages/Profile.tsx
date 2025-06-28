@@ -6,6 +6,9 @@ import ArtworkCard from "../components/ArtworkCard";
 import { ArtworkCardData, getMyArtworks } from "../services/artwork";
 import { useFavoriteArtworks } from "../hooks/useFavoriteArtworks";
 import Dock from "../components/Dock";
+import TextEditor from "../components/TextEditor";
+import { MdEdit } from "react-icons/md";
+import { updateUserBiography } from "../services/user";
 
 const TABS: {
   key: string;
@@ -20,6 +23,8 @@ const Profile = () => {
   const [activeTab, setActiveTab] = useState<string>("artworks");
   const [artworks, setArtworks] = useState<ArtworkCardData[] | null>(null);
   const [loadingArtwork, setLoadingArtwork] = useState<boolean>(true);
+  const [isEditingBiography, setIsEditingBiography] = useState<boolean>(false);
+  const [biography, setBiography] = useState<string>("");
 
   const { loggedInUser, loading, error } = useLoggedInUser();
 
@@ -37,6 +42,10 @@ const Profile = () => {
 
     fetchArtworks();
   }, []);
+
+  useEffect(() => {
+    setBiography(loggedInUser?.biography || "");
+  }, [loggedInUser]);
 
   const { favorites, loadingFavorites } = useFavoriteArtworks({
     likedByUser: loggedInUser,
@@ -113,6 +122,7 @@ const Profile = () => {
               className={`profile-tab${activeTab === tab.key ? " active" : ""}`}
               onClick={() => setActiveTab(tab.key)}
               type="button"
+              title={tab.label + " tab"}
             >
               {tab.label}
             </button>
@@ -171,15 +181,61 @@ const Profile = () => {
             activeTab === "biography" ? " active" : ""
           }`}
         >
-          {loggedInUser?.biography ? (
-            <p className="profile-content-biography">
-              {loggedInUser.biography}
-            </p>
+          {biography || isEditingBiography ? (
+            <div className="biography-container">
+              <TextEditor
+                content={biography}
+                editable={isEditingBiography}
+                className={`profile-content-biography ${
+                  isEditingBiography ? "text-editor-editing" : ""
+                }`}
+                onUpdate={({ editor }) => {
+                  if (isEditingBiography) setBiography(editor.getHTML());
+                }}
+              />
+              <MdEdit
+                className="biography-edit-icon"
+                onClick={() => setIsEditingBiography(!isEditingBiography)}
+                title="Edit"
+              />
+            </div>
           ) : (
             <p className="profile-content-text not-found">
               You haven't added a biography yet. <br />
-              You can add your biography here.
+              To add one, click the "Edit" button below. <br />
+              <button
+                className="biography-editing-button"
+                onClick={() => setIsEditingBiography(true)}
+              >
+                Edit
+              </button>
             </p>
+          )}
+          {isEditingBiography && (
+            <div className="biography-buttons-container">
+              <button
+                className="biography-editing-button"
+                id="biography-cancel-button"
+                onClick={() => {
+                  setBiography(loggedInUser?.biography || "");
+                  setIsEditingBiography(false);
+                }}
+                title="Cancel"
+              >
+                Cancel
+              </button>
+              <button
+                className="biography-editing-button"
+                id="biography-save-button"
+                onClick={async () => {
+                  await updateUserBiography({ biography });
+                  setIsEditingBiography(false);
+                }}
+                title="Save changes"
+              >
+                Save
+              </button>
+            </div>
           )}
         </div>
       </div>

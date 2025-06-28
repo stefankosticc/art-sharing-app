@@ -32,4 +32,10 @@ public class UserRepository : GenericRepository<User>,IUserRepository
     {
         return await _dbSet.Include(u => u.Role).Where(u => u.Name.ToLower().Contains(name.ToLower())).ToListAsync();
     }
+
+    public void UpdateBiography(User user)
+    {
+        _context.Attach(user);
+        _context.Entry(user).Property(u => u.Biography).IsModified = true;
+    }
 }

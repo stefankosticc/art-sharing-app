@@ -39,8 +39,13 @@ public class UserRegisterDTO
     public string Password { get; set; }
 }
 
-public class LoggedInUserDTO : UserResponseDTO 
+public class LoggedInUserDTO : UserResponseDTO
 {
     public int FollowersCount { get; set; }
     public int FollowingCount { get; set; }
+}
+
+public class UpdateUserBiographyRequestDTO
+{
+    public string Biography { get; set; }
 }
