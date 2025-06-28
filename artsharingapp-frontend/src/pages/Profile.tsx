@@ -181,7 +181,8 @@ const Profile = () => {
             activeTab === "biography" ? " active" : ""
           }`}
         >
-          {biography || isEditingBiography ? (
+          {(biography !== "" && biography !== "<p></p>") ||
+          isEditingBiography ? (
             <div className="biography-container">
               <TextEditor
                 content={biography}
