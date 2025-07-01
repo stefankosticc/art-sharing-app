@@ -15,6 +15,7 @@ import {
 } from "../services/artwork";
 import { useNavigate, useParams } from "react-router-dom";
 import TextEditor from "../components/TextEditor";
+import { get } from "http";
 
 type ArtworkPageProps = {
   isNew?: boolean;
