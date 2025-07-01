@@ -13,7 +13,7 @@ public class ArtworkResponseDTO
     public bool IsPrivate { get; set; }
     public bool IsOnSale { get; set; }
     public int CreatedByArtistId { get; set; }
-    public string CreatedByArtistName { get; set; }
+    public string CreatedByArtistUserName { get; set; }
     public int PostedByUserId { get; set; }
     public string PostedByUserName { get; set; }
     public int? CityId { get; set; }

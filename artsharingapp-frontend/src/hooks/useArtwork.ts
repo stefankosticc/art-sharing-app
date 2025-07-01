@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { Artwork, getArtwork } from "../services/artwork";
 
-export const useArtwork = (artworkId: number) => {
+export const useArtwork = (artworkId: number, refetch: boolean = false) => {
   const [artwork, setArtwork] = useState<Artwork | null>(null);
   const [loadingArtwork, setLoadingArtwork] = useState<boolean>(false);
 
@@ -32,7 +32,7 @@ export const useArtwork = (artworkId: number) => {
     return () => {
       isCancelled = true;
     };
-  }, [artworkId]);
+  }, [artworkId, refetch]);
 
   return { artwork, loadingArtwork };
 };

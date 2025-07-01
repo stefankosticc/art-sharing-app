@@ -8,27 +8,15 @@ import { LuHeading1, LuHeading2 } from "react-icons/lu";
 import { FiBold, FiItalic } from "react-icons/fi";
 import { TbLetterT } from "react-icons/tb";
 import { IoIosColorPalette, IoIosList } from "react-icons/io";
-import { useEffect } from "react";
+import { useEffect, useMemo } from "react";
 import { Editor } from "@tiptap/react";
-
-const extensions = [
-  StarterKit.configure({
-    heading: {
-      levels: [1, 2],
-    },
-  }),
-  Placeholder.configure({
-    placeholder: "Start typing here...",
-  }),
-  TextStyle,
-  Color,
-];
 
 type TextEditorProps = {
   content?: string;
   editable?: boolean;
   className?: string;
   onUpdate?: (props: { editor: Editor }) => void;
+  disableHeadings?: boolean;
 };
 
 const TextEditor = ({
@@ -36,7 +24,22 @@ const TextEditor = ({
   editable = true,
   className = "",
   onUpdate,
+  disableHeadings = false,
 }: TextEditorProps) => {
+  const extensions = useMemo(
+    () => [
+      StarterKit.configure({
+        heading: disableHeadings ? false : { levels: [1, 2] },
+      }),
+      Placeholder.configure({
+        placeholder: "Start typing here...",
+      }),
+      TextStyle,
+      Color,
+    ],
+    [disableHeadings]
+  );
+
   const editor = useEditor({
     extensions,
     content,
@@ -55,6 +58,12 @@ const TextEditor = ({
     }
   }, [editable]);
 
+  useEffect(() => {
+    if (editor && content !== editor.getHTML()) {
+      editor.commands.setContent(content || "", false);
+    }
+  }, [content, editor]);
+
   if (!editor) {
     return null;
   }
@@ -64,30 +73,32 @@ const TextEditor = ({
       <EditorContent editor={editor} />
       <BubbleMenu editor={editor}>
         <div className="bubble-menu">
-          <button
-            onClick={() => {
-              editor.chain().focus().unsetAllMarks().run();
-              editor.commands.toggleHeading({ level: 1 });
-            }}
-            className={
-              editor.isActive("heading", { level: 1 }) ? "is-active" : ""
-            }
-          >
-            <LuHeading1 />
-          </button>
-
-          <button
-            onClick={() => {
-              editor.chain().focus().unsetAllMarks().run();
-              editor.commands.toggleHeading({ level: 2 });
-            }}
-            className={
-              editor.isActive("heading", { level: 2 }) ? "is-active" : ""
-            }
-          >
-            <LuHeading2 />
-          </button>
-
+          {!disableHeadings && (
+            <>
+              <button
+                onClick={() => {
+                  editor.chain().focus().unsetAllMarks().run();
+                  editor.commands.toggleHeading({ level: 1 });
+                }}
+                className={
+                  editor.isActive("heading", { level: 1 }) ? "is-active" : ""
+                }
+              >
+                <LuHeading1 />
+              </button>
+              <button
+                onClick={() => {
+                  editor.chain().focus().unsetAllMarks().run();
+                  editor.commands.toggleHeading({ level: 2 });
+                }}
+                className={
+                  editor.isActive("heading", { level: 2 }) ? "is-active" : ""
+                }
+              >
+                <LuHeading2 />
+              </button>
+            </>
+          )}
           <button
             onClick={() => {
               editor.chain().focus().unsetAllMarks().run();

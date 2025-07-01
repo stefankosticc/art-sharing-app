@@ -6,23 +6,47 @@ import { useLoggedInUser } from "../hooks/useLoggedInUser";
 import { MdEdit } from "react-icons/md";
 import { IoMdHeartEmpty, IoMdHeart } from "react-icons/io";
 import { useEffect, useState } from "react";
-import { dislikeArtwork, likeArtwork } from "../services/artwork";
+import {
+  ArtworkRequest,
+  dislikeArtwork,
+  likeArtwork,
+  updateArtwork,
+} from "../services/artwork";
 import { useParams } from "react-router-dom";
+import TextEditor from "../components/TextEditor";
 
 const ArtworkPage = () => {
   const { artworkId } = useParams();
 
   const [isEditing, setIsEditing] = useState<boolean>(false);
   const [isLiked, setIsLiked] = useState<boolean>(false);
+
   const fallbackImage =
     "https://cdn.shopify.com/s/files/1/0047/4231/6066/files/The_Scream_by_Edvard_Munch_1893_800x.png";
   // "https://www.theartist.me/wp-content/uploads/2021/02/famous-micheal-angeleo-paintings.jpg";
   // "https://upload.wikimedia.org/wikipedia/commons/a/a3/Image-not-found.png?20210521171500";
 
-  const { artwork } = useArtwork(artworkId ? parseInt(artworkId) : -1);
+  const [refetchArtwork, setRefetchArtwork] = useState<boolean>(false);
+  const { artwork } = useArtwork(
+    artworkId ? parseInt(artworkId) : -1,
+    refetchArtwork
+  );
   const { loggedInUser } = useLoggedInUser();
 
   const [imgSrc, setImgSrc] = useState<string>("");
+
+  const [editingArtworkData, setEditingArtworkData] = useState<ArtworkRequest>({
+    title: "",
+    story: "",
+    image: "",
+    date: new Date(),
+    tipsAndTricks: "",
+    isPrivate: false,
+    createdByArtistId: 0,
+    postedByUserId: 0,
+    cityId: null,
+    galleryId: null,
+  });
 
   useEffect(() => {
     if (artwork?.image) {
@@ -32,6 +56,80 @@ const ArtworkPage = () => {
       setIsLiked(artwork.isLikedByLoggedInUser);
     }
   }, [artwork]);
+
+  useEffect(() => {
+    if (isEditing && artwork) {
+      setEditingArtworkData({
+        title: artwork.title || "",
+        story: artwork.story || "",
+        image: artwork.image || "",
+        date: artwork.date || new Date(),
+        tipsAndTricks: artwork.tipsAndTricks || "",
+        isPrivate: artwork.isPrivate || false,
+        createdByArtistId: artwork.createdByArtistId || -1,
+        postedByUserId: artwork.postedByUserId || -1,
+        cityId: artwork.cityId || null,
+        galleryId: artwork.galleryId || null,
+      });
+    }
+  }, [isEditing, artwork]);
+
+  const handleInputChange = (
+    e: React.ChangeEvent<HTMLTextAreaElement | HTMLInputElement>
+  ) => {
+    const { name, value } = e.target;
+    setEditingArtworkData((prev) => ({ ...prev, [name]: value }));
+  };
+
+  const handleStoryChange = ({ editor }: { editor: any }) => {
+    setEditingArtworkData((prev) => ({
+      ...prev,
+      story: editor.getHTML(),
+    }));
+  };
+
+  const handleTipsChange = ({ editor }: { editor: any }) => {
+    setEditingArtworkData((prev) => ({
+      ...prev,
+      tipsAndTricks: editor.getHTML(),
+    }));
+  };
+
+  const handleCancelEdit = () => {
+    setIsEditing(false);
+    if (artwork) {
+      setEditingArtworkData({
+        title: artwork.title || "",
+        story: artwork.story || "",
+        image: artwork.image || "",
+        date: artwork.date || new Date(),
+        tipsAndTricks: artwork.tipsAndTricks || "",
+        isPrivate: artwork.isPrivate || false,
+        createdByArtistId: artwork.createdByArtistId || 0,
+        postedByUserId: artwork.postedByUserId || 0,
+        cityId: artwork.cityId || null,
+        galleryId: artwork.galleryId || null,
+      });
+    }
+  };
+
+  const handleSaveEdit = async () => {
+    if (!editingArtworkData.title.trim()) {
+      alert("Title is required.");
+      return;
+    }
+
+    if (editingArtworkData.title.length > 100) {
+      alert("Title must be under 100 characters.");
+      return;
+    }
+
+    if (artwork) {
+      await updateArtwork(artwork.id, editingArtworkData);
+      setRefetchArtwork(!refetchArtwork);
+      setIsEditing(false);
+    }
+  };
 
   return (
     <div className="artwork-page fixed-page">
@@ -50,7 +148,18 @@ const ArtworkPage = () => {
 
       <div className="ap-info">
         <div className="ap-info-header">
-          <h1 className="ap-title">{artwork?.title || "Artwork Title"}</h1>
+          {isEditing ? (
+            <textarea
+              className="ap-title ap-title-editing"
+              name="title"
+              value={editingArtworkData.title}
+              onChange={handleInputChange}
+              rows={1}
+              maxLength={100}
+            />
+          ) : (
+            <h1 className="ap-title">{artwork?.title || ""}</h1>
+          )}
           <div className="ap-info-header-right-group">
             {artwork?.isOnSale && <div className="ap-on-sale">ON SALE</div>}
 
@@ -99,7 +208,7 @@ const ArtworkPage = () => {
           <div className="ap-date">
             <p className="ap-details-label">DATE</p>
             <p className="ap-details-text">
-              {artwork?.date.toString() || "XX-XX-XXXX"}
+              {artwork?.date?.toString() || "-"}
             </p>
           </div>
           <div className="ap-user-profile">
@@ -110,7 +219,11 @@ const ArtworkPage = () => {
                 alt="Default profile picture"
                 className="ap-user-profile-picture"
               />
-              <span className="ap-details-text">@createdby</span>
+              <span className="ap-details-text">
+                {artwork?.createdByArtistUserName
+                  ? "@" + artwork.createdByArtistUserName
+                  : "-"}
+              </span>
             </div>
           </div>
           <div className="ap-user-profile">
@@ -121,92 +234,66 @@ const ArtworkPage = () => {
                 alt="Default profile picture"
                 className="ap-user-profile-picture"
               />
-              <span className="ap-details-text">@postedby</span>
+              <span className="ap-details-text">
+                {artwork?.postedByUserName
+                  ? "@" + artwork.postedByUserName
+                  : "-"}
+              </span>
             </div>
           </div>
         </div>
 
-        <p className="ap-story">
-          Lorem ipsum dolor sit amet consectetur adipisicing elit. Nisi deleniti
-          vel expedita tenetur nulla explicabo in dolorem laudantium nam veniam
-          voluptates, libero vero quia laboriosam cupiditate eius illo!
-          Dignissimos, neque. Iure enim sunt quia, facere magnam mollitia minima
-          hic, doloremque saepe doloribus tenetur quasi soluta corporis eius.
-          Doloremque exercitationem architecto, consequatur provident labore
-          laboriosam veritatis libero nesciunt, blanditiis atque ad! Distinctio
-          repellendus mollitia suscipit ipsum voluptas magni repellat aut esse
-          excepturi dicta voluptatibus, iste in voluptate doloribus cum, eum
-          accusamus. <br />
-          Tempore fugiat, ex aspernatur iste molestias unde amet eos qui.
-          Placeat quae ducimus delectus tempora officia porro maiores iusto est
-          omnis provident, quis commodi, quos sequi sed laboriosam! Minima ut
-          reiciendis cum aut consequuntur assumenda libero hic nam mollitia
-          earum. Quis optio suscipit libero maxime debitis distinctio accusamus
-          veritatis vero, qui dolore consequatur saepe, illum itaque expedita
-          deserunt. Similique, aperiam molestias doloremque esse est
-          perspiciatis harum in placeat totam quis! <br />
-          Recusandae, sint fugiat voluptatem adipisci facilis eligendi dolores
-          possimus, inventore distinctio error, reprehenderit quaerat suscipit
-          laborum ea blanditiis eaque ducimus dolorem architecto saepe ipsa
-          dignissimos. Laborum porro doloremque distinctio consequuntur.
-          Mollitia, illo iste consectetur blanditiis qui cumque quo sed harum
-          repudiandae, consequuntur sit doloribus ratione eveniet sunt
-          reiciendis eum repellendus similique quod fugit commodi!br At hic iure
-          blanditiis debitis sint. <br />
-          Error, doloribus impedit sapiente, dicta nostrum obcaecati vitae
-          laboriosam libero nemo dolores tempora sed nisi, corporis delectus.
-          Minus sunt dignissimos assumenda quidem repellendus rerum possimus
-          quod sequi. Cupiditate, amet quia. Nam pariatur voluptatum natus quam
-          harum quisquam, quibusdam praesentium temporibus necessitatibus.
-          Deserunt repellat sequi, non placeat modi officiis! Ipsa perspiciatis
-          placeat culpa labore eos magni! <br /> Commodi necessitatibus
-          reprehenderit non eligendi. Maxime, deserunt natus animi excepturi
-          suscipit nam iste sapiente molestiae, fugiat mollitia tenetur adipisci
-          quos voluptatibus! Nemo, quis rem! Aut expedita delectus a nihil
-          accusamus quam, similique repudiandae eius. Nemo?
-        </p>
-        <div className="ap-tips-and-tricks">
-          <h3>Tips and Tricks</h3>
-          Lorem ipsum, dolor sit amet consectetur adipisicing elit. Asperiores
-          eum sed optio. Molestias ullam numquam inventore quibusdam accusamus
-          voluptatum omnis eum possimus laborum repudiandae quam officia
-          consequatur, alias quod repellendus. Illum quae fuga recusandae
-          officiis sed omnis error eveniet, neque sit facere repudiandae illo id
-          doloribus praesentium sint aliquid?
-          <br /> Incidunt alias beatae repellendus ea dolor provident ab
-          voluptatum necessitatibus saepe? Laborum incidunt vitae maiores nisi
-          laudantium ab ipsam quidem voluptates non omnis! Repellat id, commodi,
-          animi maiores totam illum ex, assumenda consequatur sunt alias quia
-          nam quas odit soluta dicta. Praesentium earum non laboriosam inventore
-          voluptates. <br /> Distinctio, ullam aperiam. Aliquam eaque aperiam
-          ipsa eveniet magnam vero explicabo magni veritatis voluptas, earum
-          inventore, fugit provident itaque rem commodi omnis molestias
-          adipisci. Lorem ipsum, dolor sit amet consectetur adipisicing elit.
-          Asperiores eum sed optio. Molestias ullam numquam inventore quibusdam
-          accusamus voluptatum omnis eum possimus laborum repudiandae quam
-          officia consequatur, alias quod repellendus. Illum quae fuga
-          recusandae officiis sed omnis error eveniet, neque sit facere
-          repudiandae illo id doloribus praesentium sint aliquid?
-          <br /> Incidunt alias beatae repellendus ea dolor provident ab
-          voluptatum necessitatibus saepe? Laborum incidunt vitae maiores nisi
-          laudantium ab ipsam quidem voluptates non omnis! Repellat id, commodi,
-          animi maiores totam illum ex, assumenda consequatur sunt alias quia
-          nam quas odit soluta dicta. Praesentium earum non laboriosam inventore
-          voluptates. <br /> Distinctio, ullam aperiam. Aliquam eaque aperiam
-          ipsa eveniet magnam vero explicabo magni veritatis voluptas, earum
-          inventore, fugit provident itaque rem commodi omnis molestias
-          adipisci.
-        </div>
+        {((artwork?.story && artwork.story !== "<p></p>") || isEditing) && (
+          <div className="ap-story">
+            <h3>Story</h3>
+            <TextEditor
+              content={isEditing ? editingArtworkData.story : artwork?.story}
+              editable={isEditing}
+              className={`ap-text-editor ${
+                isEditing ? "text-editor-editing" : ""
+              }`}
+              onUpdate={isEditing ? handleStoryChange : undefined}
+              disableHeadings={true}
+            />
+          </div>
+        )}
+
+        {((artwork?.tipsAndTricks && artwork.tipsAndTricks !== "<p></p>") ||
+          isEditing) && (
+          <div className="ap-tips-and-tricks">
+            <h3>Tips and Tricks</h3>
+            <TextEditor
+              content={
+                isEditing
+                  ? editingArtworkData.tipsAndTricks
+                  : artwork?.tipsAndTricks
+              }
+              editable={isEditing}
+              className={`ap-text-editor ${
+                isEditing ? "text-editor-editing" : ""
+              }`}
+              onUpdate={isEditing ? handleTipsChange : undefined}
+              disableHeadings={true}
+            />
+          </div>
+        )}
 
         {isEditing && (
           <div className="ap-info-edit-btns">
             <button
-              onClick={() => setIsEditing(false)}
+              onClick={handleCancelEdit}
               className="ap-cancel-edit-btn"
+              type="button"
             >
               Cancel
             </button>
-            <button className="ap-save-edit-btn">Save</button>
+            <button
+              className="ap-save-edit-btn"
+              onClick={handleSaveEdit}
+              type="button"
+            >
+              Save
+            </button>
           </div>
         )}
       </div>

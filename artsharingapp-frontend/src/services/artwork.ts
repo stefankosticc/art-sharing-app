@@ -27,7 +27,7 @@ export interface Artwork {
   isPrivate: boolean;
   isOnSale: boolean;
   createdByArtistId: number;
-  createdByArtistName: string;
+  createdByArtistUserName: string;
   postedByUserId: number;
   postedByUserName: string;
   cityId: number | null;
@@ -35,6 +35,19 @@ export interface Artwork {
   galleryId: number | null;
   galleryName: string | null;
   isLikedByLoggedInUser: boolean | null;
+}
+
+export interface ArtworkRequest {
+  title: string;
+  story: string;
+  image: string;
+  date: Date;
+  tipsAndTricks: string;
+  isPrivate: boolean;
+  createdByArtistId: number;
+  postedByUserId: number;
+  cityId: number | null;
+  galleryId: number | null;
 }
 
 export async function getMyArtworks(): Promise<ArtworkCardData[]> {
@@ -76,6 +89,21 @@ export async function dislikeArtwork(artworkId: number): Promise<void> {
       error?.response?.data?.error ||
       error?.message ||
       "An unknown error occurred.";
+    console.error("Error:", message);
+  }
+}
+
+export async function updateArtwork(
+  artworkId: number,
+  request: ArtworkRequest
+): Promise<void> {
+  try {
+    await authAxios.put(`/artwork/${artworkId}`, request);
+  } catch (error: any) {
+    const message =
+      error?.response?.data?.error ||
+      error?.message ||
+      "An unknown error occurred while updating artwork.";
     console.error("Error:", message);
   }
 }
