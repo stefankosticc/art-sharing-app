@@ -9,6 +9,11 @@ export const useArtwork = (artworkId: number, refetch: boolean = false) => {
     let isCancelled = false;
 
     const fetchArtwork = async () => {
+      if (artworkId <= 0) {
+        setArtwork(null);
+        setLoadingArtwork(false);
+        return;
+      }
       try {
         setLoadingArtwork(true);
         const response = await getArtwork(artworkId);

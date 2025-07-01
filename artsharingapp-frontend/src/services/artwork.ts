@@ -41,7 +41,7 @@ export interface ArtworkRequest {
   title: string;
   story: string;
   image: string;
-  date: Date;
+  date: Date | string;
   tipsAndTricks: string;
   isPrivate: boolean;
   createdByArtistId: number;
@@ -104,6 +104,18 @@ export async function updateArtwork(
       error?.response?.data?.error ||
       error?.message ||
       "An unknown error occurred while updating artwork.";
+    console.error("Error:", message);
+  }
+}
+
+export async function addNewArtwork(artwork: ArtworkRequest): Promise<void> {
+  try {
+    await authAxios.post(`/artwork`, artwork);
+  } catch (error: any) {
+    const message =
+      error?.response?.data?.error ||
+      error?.message ||
+      "An unknown error occurred.";
     console.error("Error:", message);
   }
 }
