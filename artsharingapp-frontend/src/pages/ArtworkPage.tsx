@@ -7,63 +7,73 @@ import { MdEdit } from "react-icons/md";
 import { IoMdHeartEmpty, IoMdHeart } from "react-icons/io";
 import { useEffect, useState } from "react";
 import {
+  addNewArtwork,
   ArtworkRequest,
   dislikeArtwork,
   likeArtwork,
   updateArtwork,
 } from "../services/artwork";
-import { useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import TextEditor from "../components/TextEditor";
 
-const ArtworkPage = () => {
+type ArtworkPageProps = {
+  isNew?: boolean;
+};
+
+const fallbackImage =
+  "https://cdn.shopify.com/s/files/1/0047/4231/6066/files/The_Scream_by_Edvard_Munch_1893_800x.png";
+
+const getFormattedDateOnly = (date: Date): string => {
+  return date.toISOString().split("T")[0];
+};
+
+const getInitialArtworkData = (userId: number): ArtworkRequest => ({
+  title: "",
+  story: "",
+  image: "",
+  date: getFormattedDateOnly(new Date()),
+  tipsAndTricks: "",
+  isPrivate: false,
+  createdByArtistId: userId,
+  postedByUserId: userId,
+  cityId: null,
+  galleryId: null,
+});
+
+const ArtworkPage = ({ isNew = false }: ArtworkPageProps) => {
   const { artworkId } = useParams();
-
-  const [isEditing, setIsEditing] = useState<boolean>(false);
-  const [isLiked, setIsLiked] = useState<boolean>(false);
-
-  const fallbackImage =
-    "https://cdn.shopify.com/s/files/1/0047/4231/6066/files/The_Scream_by_Edvard_Munch_1893_800x.png";
-  // "https://www.theartist.me/wp-content/uploads/2021/02/famous-micheal-angeleo-paintings.jpg";
-  // "https://upload.wikimedia.org/wikipedia/commons/a/a3/Image-not-found.png?20210521171500";
-
-  const [refetchArtwork, setRefetchArtwork] = useState<boolean>(false);
-  const { artwork } = useArtwork(
-    artworkId ? parseInt(artworkId) : -1,
-    refetchArtwork
-  );
+  const navigate = useNavigate();
   const { loggedInUser } = useLoggedInUser();
 
+  const [isEditing, setIsEditing] = useState<boolean>(isNew);
+  const [isLiked, setIsLiked] = useState<boolean>(false);
   const [imgSrc, setImgSrc] = useState<string>("");
+  const [refetchArtwork, setRefetchArtwork] = useState<boolean>(false);
 
-  const [editingArtworkData, setEditingArtworkData] = useState<ArtworkRequest>({
-    title: "",
-    story: "",
-    image: "",
-    date: new Date(),
-    tipsAndTricks: "",
-    isPrivate: false,
-    createdByArtistId: 0,
-    postedByUserId: 0,
-    cityId: null,
-    galleryId: null,
-  });
+  // Fetch artwork if not new
+  const { artwork } = useArtwork(
+    !isNew && artworkId ? parseInt(artworkId) : -1,
+    refetchArtwork
+  );
+
+  const [editingArtworkData, setEditingArtworkData] = useState<ArtworkRequest>(
+    getInitialArtworkData(loggedInUser?.id ?? -1)
+  );
 
   useEffect(() => {
-    if (artwork?.image) {
-      setImgSrc(artwork.image);
-    }
-    if (artwork?.isLikedByLoggedInUser) {
+    if (artwork?.image) setImgSrc(artwork.image);
+    if (artwork?.isLikedByLoggedInUser)
       setIsLiked(artwork.isLikedByLoggedInUser);
-    }
   }, [artwork]);
 
+  // Populate editing data when entering edit mode or when artwork changes
   useEffect(() => {
-    if (isEditing && artwork) {
+    if (isEditing && artwork && !isNew) {
       setEditingArtworkData({
         title: artwork.title || "",
         story: artwork.story || "",
         image: artwork.image || "",
-        date: artwork.date || new Date(),
+        date: artwork.date || getFormattedDateOnly(new Date()),
         tipsAndTricks: artwork.tipsAndTricks || "",
         isPrivate: artwork.isPrivate || false,
         createdByArtistId: artwork.createdByArtistId || -1,
@@ -72,7 +82,17 @@ const ArtworkPage = () => {
         galleryId: artwork.galleryId || null,
       });
     }
-  }, [isEditing, artwork]);
+    if (isEditing && isNew) {
+      setEditingArtworkData(getInitialArtworkData(loggedInUser?.id ?? -1));
+    }
+  }, [isEditing, artwork, isNew, loggedInUser?.id]);
+
+  useEffect(() => {
+    if (isNew) {
+      setIsEditing(isNew);
+      setImgSrc("");
+    }
+  }, [isNew]);
 
   const handleInputChange = (
     e: React.ChangeEvent<HTMLTextAreaElement | HTMLInputElement>
@@ -97,37 +117,60 @@ const ArtworkPage = () => {
 
   const handleCancelEdit = () => {
     setIsEditing(false);
-    if (artwork) {
+    if (artwork && !isNew) {
       setEditingArtworkData({
         title: artwork.title || "",
         story: artwork.story || "",
         image: artwork.image || "",
-        date: artwork.date || new Date(),
+        date: artwork.date || getFormattedDateOnly(new Date()),
         tipsAndTricks: artwork.tipsAndTricks || "",
         isPrivate: artwork.isPrivate || false,
-        createdByArtistId: artwork.createdByArtistId || 0,
-        postedByUserId: artwork.postedByUserId || 0,
+        createdByArtistId: artwork.createdByArtistId || -1,
+        postedByUserId: artwork.postedByUserId || -1,
         cityId: artwork.cityId || null,
         galleryId: artwork.galleryId || null,
       });
+    } else if (isNew) {
+      navigate(-1);
     }
   };
 
-  const handleSaveEdit = async () => {
+  const handleSave = async () => {
     if (!editingArtworkData.title.trim()) {
       alert("Title is required.");
       return;
     }
-
     if (editingArtworkData.title.length > 100) {
       alert("Title must be under 100 characters.");
       return;
     }
 
-    if (artwork) {
+    if (isNew) {
+      await addNewArtwork({
+        ...editingArtworkData,
+        image: editingArtworkData.image || "new",
+        createdByArtistId: loggedInUser?.id ?? -1,
+        postedByUserId: loggedInUser?.id ?? -1,
+      });
+      navigate("/profile");
+    } else if (artwork) {
       await updateArtwork(artwork.id, editingArtworkData);
       setRefetchArtwork(!refetchArtwork);
       setIsEditing(false);
+    }
+  };
+
+  const handleLike = async () => {
+    if (artwork) {
+      const liked = await likeArtwork(artwork.id);
+      setIsLiked(liked);
+    }
+  };
+
+  const handleDislike = async () => {
+    if (artwork) {
+      await dislikeArtwork(artwork.id);
+      setIsLiked(false);
     }
   };
 
@@ -163,36 +206,28 @@ const ArtworkPage = () => {
           <div className="ap-info-header-right-group">
             {artwork?.isOnSale && <div className="ap-on-sale">ON SALE</div>}
 
-            {isLiked ? (
-              <IoMdHeart
-                className="ap-info-header-icon"
-                id="ap-liked-artwork-icon"
-                title="Dislike"
-                onClick={async () => {
-                  if (artwork) {
-                    await dislikeArtwork(artwork.id);
-                    setIsLiked(false);
-                  }
-                }}
-              />
-            ) : (
-              <IoMdHeartEmpty
-                className="ap-info-header-icon"
-                title="Like"
-                onClick={async () => {
-                  if (artwork) {
-                    setIsLiked(await likeArtwork(artwork.id));
-                  }
-                }}
-              />
-            )}
+            {!isNew &&
+              (isLiked ? (
+                <IoMdHeart
+                  className="ap-info-header-icon"
+                  id="ap-liked-artwork-icon"
+                  title="Dislike"
+                  onClick={handleDislike}
+                />
+              ) : (
+                <IoMdHeartEmpty
+                  className="ap-info-header-icon"
+                  title="Like"
+                  onClick={handleLike}
+                />
+              ))}
 
-            {artwork?.postedByUserId === loggedInUser?.id && (
+            {!isNew && artwork?.postedByUserId === loggedInUser?.id && (
               <div className="ap-info-header-right-group">
                 <MdEdit
                   className="ap-info-header-icon"
                   title="Edit"
-                  onClick={() => setIsEditing(!isEditing)}
+                  onClick={() => setIsEditing((prev) => !prev)}
                 />
                 <PiDotsThreeOutlineVerticalFill
                   className="ap-info-header-icon"
@@ -208,7 +243,8 @@ const ArtworkPage = () => {
           <div className="ap-date">
             <p className="ap-details-label">DATE</p>
             <p className="ap-details-text">
-              {artwork?.date?.toString() || "-"}
+              {artwork?.date?.toString() ||
+                (isEditing ? editingArtworkData.date.toString() : "-")}
             </p>
           </div>
           <div className="ap-user-profile">
@@ -222,6 +258,8 @@ const ArtworkPage = () => {
               <span className="ap-details-text">
                 {artwork?.createdByArtistUserName
                   ? "@" + artwork.createdByArtistUserName
+                  : isEditing && loggedInUser?.userName
+                  ? "@" + loggedInUser.userName
                   : "-"}
               </span>
             </div>
@@ -237,6 +275,8 @@ const ArtworkPage = () => {
               <span className="ap-details-text">
                 {artwork?.postedByUserName
                   ? "@" + artwork.postedByUserName
+                  : isEditing && loggedInUser?.userName
+                  ? "@" + loggedInUser.userName
                   : "-"}
               </span>
             </div>
@@ -289,7 +329,7 @@ const ArtworkPage = () => {
             </button>
             <button
               className="ap-save-edit-btn"
-              onClick={handleSaveEdit}
+              onClick={handleSave}
               type="button"
             >
               Save
@@ -297,7 +337,6 @@ const ArtworkPage = () => {
           </div>
         )}
       </div>
-
       <Dock />
     </div>
   );

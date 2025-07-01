@@ -25,6 +25,14 @@ function App() {
             }
           />
           <Route
+            path="/artwork/new"
+            element={
+              <PrivateRoute>
+                <ArtworkPage isNew />
+              </PrivateRoute>
+            }
+          />
+          <Route
             path="/artwork/:artworkId"
             element={
               <PrivateRoute>

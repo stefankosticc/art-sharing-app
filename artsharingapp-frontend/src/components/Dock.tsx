@@ -1,8 +1,8 @@
 import { FiSearch } from "react-icons/fi";
-import { FaMap, FaUser } from "react-icons/fa";
+import { FaMap, FaUser, FaPlusSquare } from "react-icons/fa";
 import { NavLink } from "react-router-dom";
 import "../styles/Dock.css";
-import { FaHouse, FaWindowMaximize } from "react-icons/fa6";
+import { FaWindowMaximize } from "react-icons/fa6";
 import { MdOutlineChatBubble } from "react-icons/md";
 import { IoNotifications } from "react-icons/io5";
 
@@ -24,8 +24,8 @@ const Dock = () => {
       <NavLink to={"/profile"} title="Profile">
         <FaUser />
       </NavLink>
-      <NavLink to={"/home"} title="Home">
-        <FaHouse />
+      <NavLink to={"/artwork/new"} title="New Artwork">
+        <FaPlusSquare />
       </NavLink>
       <NavLink to={"/chat"} title="Chat">
         <MdOutlineChatBubble />
