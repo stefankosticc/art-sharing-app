@@ -1,6 +1,4 @@
-import axios from "axios";
-
-const API_BASE_URL = "http://localhost:5125/api";
+import authAxios from "./authAxios";
 
 export interface ArtworkCardData {
   id: number;
@@ -19,27 +17,105 @@ export interface FavoriteArtwork {
   artworkImage: string | null;
 }
 
+export interface Artwork {
+  id: number;
+  title: string;
+  story: string;
+  image: string;
+  date: Date;
+  tipsAndTricks: string;
+  isPrivate: boolean;
+  isOnSale: boolean;
+  createdByArtistId: number;
+  createdByArtistUserName: string;
+  postedByUserId: number;
+  postedByUserName: string;
+  cityId: number | null;
+  cityName: string | null;
+  galleryId: number | null;
+  galleryName: string | null;
+  isLikedByLoggedInUser: boolean | null;
+}
+
+export interface ArtworkRequest {
+  title: string;
+  story: string;
+  image: string;
+  date: Date | string;
+  tipsAndTricks: string;
+  isPrivate: boolean;
+  createdByArtistId: number;
+  postedByUserId: number;
+  cityId: number | null;
+  galleryId: number | null;
+}
+
 export async function getMyArtworks(): Promise<ArtworkCardData[]> {
-  var accessToken = localStorage.getItem("accessToken");
-  const response = await axios.get(`${API_BASE_URL}/artworks/mine`, {
-    headers: {
-      Authorization: `Bearer ${accessToken}`,
-    },
-  });
+  const response = await authAxios.get(`/artworks/mine`);
   return response.data;
 }
 
 export async function getFavoriteArtworks(
   userId: number
 ): Promise<FavoriteArtwork[]> {
-  var accessToken = localStorage.getItem("accessToken");
-  const response = await axios.get(
-    `${API_BASE_URL}/user/${userId}/liked-artworks`,
-    {
-      headers: {
-        Authorization: `Bearer ${accessToken}`,
-      },
-    }
-  );
+  const response = await authAxios.get(`/user/${userId}/liked-artworks`);
   return response.data;
+}
+
+export async function getArtwork(artworkId: number): Promise<Artwork> {
+  const response = await authAxios.get(`/artwork/${artworkId}`);
+  return response.data;
+}
+
+export async function likeArtwork(artworkId: number): Promise<boolean> {
+  try {
+    await authAxios.post(`/artwork/${artworkId}/like`);
+    return true;
+  } catch (error: any) {
+    const message =
+      error?.response?.data?.error ||
+      error?.message ||
+      "An unknown error occurred.";
+    console.error("Error:", message);
+    return false;
+  }
+}
+
+export async function dislikeArtwork(artworkId: number): Promise<void> {
+  try {
+    await authAxios.delete(`/artwork/${artworkId}/dislike`);
+  } catch (error: any) {
+    const message =
+      error?.response?.data?.error ||
+      error?.message ||
+      "An unknown error occurred.";
+    console.error("Error:", message);
+  }
+}
+
+export async function updateArtwork(
+  artworkId: number,
+  request: ArtworkRequest
+): Promise<void> {
+  try {
+    await authAxios.put(`/artwork/${artworkId}`, request);
+  } catch (error: any) {
+    const message =
+      error?.response?.data?.error ||
+      error?.message ||
+      "An unknown error occurred while updating artwork.";
+    console.error("Error:", message);
+  }
+}
+
+export async function addNewArtwork(artwork: ArtworkRequest): Promise<void> {
+  try {
+    await authAxios.post(`/artwork`, artwork);
+  } catch (error: any) {
+    const message =
+      error?.response?.data?.error ||
+      error?.message ||
+      "An unknown error occurred.";
+    console.error("Error:", message);
+  }
 }

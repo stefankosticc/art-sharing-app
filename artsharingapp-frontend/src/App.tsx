@@ -5,7 +5,8 @@ import Login from "./pages/Login";
 import SignUp from "./pages/SignUp";
 import PrivateRoute from "./components/PrivateRoute";
 import Profile from "./pages/Profile";
-import Loading from "./pages/Loading";
+import ArtworkPage from "./pages/ArtworkPage";
+import NotFound from "./pages/NotFound";
 
 function App() {
   return (
@@ -23,7 +24,23 @@ function App() {
               </PrivateRoute>
             }
           />
-          <Route path="*" element={<LandingPage />} />
+          <Route
+            path="/artwork/new"
+            element={
+              <PrivateRoute>
+                <ArtworkPage isNew />
+              </PrivateRoute>
+            }
+          />
+          <Route
+            path="/artwork/:artworkId"
+            element={
+              <PrivateRoute>
+                <ArtworkPage />
+              </PrivateRoute>
+            }
+          />
+          <Route path="*" element={<NotFound />} />
         </Routes>
       </div>
     </BrowserRouter>

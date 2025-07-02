@@ -9,5 +9,6 @@ namespace ArtSharingApp.Backend.Service.ServiceInterface
         Task<UserResponseDTO?> GetUserByIdAsync(int id);
         Task<IEnumerable<UserResponseDTO>> GetAllUsersAsync();
         Task DeleteAsync(int id);
+        Task UpdateUserBiographyAsync(int userId, string biography);
     }
 }

@@ -58,4 +58,14 @@ public class UserService : IUserService
         await _userRepository.DeleteAsync(id);
         await _userRepository.SaveAsync();
     }
+
+    public async Task UpdateUserBiographyAsync(int userId, string biography)
+    {
+        var user = await _userRepository.GetByIdAsync(userId);
+        if (user == null)
+            throw new NotFoundException($"User with id {userId} not found.");
+        user.Biography = biography;
+        _userRepository.UpdateBiography(user);
+        await _userRepository.SaveAsync();
+    }
 }

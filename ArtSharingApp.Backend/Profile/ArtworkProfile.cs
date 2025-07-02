@@ -8,8 +8,8 @@ public class ArtworkProfile : AutoMapper.Profile
     public ArtworkProfile()
     {
         CreateMap<Artwork, ArtworkResponseDTO>()
-            .ForMember(dest => dest.CreatedByArtistName, opt => 
-                opt.MapFrom(src => src.CreatedByArtist != null ? src.CreatedByArtist.Name : null))
+            .ForMember(dest => dest.CreatedByArtistUserName, opt => 
+                opt.MapFrom(src => src.CreatedByArtist != null ? src.CreatedByArtist.UserName : null))
             .ForMember(dest => dest.PostedByUserName, opt =>
                 opt.MapFrom(src => src.PostedByUser != null ? src.PostedByUser.UserName : null))
             .ForMember(dest => dest.CityName, opt => 

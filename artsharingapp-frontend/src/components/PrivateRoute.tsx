@@ -2,6 +2,7 @@ import { JSX, useEffect, useState } from "react";
 import { Navigate } from "react-router-dom";
 import axios from "axios";
 import Loading from "../pages/Loading";
+import authAxios from "../services/authAxios";
 
 function PrivateRoute({ children }: { children: JSX.Element }) {
   const [auth, setAuth] = useState<boolean | null>(null);
@@ -10,12 +11,8 @@ function PrivateRoute({ children }: { children: JSX.Element }) {
   useEffect(() => {
     const accessToken = localStorage.getItem("accessToken");
     if (accessToken) {
-      axios
-        .get("http://localhost:5125/api/auth/loggedin-user", {
-          headers: {
-            Authorization: `Bearer ${accessToken}`,
-          },
-        })
+      authAxios
+        .get("/auth/loggedin-user")
         .then(() => {
           setAuth(true);
           // TODO: DELETE DELAYS LATER

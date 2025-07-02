@@ -11,14 +11,16 @@ public class ArtworkResponseDTO
     public DateOnly Date { get; set; }
     public string TipsAndTricks { get; set; }
     public bool IsPrivate { get; set; }
+    public bool IsOnSale { get; set; }
     public int CreatedByArtistId { get; set; }
-    public string CreatedByArtistName { get; set; }
+    public string CreatedByArtistUserName { get; set; }
     public int PostedByUserId { get; set; }
     public string PostedByUserName { get; set; }
     public int? CityId { get; set; }
     public string? CityName { get; set; }
     public int? GalleryId { get; set; }
     public string? GalleryName { get; set; }
+    public bool? IsLikedByLoggedInUser { get; set; }
 }
 
 public class ArtworkRequestDTO

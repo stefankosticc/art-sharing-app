@@ -118,8 +118,66 @@
     text-align: center;
 }
 
+.biography-editing-button {
+    background-color: var(--gray-light);
+    color: var(--black);
+    border: none;
+    padding: 0.2rem 1rem;
+    border-radius: 1rem;
+    cursor: pointer;
+    margin-top: 0.8rem;
+    width: fit-content;
+}
+
+.biography-editing-button:hover {
+    background-color: var(--cyan);
+}
+
+.biography-buttons-container {
+    display: flex;
+    justify-content: end;
+    margin-top: 0.4rem;
+    margin-right: 1rem;
+    gap: 0.5rem;
+}
+
+#biography-save-button,
+#biography-cancel-button {
+    font-weight: bold;
+    padding: 0.4rem 0.6rem;
+    font-weight: bold;
+    border-radius: 0.2rem;
+    width: 10%;
+}
+
+#biography-save-button {
+    background-color: var(--purple);
+}
+
+#biography-cancel-button:hover {
+    background-color: var(--gray-light);
+}
+
 .profile-content-biography {
     height: 100%;
+}
+
+.biography-container {
+    position: relative;
+}
+
+.biography-edit-icon {
+    display: none;
+    color: var(--gray-light);
+    cursor: pointer;
+    font-size: 1.2rem;
+    position: absolute;
+    top: 0.5rem;
+    right: 0.5rem;
+}
+
+.biography-container:hover .biography-edit-icon {
+    display: block;
 }
 
 .skeleton {

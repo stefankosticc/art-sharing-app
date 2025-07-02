@@ -1,4 +1,5 @@
 import axios from "axios";
+import authAxios from "./authAxios";
 
 const API_BASE_URL = "http://localhost:5125/api";
 
@@ -40,11 +41,6 @@ export async function signUp(request: SignUpRequest): Promise<void> {
 }
 
 export async function getLoggedInUser(): Promise<User> {
-  var accessToken = localStorage.getItem("accessToken");
-  const response = await axios.get(`${API_BASE_URL}/auth/loggedin-user`, {
-    headers: {
-      Authorization: `Bearer ${accessToken}`,
-    },
-  });
+  const response = await authAxios.get(`/auth/loggedin-user`);
   return response.data;
 }

@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { ArtworkCardData, FavoriteArtwork } from "../services/artwork";
 import "../styles/ArtworkCard.css";
+import { useNavigate } from "react-router-dom";
 
 type ArtworkCardProps = {
   artwork: ArtworkCardData | FavoriteArtwork | null;
@@ -8,6 +9,8 @@ type ArtworkCardProps = {
 };
 
 const ArtworkCard = ({ artwork, loading = false }: ArtworkCardProps) => {
+  const navigate = useNavigate();
+
   const fallbackImage =
     "https://upload.wikimedia.org/wikipedia/commons/a/a3/Image-not-found.png?20210521171500";
 
@@ -19,6 +22,11 @@ const ArtworkCard = ({ artwork, loading = false }: ArtworkCardProps) => {
   const getImage = (): string | null => {
     if (!artwork) return null;
     return "image" in artwork ? artwork.image : artwork.artworkImage;
+  };
+
+  const getId = (): number | null => {
+    if (!artwork) return null;
+    return "id" in artwork ? artwork.id : artwork.artworkId;
   };
 
   const [imgSrc, setImgSrc] = useState(getImage() || fallbackImage);
@@ -33,7 +41,11 @@ const ArtworkCard = ({ artwork, loading = false }: ArtworkCardProps) => {
   }
 
   return (
-    <div className="artwork-card" title={getTitle() || ""}>
+    <div
+      className="artwork-card"
+      title={getTitle() || ""}
+      onClick={() => navigate(`/artwork/${getId()}`)}
+    >
       <img
         className="artwork-card-image"
         src={imgSrc}
