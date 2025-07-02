@@ -249,37 +249,41 @@ const ArtworkPage = ({ isNew = false }: ArtworkPageProps) => {
           </div>
           <div className="ap-user-profile">
             <p className="ap-details-label">CREATED BY</p>
-            <div className="ap-user-info">
-              <img
-                src="https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_1280.png"
-                alt="Default profile picture"
-                className="ap-user-profile-picture"
-              />
-              <span className="ap-details-text">
-                {artwork?.createdByArtistUserName
-                  ? "@" + artwork.createdByArtistUserName
-                  : isEditing && loggedInUser?.userName
-                  ? "@" + loggedInUser.userName
-                  : "-"}
-              </span>
-            </div>
+            {artwork?.createdByArtistUserName ||
+            (isEditing && loggedInUser?.userName) ? (
+              <div className="ap-user-info">
+                <img
+                  src="https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_1280.png"
+                  alt="Default profile picture"
+                  className="ap-user-profile-picture"
+                />
+                <span className="ap-details-text">
+                  {"@" +
+                    (artwork?.createdByArtistUserName ||
+                      loggedInUser?.userName)}
+                </span>
+              </div>
+            ) : (
+              <span className="ap-details-text">-</span>
+            )}
           </div>
           <div className="ap-user-profile">
             <p className="ap-details-label">POSTED BY</p>
-            <div className="ap-user-info">
-              <img
-                src="https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_1280.png"
-                alt="Default profile picture"
-                className="ap-user-profile-picture"
-              />
-              <span className="ap-details-text">
-                {artwork?.postedByUserName
-                  ? "@" + artwork.postedByUserName
-                  : isEditing && loggedInUser?.userName
-                  ? "@" + loggedInUser.userName
-                  : "-"}
-              </span>
-            </div>
+            {artwork?.postedByUserName ||
+            (isEditing && loggedInUser?.userName) ? (
+              <div className="ap-user-info">
+                <img
+                  src="https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_1280.png"
+                  alt="Default profile picture"
+                  className="ap-user-profile-picture"
+                />
+                <span className="ap-details-text">
+                  {"@" + (artwork?.postedByUserName || loggedInUser?.userName)}
+                </span>
+              </div>
+            ) : (
+              <span className="ap-details-text">-</span>
+            )}
           </div>
         </div>
 
