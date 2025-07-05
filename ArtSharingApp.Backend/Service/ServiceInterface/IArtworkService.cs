@@ -9,7 +9,7 @@ public interface IArtworkService
     Task AddAsync(ArtworkRequestDTO artworkDto);
     Task UpdateAsync(int id, ArtworkRequestDTO artworkDto);
     Task DeleteAsync(int id);
-    Task<IEnumerable<ArtworkResponseDTO>?> SearchByTitle(string title);
+    Task<IEnumerable<ArtworkSearchResponseDTO>?> SearchByTitle(string title);
     Task ChangeVisibilityAsync(int id, bool isPrivate);
     Task PutOnSaleAsync(int id, int loggedInUserId, PutArtworkOnSaleDTO request);
     Task RemoveFromSaleAsync(int id, int loggedInUserId);

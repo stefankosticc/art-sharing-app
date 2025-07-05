@@ -50,6 +50,20 @@ export interface ArtworkRequest {
   galleryId: number | null;
 }
 
+export interface ArtworkSearchResponse {
+  id: number;
+  title: string;
+  image: string;
+  isOnSale: boolean;
+  postedByUserId: number;
+  postedByUserName: string;
+  cityId: number | null;
+  cityName: string | null;
+  country: string | null;
+  galleryId: number | null;
+  galleryName: string | null;
+}
+
 export async function getMyArtworks(): Promise<ArtworkCardData[]> {
   const response = await authAxios.get(`/artworks/mine`);
   return response.data;
@@ -118,4 +132,13 @@ export async function addNewArtwork(artwork: ArtworkRequest): Promise<void> {
       "An unknown error occurred.";
     console.error("Error:", message);
   }
+}
+
+export async function searchArtworks(
+  title: string
+): Promise<ArtworkSearchResponse[]> {
+  const response = await authAxios.get(`/artworks/search`, {
+    params: { title },
+  });
+  return response.data;
 }

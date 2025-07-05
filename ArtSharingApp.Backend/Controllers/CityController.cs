@@ -50,4 +50,10 @@ public class CityController : Controller
         await _cityService.DeleteAsync(id);
         return Ok(new {message = "City deleted successfully."});
     }
+    
+    [HttpGet("cities/search")]
+    public async Task<IActionResult> GetGalleriesByName([FromQuery] string name)
+    {
+        return Ok(await _cityService.GetCitiesByName(name));
+    }
 }

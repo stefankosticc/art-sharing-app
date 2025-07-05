@@ -27,15 +27,17 @@ public class UserRepository : GenericRepository<User>,IUserRepository
         var combinedIncludes = DefaultIncludes.Concat(includes ?? Enumerable.Empty<Expression<Func<User, object>>>()).ToArray();
         return await base.GetByIdAsync(id, combinedIncludes);
     }
-    
-    public async Task<IEnumerable<User>> GetUsersByName(string name)
-    {
-        return await _dbSet.Include(u => u.Role).Where(u => u.Name.ToLower().Contains(name.ToLower())).ToListAsync();
-    }
 
     public void UpdateBiography(User user)
     {
         _context.Attach(user);
         _context.Entry(user).Property(u => u.Biography).IsModified = true;
+    }
+
+    public async Task<IEnumerable<User>> GetUsersByNameAndUserName(string searchString)
+    {
+        return await _dbSet
+            .Where(u => u.UserName.ToLower().Contains(searchString.ToLower())
+                        || u.Name.ToLower().Contains(searchString.ToLower())).ToListAsync();
     }
 }

@@ -46,10 +46,10 @@ public class UserController : AuthenticatedUserBaseController
         return Ok(new { message = "User deleted successfully" });
     }
 
-    [HttpGet("users/by-name")]
-    public async Task<IActionResult> GetUsersByName([FromQuery] string name)
+    [HttpGet("users/search")]
+    public async Task<IActionResult> GetUsersByNameAndUserName([FromQuery] string searchString)
     {
-        var users = await _userService.GetUsersByName(name);
+        var users = await _userService.GetUsersByNameAndUserName(searchString);
         return Ok(users);
     }
 

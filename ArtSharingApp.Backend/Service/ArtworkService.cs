@@ -71,14 +71,14 @@ public class ArtworkService : IArtworkService
         await _artworkRepository.SaveAsync();
     }
 
-    public async Task<IEnumerable<ArtworkResponseDTO>?> SearchByTitle(string title)
+    public async Task<IEnumerable<ArtworkSearchResponseDTO>?> SearchByTitle(string title)
     {
         if (string.IsNullOrWhiteSpace(title))
             throw new BadRequestException("Title parameter is required.");
         var artworks = await _artworkRepository.SearchByTitle(title);
         if (artworks == null || !artworks.Any())
             throw new NotFoundException($"No artworks found with this title.");
-        return _mapper.Map<IEnumerable<ArtworkResponseDTO>>(artworks);
+        return _mapper.Map<IEnumerable<ArtworkSearchResponseDTO>>(artworks);
     }
 
     public async Task ChangeVisibilityAsync(int id, bool isPrivate)

@@ -16,5 +16,7 @@ public class UserProfile : AutoMapper.Profile
 
         CreateMap<UserRegisterDTO, User>()
             .ForMember(dest => dest.Role, opt => opt.Ignore());
+
+        CreateMap<User, UserSearchResponseDTO>();
     }
 }

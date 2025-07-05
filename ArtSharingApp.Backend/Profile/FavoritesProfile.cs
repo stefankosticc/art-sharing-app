@@ -12,6 +12,5 @@ public class FavoritesProfile : AutoMapper.Profile
                 opt.MapFrom(src => src.Artwork.Title))
             .ForMember(dest => dest.ArtworkImage, opt =>
                 opt.MapFrom(src => src.Artwork.Image));
-        // Add more mappings as needed
     }
 }

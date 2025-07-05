@@ -8,13 +8,13 @@ public class ArtworkProfile : AutoMapper.Profile
     public ArtworkProfile()
     {
         CreateMap<Artwork, ArtworkResponseDTO>()
-            .ForMember(dest => dest.CreatedByArtistUserName, opt => 
+            .ForMember(dest => dest.CreatedByArtistUserName, opt =>
                 opt.MapFrom(src => src.CreatedByArtist != null ? src.CreatedByArtist.UserName : null))
             .ForMember(dest => dest.PostedByUserName, opt =>
                 opt.MapFrom(src => src.PostedByUser != null ? src.PostedByUser.UserName : null))
-            .ForMember(dest => dest.CityName, opt => 
+            .ForMember(dest => dest.CityName, opt =>
                 opt.MapFrom(src => src.City != null ? src.City.Name : null))
-            .ForMember(dest => dest.GalleryName, opt => 
+            .ForMember(dest => dest.GalleryName, opt =>
                 opt.MapFrom(src => src.Gallery != null ? src.Gallery.Name : null));
 
         CreateMap<ArtworkRequestDTO, Artwork>()
@@ -23,8 +23,18 @@ public class ArtworkProfile : AutoMapper.Profile
             .ForMember(dest => dest.Gallery, opt => opt.Ignore())
             .ForMember(dest => dest.City, opt => opt.Ignore());
 
-        CreateMap<Artwork, ArtworkPreviewDTO>()            
+        CreateMap<Artwork, ArtworkPreviewDTO>()
             .ForMember(dest => dest.PostedByUserName, opt =>
             opt.MapFrom(src => src.PostedByUser != null ? src.PostedByUser.UserName : null));
+
+        CreateMap<Artwork, ArtworkSearchResponseDTO>()
+            .ForMember(dest => dest.PostedByUserName, opt =>
+                opt.MapFrom(src => src.PostedByUser != null ? src.PostedByUser.UserName : null))
+            .ForMember(dest => dest.CityName, opt =>
+                opt.MapFrom(src => src.City != null ? src.City.Name : null))
+            .ForMember(dest => dest.Country, opt =>
+                opt.MapFrom(src => src.City != null ? src.City.Country : null))
+            .ForMember(dest => dest.GalleryName, opt =>
+                opt.MapFrom(src => src.Gallery != null ? src.Gallery.Name : null)); ;
     }
 }

@@ -9,4 +9,5 @@ public interface ICityService
     Task AddAsync(CityRequestDTO cityDto);
     Task UpdateAsync(int id, CityRequestDTO cityDto);
     Task DeleteAsync(int id);
+    Task<IEnumerable<CityResponseDTO>?> GetCitiesByName(string name);
 }

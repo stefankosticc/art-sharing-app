@@ -9,10 +9,10 @@ namespace ArtSharingApp.Backend.Service;
 
 public class CityService : ICityService
 {
-    private readonly IGenericRepository<City> _cityRepository;
+    private readonly ICityRepository _cityRepository;
     private readonly IMapper _mapper;
 
-    public CityService(IGenericRepository<City> cityRepository, IMapper mapper)
+    public CityService(ICityRepository cityRepository, IMapper mapper)
     {
         _cityRepository = cityRepository;
         _mapper = mapper;
@@ -62,5 +62,15 @@ public class CityService : ICityService
             throw new NotFoundException($"City with id {id} not found.");
         await _cityRepository.DeleteAsync(id);
         await _cityRepository.SaveAsync();
+    }
+
+    public async Task<IEnumerable<CityResponseDTO>?> GetCitiesByName(string name)
+    {
+        if (string.IsNullOrWhiteSpace(name))
+            throw new BadRequestException("Name parameter is required.");
+        var galleries = await _cityRepository.GetCitiesByName(name);
+        if (galleries == null)
+            return null;
+        return _mapper.Map<IEnumerable<CityResponseDTO>>(galleries);
     }
 }

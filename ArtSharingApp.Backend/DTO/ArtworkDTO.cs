@@ -59,3 +59,18 @@ public class ArtworkPreviewDTO
     public int PostedByUserId { get; set; }
     public string PostedByUserName { get; set; }
 }
+
+public class ArtworkSearchResponseDTO
+{
+    public int Id { get; set; }
+    public string Title { get; set; }
+    public string Image { get; set; }
+    public bool IsOnSale { get; set; }
+    public int PostedByUserId { get; set; }
+    public string PostedByUserName { get; set; }
+    public int? CityId { get; set; }
+    public string? CityName { get; set; }
+    public string? Country { get; set; }
+    public int? GalleryId { get; set; }
+    public string? GalleryName { get; set; }
+}
