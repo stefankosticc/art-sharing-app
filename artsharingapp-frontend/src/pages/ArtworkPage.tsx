@@ -5,6 +5,8 @@ import { PiDotsThreeOutlineVerticalFill } from "react-icons/pi";
 import { useLoggedInUser } from "../hooks/useLoggedInUser";
 import { MdEdit } from "react-icons/md";
 import { IoMdHeartEmpty, IoMdHeart } from "react-icons/io";
+import { FiUpload } from "react-icons/fi";
+import { HiArrowPathRoundedSquare } from "react-icons/hi2";
 import { useEffect, useState } from "react";
 import {
   addNewArtwork,
@@ -51,7 +53,7 @@ const ArtworkPage = ({ isNew = false }: ArtworkPageProps) => {
   const [refetchArtwork, setRefetchArtwork] = useState<boolean>(false);
 
   // Fetch artwork if not new
-  const { artwork } = useArtwork(
+  const { artwork, loadingArtwork } = useArtwork(
     !isNew && artworkId ? parseInt(artworkId) : -1,
     refetchArtwork
   );
@@ -93,6 +95,10 @@ const ArtworkPage = ({ isNew = false }: ArtworkPageProps) => {
       setImgSrc("");
     }
   }, [isNew]);
+
+  useEffect(() => {
+    if (!isNew) setIsEditing(false);
+  }, [artworkId]);
 
   const handleInputChange = (
     e: React.ChangeEvent<HTMLTextAreaElement | HTMLInputElement>
@@ -178,12 +184,31 @@ const ArtworkPage = ({ isNew = false }: ArtworkPageProps) => {
     <div className="artwork-page fixed-page">
       <div className="ap-image-container">
         {imgSrc ? (
-          <img
-            src={imgSrc}
-            alt={artwork?.title || "artwork image"}
-            className="ap-image"
-            onError={() => setImgSrc(fallbackImage)}
-          />
+          <>
+            <img
+              src={imgSrc}
+              alt={artwork?.title || "artwork image"}
+              className="ap-image"
+              onError={() => setImgSrc(fallbackImage)}
+            />
+            {isEditing && (
+              <div
+                className="ap-image ap-replace-image-overlay"
+                title="Replace image"
+                onClick={() => setImgSrc("")}
+              >
+                <HiArrowPathRoundedSquare />
+              </div>
+            )}
+          </>
+        ) : (isNew || imgSrc == "") && !loadingArtwork ? (
+          <div
+            className="ap-upload-image ap-image"
+            title="Upload image"
+            onClick={() => setImgSrc(fallbackImage)}
+          >
+            <FiUpload />
+          </div>
         ) : (
           <div className="ap-image ap-image-placeholder skeleton"></div>
         )}
@@ -199,6 +224,7 @@ const ArtworkPage = ({ isNew = false }: ArtworkPageProps) => {
               onChange={handleInputChange}
               rows={1}
               maxLength={100}
+              placeholder="Title"
             />
           ) : (
             <h1 className="ap-title">{artwork?.title || ""}</h1>
