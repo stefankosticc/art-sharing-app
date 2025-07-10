@@ -71,4 +71,14 @@ public class ArtworkRepository : GenericRepository<Artwork>,IArtworkRepository
             .Include(a => a.PostedByUser)
             .ToListAsync();
     }
+
+    public async Task<(byte[]? Image, string? ContentType)> GetArtworkImageAsync(int id)
+    {
+        var result = await _dbSet
+            .Where(a => a.Id == id)
+            .Select(a => new { a.Image, a.ContentType })
+            .FirstOrDefaultAsync();
+
+        return (result?.Image, result?.ContentType);
+    }
 }

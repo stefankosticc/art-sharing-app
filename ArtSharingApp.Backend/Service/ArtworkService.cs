@@ -41,23 +41,46 @@ public class ArtworkService : IArtworkService
         return response;
     }
 
-    public async Task AddAsync(ArtworkRequestDTO artworkDto)
+    public async Task AddAsync(ArtworkRequestDTO artworkDto, IFormFile artworkImage)
     {
         if (artworkDto == null)
             throw new BadRequestException("Artwork parameters not provided correctly.");
+        if (artworkImage == null || artworkImage.Length == 0)
+            throw new BadRequestException("Image not provided correctly.");
+        
         var artwork = _mapper.Map<Artwork>(artworkDto);
+
+        using (var ms = new MemoryStream())
+        {
+            await artworkImage.CopyToAsync(ms);
+            artwork.Image = ms.ToArray();
+        }
+        artwork.ContentType = artworkImage.ContentType;
+        
         await _artworkRepository.AddAsync(artwork);
         await _artworkRepository.SaveAsync();
     }
 
-    public async Task UpdateAsync(int id, ArtworkRequestDTO artworkDto)
+    public async Task UpdateAsync(int id, ArtworkRequestDTO artworkDto, IFormFile artworkImage)
     {
         if (artworkDto == null)
             throw new BadRequestException("Artwork parameters not provided correctly.");
+        if (artworkImage == null || artworkImage.Length == 0)
+            throw new BadRequestException("Image not provided correctly.");
+        
         var artwork = await _artworkRepository.GetByIdAsync(id);
         if (artwork == null)
             throw new NotFoundException($"Artwork with id {id} not found.");
+        
         _mapper.Map(artworkDto, artwork);
+        
+        using (var ms = new MemoryStream())
+        {
+            await artworkImage.CopyToAsync(ms);
+            artwork.Image = ms.ToArray();
+        }
+        artwork.ContentType = artworkImage.ContentType;
+        
         _artworkRepository.Update(artwork);
         await _artworkRepository.SaveAsync();
     }
@@ -146,5 +169,14 @@ public class ArtworkService : IArtworkService
     {
         var artworks = await _artworkRepository.GetMyArtworksAsync(loggedInUserId);
         return _mapper.Map<IEnumerable<ArtworkPreviewDTO>>(artworks);
+    }
+
+    public async Task<(byte[] Image, string ContentType)> GetArtworkImageAsync(int id)
+    {
+        var result = await _artworkRepository.GetArtworkImageAsync(id);
+        if (result.Image == null || result.Image.Length == 0)
+            throw new NotFoundException("Image not found.");
+
+        return (result.Image, string.IsNullOrWhiteSpace(result.ContentType) ? "image/jpeg" : result.ContentType);
     }
 }

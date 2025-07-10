@@ -3,6 +3,7 @@ using System;
 using ArtSharingApp.Backend.DataAccess;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
@@ -11,9 +12,11 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace ArtSharingApp.Backend.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20250707121639_RemovedImageFromArtworks")]
+    partial class RemovedImageFromArtworks
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -33,10 +36,6 @@ namespace ArtSharingApp.Backend.Migrations
                     b.Property<int?>("CityId")
                         .HasColumnType("integer");
 
-                    b.Property<string>("ContentType")
-                        .IsRequired()
-                        .HasColumnType("text");
-
                     b.Property<int>("CreatedByArtistId")
                         .HasColumnType("integer");
 
@@ -49,10 +48,6 @@ namespace ArtSharingApp.Backend.Migrations
 
                     b.Property<int?>("GalleryId")
                         .HasColumnType("integer");
-
-                    b.Property<byte[]>("Image")
-                        .IsRequired()
-                        .HasColumnType("bytea");
 
                     b.Property<bool>("IsOnSale")
                         .HasColumnType("boolean");
@@ -306,9 +301,6 @@ namespace ArtSharingApp.Backend.Migrations
                         .IsConcurrencyToken()
                         .HasColumnType("text");
 
-                    b.Property<string>("ContentType")
-                        .HasColumnType("text");
-
                     b.Property<string>("Email")
                         .HasMaxLength(256)
                         .HasColumnType("character varying(256)");
@@ -342,9 +334,6 @@ namespace ArtSharingApp.Backend.Migrations
 
                     b.Property<bool>("PhoneNumberConfirmed")
                         .HasColumnType("boolean");
-
-                    b.Property<byte[]>("ProfilePhoto")
-                        .HasColumnType("bytea");
 
                     b.Property<string>("RefreshToken")
                         .HasColumnType("text");

@@ -10,6 +10,8 @@ public class User : IdentityUser<int>
     public Role? Role { get; set; }
     public string? RefreshToken { get; set; }
     public DateTime? RefreshTokenExpiresAt { get; set; }
+    public byte[]? ProfilePhoto { get; set; }
+    public string? ContentType { get; set; }
     public ICollection<Artwork> CreatedArtworks { get; set; } = new List<Artwork>();
     public ICollection<Artwork> PostedArtworks { get; set; } = new List<Artwork>();
     public ICollection<Favorites> Favorites { get; set; } = new List<Favorites>();

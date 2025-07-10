@@ -3,11 +3,10 @@ import { FaLandmark } from "react-icons/fa6";
 import { FaCity } from "react-icons/fa";
 import { ArtworkSearchResponse } from "../../services/artwork";
 import { useNavigate } from "react-router-dom";
+import { BACKEND_BASE_URL } from "../../config/constants";
 
 const fallbackImage =
-  "https://cdn.shopify.com/s/files/1/0047/4231/6066/files/The_Scream_by_Edvard_Munch_1893_800x.png";
-//   "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSxUJETfjcCv4VMKnbIpdK32QicBPC-dF17Fg&s";
-//   "https://artrkl.com/cdn/shop/articles/thecreationofadam-1690035964350_d2d6280f-ed1d-465e-ad42-0ea0bbbcefde.webp?v=1690563054&width=1100";
+  "https://upload.wikimedia.org/wikipedia/commons/a/a3/Image-not-found.png?20210521171500";
 
 type ArtworkSearchCardProps = {
   artwork: ArtworkSearchResponse;
@@ -25,11 +24,12 @@ const ArtworkSearchCard = ({ artwork }: ArtworkSearchCardProps) => {
     >
       <div className="asc-img-container">
         <img
-          src={artwork.image || fallbackImage}
+          src={`${BACKEND_BASE_URL}${artwork.image}` || fallbackImage}
           alt={artwork.title}
           onError={(e) => {
             (e.target as HTMLImageElement).src = fallbackImage;
           }}
+          className="asc-img"
         />
       </div>
       <div className="asc-details">

@@ -40,7 +40,6 @@ export interface Artwork {
 export interface ArtworkRequest {
   title: string;
   story: string;
-  image: string;
   date: Date | string;
   tipsAndTricks: string;
   isPrivate: boolean;
@@ -109,10 +108,20 @@ export async function dislikeArtwork(artworkId: number): Promise<void> {
 
 export async function updateArtwork(
   artworkId: number,
-  request: ArtworkRequest
+  request: ArtworkRequest,
+  artworkImage: File
 ): Promise<void> {
   try {
-    await authAxios.put(`/artwork/${artworkId}`, request);
+    const formData = new FormData();
+    for (const key in request) {
+      const value = (request as any)[key];
+      formData.append(key, value !== null ? value.toString() : "");
+    }
+    formData.append("artworkImage", artworkImage);
+
+    await authAxios.put(`/artwork/${artworkId}`, formData, {
+      headers: { "Content-Type": "multipart/form-data" },
+    });
   } catch (error: any) {
     const message =
       error?.response?.data?.error ||
@@ -122,9 +131,21 @@ export async function updateArtwork(
   }
 }
 
-export async function addNewArtwork(artwork: ArtworkRequest): Promise<void> {
+export async function addNewArtwork(
+  artwork: ArtworkRequest,
+  artworkImage: File
+): Promise<void> {
   try {
-    await authAxios.post(`/artwork`, artwork);
+    const formData = new FormData();
+    for (const key in artwork) {
+      const value = (artwork as any)[key];
+      formData.append(key, value !== null ? value.toString() : "");
+    }
+    formData.append("artworkImage", artworkImage);
+
+    await authAxios.post(`/artwork`, formData, {
+      headers: { "Content-Type": "multipart/form-data" },
+    });
   } catch (error: any) {
     const message =
       error?.response?.data?.error ||
@@ -141,4 +162,19 @@ export async function searchArtworks(
     params: { title },
   });
   return response.data;
+}
+
+export async function getArtworkImage(imageUrl: string): Promise<string> {
+  try {
+    const response = await authAxios.get(imageUrl, { responseType: "blob" });
+    const url = URL.createObjectURL(response.data);
+    return url;
+  } catch (error: any) {
+    const message =
+      error?.response?.data?.error ||
+      error?.message ||
+      "An unknown error occurred.";
+    console.error("Error:", message);
+    return "";
+  }
 }

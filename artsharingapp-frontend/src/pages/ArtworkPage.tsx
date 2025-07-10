@@ -17,13 +17,14 @@ import {
 } from "../services/artwork";
 import { useNavigate, useParams } from "react-router-dom";
 import TextEditor from "../components/TextEditor";
+import { BACKEND_BASE_URL } from "../config/constants";
 
 type ArtworkPageProps = {
   isNew?: boolean;
 };
 
 const fallbackImage =
-  "https://cdn.shopify.com/s/files/1/0047/4231/6066/files/The_Scream_by_Edvard_Munch_1893_800x.png";
+  "https://upload.wikimedia.org/wikipedia/commons/a/a3/Image-not-found.png?20210521171500";
 
 const getFormattedDateOnly = (date: Date): string => {
   return date.toISOString().split("T")[0];
@@ -31,10 +32,9 @@ const getFormattedDateOnly = (date: Date): string => {
 
 const getInitialArtworkData = (userId: number): ArtworkRequest => ({
   title: "",
-  story: "",
-  image: "",
+  story: "<p></p>",
   date: getFormattedDateOnly(new Date()),
-  tipsAndTricks: "",
+  tipsAndTricks: "<p></p>",
   isPrivate: false,
   createdByArtistId: userId,
   postedByUserId: userId,
@@ -49,8 +49,9 @@ const ArtworkPage = ({ isNew = false }: ArtworkPageProps) => {
 
   const [isEditing, setIsEditing] = useState<boolean>(isNew);
   const [isLiked, setIsLiked] = useState<boolean>(false);
-  const [imgSrc, setImgSrc] = useState<string>("");
   const [refetchArtwork, setRefetchArtwork] = useState<boolean>(false);
+  const [imgSrc, setImgSrc] = useState<string>("");
+  const [artworkImageFile, setArtworkImageFile] = useState<File | null>(null);
 
   // Fetch artwork if not new
   const { artwork, loadingArtwork } = useArtwork(
@@ -63,7 +64,8 @@ const ArtworkPage = ({ isNew = false }: ArtworkPageProps) => {
   );
 
   useEffect(() => {
-    if (artwork?.image) setImgSrc(artwork.image);
+    if (artwork?.image)
+      setImgSrc(`${BACKEND_BASE_URL}${artwork.image}?t=${Date.now()}`);
     if (artwork?.isLikedByLoggedInUser)
       setIsLiked(artwork.isLikedByLoggedInUser);
   }, [artwork]);
@@ -74,7 +76,6 @@ const ArtworkPage = ({ isNew = false }: ArtworkPageProps) => {
       setEditingArtworkData({
         title: artwork.title || "",
         story: artwork.story || "",
-        image: artwork.image || "",
         date: artwork.date || getFormattedDateOnly(new Date()),
         tipsAndTricks: artwork.tipsAndTricks || "",
         isPrivate: artwork.isPrivate || false,
@@ -127,7 +128,6 @@ const ArtworkPage = ({ isNew = false }: ArtworkPageProps) => {
       setEditingArtworkData({
         title: artwork.title || "",
         story: artwork.story || "",
-        image: artwork.image || "",
         date: artwork.date || getFormattedDateOnly(new Date()),
         tipsAndTricks: artwork.tipsAndTricks || "",
         isPrivate: artwork.isPrivate || false,
@@ -141,6 +141,15 @@ const ArtworkPage = ({ isNew = false }: ArtworkPageProps) => {
     }
   };
 
+  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0] || null;
+    setArtworkImageFile(file);
+    if (file) {
+      const url = URL.createObjectURL(file);
+      setImgSrc(url);
+    }
+  };
+
   const handleSave = async () => {
     if (!editingArtworkData.title.trim()) {
       alert("Title is required.");
@@ -151,17 +160,24 @@ const ArtworkPage = ({ isNew = false }: ArtworkPageProps) => {
       return;
     }
 
+    if (!artworkImageFile) {
+      alert("Please upload an image.");
+      return;
+    }
+
     if (isNew) {
-      await addNewArtwork({
-        ...editingArtworkData,
-        image: editingArtworkData.image || "new",
-        createdByArtistId: loggedInUser?.id ?? -1,
-        postedByUserId: loggedInUser?.id ?? -1,
-      });
+      await addNewArtwork(
+        {
+          ...editingArtworkData,
+          createdByArtistId: loggedInUser?.id ?? -1,
+          postedByUserId: loggedInUser?.id ?? -1,
+        },
+        artworkImageFile
+      );
       navigate("/profile");
     } else if (artwork) {
-      await updateArtwork(artwork.id, editingArtworkData);
-      setRefetchArtwork(!refetchArtwork);
+      await updateArtwork(artwork.id, editingArtworkData, artworkImageFile);
+      setRefetchArtwork((prev) => !prev);
       setIsEditing(false);
     }
   };
@@ -195,19 +211,26 @@ const ArtworkPage = ({ isNew = false }: ArtworkPageProps) => {
               <div
                 className="ap-image ap-replace-image-overlay"
                 title="Replace image"
-                onClick={() => setImgSrc("")}
               >
                 <HiArrowPathRoundedSquare />
+                <input
+                  type="file"
+                  accept="image/*"
+                  onChange={handleFileChange}
+                  className="ap-file-input-overlay"
+                />
               </div>
             )}
           </>
         ) : (isNew || imgSrc == "") && !loadingArtwork ? (
-          <div
-            className="ap-upload-image ap-image"
-            title="Upload image"
-            onClick={() => setImgSrc(fallbackImage)}
-          >
+          <div className="ap-upload-image ap-image" title="Upload image">
             <FiUpload />
+            <input
+              type="file"
+              accept="image/*"
+              onChange={handleFileChange}
+              className="ap-file-input-overlay"
+            />
           </div>
         ) : (
           <div className="ap-image ap-image-placeholder skeleton"></div>

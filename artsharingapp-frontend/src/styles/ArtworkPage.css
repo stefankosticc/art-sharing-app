@@ -55,6 +55,13 @@
     background-color: var(--gray-light);
 }
 
+.ap-file-input-overlay {
+    position: absolute;
+    inset: 0;
+    opacity: 0;
+    cursor: pointer;
+}
+
 .ap-image-container:has(.ap-upload-image) {
     background-color: transparent;
 }

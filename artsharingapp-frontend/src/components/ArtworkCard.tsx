@@ -2,6 +2,7 @@ import { useState } from "react";
 import { ArtworkCardData, FavoriteArtwork } from "../services/artwork";
 import "../styles/ArtworkCard.css";
 import { useNavigate } from "react-router-dom";
+import { BACKEND_BASE_URL } from "../config/constants";
 
 type ArtworkCardProps = {
   artwork: ArtworkCardData | FavoriteArtwork | null;
@@ -21,7 +22,9 @@ const ArtworkCard = ({ artwork, loading = false }: ArtworkCardProps) => {
 
   const getImage = (): string | null => {
     if (!artwork) return null;
-    return "image" in artwork ? artwork.image : artwork.artworkImage;
+    return "image" in artwork
+      ? `${BACKEND_BASE_URL}${artwork.image}`
+      : `${BACKEND_BASE_URL}${artwork.artworkImage}`;
   };
 
   const getId = (): number | null => {

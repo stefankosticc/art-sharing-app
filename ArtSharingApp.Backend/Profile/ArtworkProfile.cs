@@ -15,7 +15,9 @@ public class ArtworkProfile : AutoMapper.Profile
             .ForMember(dest => dest.CityName, opt =>
                 opt.MapFrom(src => src.City != null ? src.City.Name : null))
             .ForMember(dest => dest.GalleryName, opt =>
-                opt.MapFrom(src => src.Gallery != null ? src.Gallery.Name : null));
+                opt.MapFrom(src => src.Gallery != null ? src.Gallery.Name : null))
+            .ForMember(dest => dest.Image, opt =>
+                opt.MapFrom(src => $"/api/artwork/{src.Id}/image"));
 
         CreateMap<ArtworkRequestDTO, Artwork>()
             .ForMember(dest => dest.CreatedByArtist, opt => opt.Ignore())
@@ -24,8 +26,10 @@ public class ArtworkProfile : AutoMapper.Profile
             .ForMember(dest => dest.City, opt => opt.Ignore());
 
         CreateMap<Artwork, ArtworkPreviewDTO>()
-            .ForMember(dest => dest.PostedByUserName, opt =>
-            opt.MapFrom(src => src.PostedByUser != null ? src.PostedByUser.UserName : null));
+            .ForMember(dest => dest.PostedByUserName, opt => 
+                opt.MapFrom(src => src.PostedByUser != null ? src.PostedByUser.UserName : null))
+            .ForMember(dest => dest.Image, opt =>
+                opt.MapFrom(src => $"/api/artwork/{src.Id}/image"));
 
         CreateMap<Artwork, ArtworkSearchResponseDTO>()
             .ForMember(dest => dest.PostedByUserName, opt =>
@@ -35,6 +39,8 @@ public class ArtworkProfile : AutoMapper.Profile
             .ForMember(dest => dest.Country, opt =>
                 opt.MapFrom(src => src.City != null ? src.City.Country : null))
             .ForMember(dest => dest.GalleryName, opt =>
-                opt.MapFrom(src => src.Gallery != null ? src.Gallery.Name : null)); ;
+                opt.MapFrom(src => src.Gallery != null ? src.Gallery.Name : null))
+            .ForMember(dest => dest.Image, opt =>
+                opt.MapFrom(src => $"/api/artwork/{src.Id}/image"));
     }
 }
