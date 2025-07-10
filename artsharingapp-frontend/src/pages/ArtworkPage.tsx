@@ -222,7 +222,7 @@ const ArtworkPage = ({ isNew = false }: ArtworkPageProps) => {
               </div>
             )}
           </>
-        ) : (isNew || imgSrc == "") && !loadingArtwork ? (
+        ) : isNew && !loadingArtwork ? (
           <div className="ap-upload-image ap-image" title="Upload image">
             <FiUpload />
             <input
