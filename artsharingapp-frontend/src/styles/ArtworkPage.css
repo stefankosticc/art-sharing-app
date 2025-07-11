@@ -221,3 +221,46 @@
 .ap-title-editing:focus {
     outline: none;
 }
+
+/* Color changing */
+.ap-change-color-container {
+    display: flex;
+    align-items: center;
+    gap: 0.8rem;
+    margin: 0 1rem 1rem 2rem;
+
+    position: absolute;
+    bottom: -1rem;
+    left: 1rem;
+}
+
+.ap-color-picker {
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    appearance: none;
+    width: 2rem;
+    height: 2rem;
+    background-color: transparent;
+    border: none;
+    cursor: pointer;
+}
+
+.ap-color-picker::-webkit-color-swatch {
+    border-radius: 0.2rem;
+    border: none;
+}
+
+.ap-color-picker::-moz-color-swatch {
+    border-radius: 0.2rem;
+    border: none;
+}
+
+.ap-color-btn {
+    background-color: var(--gray-light);
+    color: var(--gray-ligther);
+    border: none;
+    padding: 0.2rem 0.6rem;
+    border-radius: 1rem;
+    font-size: 0.8rem;
+    cursor: pointer;
+}

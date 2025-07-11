@@ -231,18 +231,56 @@ const ArtworkPage = ({ isNew = false }: ArtworkPageProps) => {
               className="ap-image"
             />
             {isEditing && (
-              <div
-                className="ap-image ap-replace-image-overlay"
-                title="Replace image"
-              >
-                <HiArrowPathRoundedSquare />
-                <input
-                  type="file"
-                  accept="image/*"
-                  onChange={handleFileChange}
-                  className="ap-file-input-overlay"
-                />
-              </div>
+              <>
+                <div
+                  className="ap-image ap-replace-image-overlay"
+                  title="Replace image"
+                >
+                  <HiArrowPathRoundedSquare />
+                  <input
+                    type="file"
+                    accept="image/*"
+                    onChange={handleFileChange}
+                    className="ap-file-input-overlay"
+                  />
+                </div>
+
+                <div className="ap-change-color-container">
+                  <input
+                    type="color"
+                    name="color"
+                    className="ap-color-picker"
+                    title="Change color background"
+                    value={extractedColor || artwork?.color || "#5c5c5c"}
+                    onChange={(e) => {
+                      handleInputChange(e);
+                      setExtractedColor(e.target.value);
+                    }}
+                  />
+                  <button
+                    className="ap-color-btn"
+                    title="Remove color background"
+                    onClick={() => {
+                      setExtractedColor(null);
+                      setEditingArtworkData((prev) => ({
+                        ...prev,
+                        color: null,
+                      }));
+                    }}
+                  >
+                    Clear Color
+                  </button>
+                  <button
+                    className="ap-color-btn"
+                    title="Revert color background"
+                    onClick={() => {
+                      if (artwork) setExtractedColor(artwork.color);
+                    }}
+                  >
+                    Revert Color
+                  </button>
+                </div>
+              </>
             )}
           </div>
         ) : isNew && !loadingArtwork ? (
