@@ -1,4 +1,5 @@
 using ArtSharingApp.Backend.DTO;
+using Microsoft.AspNetCore.Mvc;
 
 namespace ArtSharingApp.Backend.Service.ServiceInterface;
 
@@ -16,4 +17,5 @@ public interface IArtworkService
     Task TransferToUserAsync(int artworkId, int fromUserId, int toUserId);
     Task<IEnumerable<ArtworkPreviewDTO>?>  GetMyArtworksAsync(int loggedInUserId);
     Task<(byte[] Image, string ContentType)> GetArtworkImageAsync(int id);
+    Task<string?> ExtractColorAsync(IFormFile image);
 }

@@ -15,6 +15,7 @@ public class Artwork
     public bool IsOnSale { get; set; }
     public decimal? Price { get; set; }
     public Currency Currency { get; set; }
+    public string? Color { get; set; }
     public int? CityId { get; set; }
     public City? City { get; set; }
     public int? GalleryId { get; set; }

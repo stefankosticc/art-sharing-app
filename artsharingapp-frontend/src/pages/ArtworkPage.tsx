@@ -12,6 +12,7 @@ import {
   addNewArtwork,
   ArtworkRequest,
   dislikeArtwork,
+  extractArtworkColor,
   likeArtwork,
   updateArtwork,
 } from "../services/artwork";
@@ -40,6 +41,7 @@ const getInitialArtworkData = (userId: number): ArtworkRequest => ({
   postedByUserId: userId,
   cityId: null,
   galleryId: null,
+  color: null,
 });
 
 const ArtworkPage = ({ isNew = false }: ArtworkPageProps) => {
@@ -52,6 +54,7 @@ const ArtworkPage = ({ isNew = false }: ArtworkPageProps) => {
   const [refetchArtwork, setRefetchArtwork] = useState<boolean>(false);
   const [imgSrc, setImgSrc] = useState<string>("");
   const [artworkImageFile, setArtworkImageFile] = useState<File | null>(null);
+  const [extractedColor, setExtractedColor] = useState<string | null>(null);
 
   // Fetch artwork if not new
   const { artwork, loadingArtwork } = useArtwork(
@@ -64,8 +67,10 @@ const ArtworkPage = ({ isNew = false }: ArtworkPageProps) => {
   );
 
   useEffect(() => {
-    if (artwork?.image)
+    if (artwork?.image) {
       setImgSrc(`${BACKEND_BASE_URL}${artwork.image}?t=${Date.now()}`);
+      setExtractedColor(artwork.color);
+    }
     if (artwork?.isLikedByLoggedInUser)
       setIsLiked(artwork.isLikedByLoggedInUser);
   }, [artwork]);
@@ -83,6 +88,7 @@ const ArtworkPage = ({ isNew = false }: ArtworkPageProps) => {
         postedByUserId: artwork.postedByUserId || -1,
         cityId: artwork.cityId || null,
         galleryId: artwork.galleryId || null,
+        color: artwork.color || null,
       });
     }
     if (isEditing && isNew) {
@@ -94,6 +100,7 @@ const ArtworkPage = ({ isNew = false }: ArtworkPageProps) => {
     if (isNew) {
       setIsEditing(isNew);
       setImgSrc("");
+      setExtractedColor(null);
     }
   }, [isNew]);
 
@@ -135,18 +142,28 @@ const ArtworkPage = ({ isNew = false }: ArtworkPageProps) => {
         postedByUserId: artwork.postedByUserId || -1,
         cityId: artwork.cityId || null,
         galleryId: artwork.galleryId || null,
+        color: artwork.color || null,
       });
+      setExtractedColor(artwork.color);
+      setImgSrc(`${BACKEND_BASE_URL}${artwork.image}?t=${Date.now()}`);
     } else if (isNew) {
       navigate(-1);
     }
   };
 
-  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0] || null;
     setArtworkImageFile(file);
     if (file) {
       const url = URL.createObjectURL(file);
       setImgSrc(url);
+
+      const color = await extractArtworkColor(file);
+      setExtractedColor(color);
+      setEditingArtworkData((prev) => ({
+        ...prev,
+        color: color,
+      }));
     }
   };
 
@@ -201,7 +218,7 @@ const ArtworkPage = ({ isNew = false }: ArtworkPageProps) => {
         className="ap-image-container"
         style={
           {
-            "--artwork-background-color": artwork?.color,
+            "--artwork-background-color": extractedColor,
           } as React.CSSProperties
         }
       >
@@ -211,6 +228,7 @@ const ArtworkPage = ({ isNew = false }: ArtworkPageProps) => {
               src={imgSrc}
               alt={artwork?.title || "artwork image"}
               onError={() => setImgSrc(fallbackImage)}
+              className="ap-image"
             />
             {isEditing && (
               <div

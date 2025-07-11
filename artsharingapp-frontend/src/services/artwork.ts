@@ -48,6 +48,7 @@ export interface ArtworkRequest {
   postedByUserId: number;
   cityId: number | null;
   galleryId: number | null;
+  color: string | null;
 }
 
 export interface ArtworkSearchResponse {
@@ -180,5 +181,24 @@ export async function getArtworkImage(imageUrl: string): Promise<string> {
       "An unknown error occurred.";
     console.error("Error:", message);
     return "";
+  }
+}
+
+export async function extractArtworkColor(
+  imageFile: File
+): Promise<string | null> {
+  const formData = new FormData();
+  formData.append("image", imageFile);
+
+  try {
+    const response = await authAxios.post("/artwork/extract-color", formData, {
+      headers: {
+        "Content-Type": "multipart/form-data",
+      },
+    });
+    return response.data;
+  } catch (err) {
+    console.error("Failed to extract color", err);
+    return null;
   }
 }

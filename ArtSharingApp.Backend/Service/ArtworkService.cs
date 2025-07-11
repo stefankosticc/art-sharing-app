@@ -5,6 +5,8 @@ using ArtSharingApp.Backend.DTO;
 using AutoMapper;
 using ArtSharingApp.Backend.Exceptions;
 using ArtSharingApp.Backend.Models.Enums;
+using ArtSharingApp.Backend.Utils;
+using Microsoft.AspNetCore.Mvc;
 using UnauthorizedAccessException = ArtSharingApp.Backend.Exceptions.UnauthorizedAccessException;
 
 namespace ArtSharingApp.Backend.Service;
@@ -56,7 +58,7 @@ public class ArtworkService : IArtworkService
             artwork.Image = ms.ToArray();
         }
         artwork.ContentType = artworkImage.ContentType;
-        
+
         await _artworkRepository.AddAsync(artwork);
         await _artworkRepository.SaveAsync();
     }
@@ -180,5 +182,28 @@ public class ArtworkService : IArtworkService
             throw new NotFoundException("Image not found.");
 
         return (result.Image, string.IsNullOrWhiteSpace(result.ContentType) ? "image/jpeg" : result.ContentType);
+    }
+
+    public async Task<string?> ExtractColorAsync(IFormFile image)
+    {
+        if (image == null || image.Length == 0)
+            throw new BadRequestException("Image is required.");
+
+        byte[] imageBytes;
+        using (var ms = new MemoryStream())
+        {
+            await image.CopyToAsync(ms);
+            imageBytes = ms.ToArray();
+        }
+
+        try
+        {
+            var color = ImageColorHelper.ExtractSaturationWeightedAverageColor(imageBytes);
+            return color;
+        }
+        catch
+        {
+            return null;
+        }
     }
 }

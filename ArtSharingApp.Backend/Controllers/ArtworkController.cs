@@ -33,6 +33,7 @@ public class ArtworkController : AuthenticatedUserBaseController
     }
 
     [Authorize(Roles = "Admin, Artist")]
+    [RequestSizeLimit(5 * 1024 * 1024)] 
     [HttpPost("artwork")]
     public async Task<IActionResult> Add([FromForm] ArtworkRequestDTO artworkDto, [FromForm] IFormFile artworkImage)
     {
@@ -41,6 +42,7 @@ public class ArtworkController : AuthenticatedUserBaseController
     }
 
     [Authorize(Roles = "Admin, Artist")]
+    [RequestSizeLimit(5 * 1024 * 1024)] 
     [HttpPut("artwork/{id}")]
     public async Task<IActionResult> Update(int id, [FromForm] ArtworkRequestDTO artworkDto, [FromForm] IFormFile? artworkImage)
     {
@@ -111,5 +113,13 @@ public class ArtworkController : AuthenticatedUserBaseController
     {
         var response = await _artworkService.GetArtworkImageAsync(id);
         return File(response.Image, response.ContentType);
+    }
+    
+    [HttpPost("artwork/extract-color")]
+    public async Task<IActionResult> ExtractColor([FromForm] IFormFile image)
+    {
+        var color = await _artworkService.ExtractColorAsync(image);
+        if (color == null) return BadRequest(new { message = "Failed to extract color."});
+        return Ok(color);
     }
 }

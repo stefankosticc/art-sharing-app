@@ -21,6 +21,7 @@ public class ArtworkResponseDTO
     public int? GalleryId { get; set; }
     public string? GalleryName { get; set; }
     public bool? IsLikedByLoggedInUser { get; set; }
+    public string? Color { get; set; }
 }
 
 public class ArtworkRequestDTO
@@ -34,6 +35,7 @@ public class ArtworkRequestDTO
     public int PostedByUserId { get; set; }
     public int? CityId { get; set; }
     public int? GalleryId { get; set; }
+    public string? Color { get; set; }
 }
 
 public class ChangeArtworkVisibilityDTO

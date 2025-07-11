@@ -24,7 +24,7 @@
     border-radius: 0.6rem;
 }
 
-.ap-image-container img {
+.ap-image {
     width: 50vw;
     max-height: 80vh;
     margin: 2rem;
@@ -64,6 +64,7 @@
     font-size: 5rem;
     cursor: pointer;
     color: var(--black);
+    position: relative;
 }
 
 .ap-upload-image:hover {
