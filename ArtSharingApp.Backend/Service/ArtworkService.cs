@@ -61,26 +61,28 @@ public class ArtworkService : IArtworkService
         await _artworkRepository.SaveAsync();
     }
 
-    public async Task UpdateAsync(int id, ArtworkRequestDTO artworkDto, IFormFile artworkImage)
+    public async Task UpdateAsync(int id, ArtworkRequestDTO artworkDto, IFormFile? artworkImage)
     {
         if (artworkDto == null)
             throw new BadRequestException("Artwork parameters not provided correctly.");
-        if (artworkImage == null || artworkImage.Length == 0)
-            throw new BadRequestException("Image not provided correctly.");
         
         var artwork = await _artworkRepository.GetByIdAsync(id);
         if (artwork == null)
             throw new NotFoundException($"Artwork with id {id} not found.");
         
         _mapper.Map(artworkDto, artwork);
-        
-        using (var ms = new MemoryStream())
+
+        if (artworkImage != null && artworkImage.Length > 0)
         {
-            await artworkImage.CopyToAsync(ms);
-            artwork.Image = ms.ToArray();
+            using (var ms = new MemoryStream())
+            {
+                await artworkImage.CopyToAsync(ms);
+                artwork.Image = ms.ToArray();
+            }
+
+            artwork.ContentType = artworkImage.ContentType;
         }
-        artwork.ContentType = artworkImage.ContentType;
-        
+
         _artworkRepository.Update(artwork);
         await _artworkRepository.SaveAsync();
     }

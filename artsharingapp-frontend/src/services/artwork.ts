@@ -35,6 +35,7 @@ export interface Artwork {
   galleryId: number | null;
   galleryName: string | null;
   isLikedByLoggedInUser: boolean | null;
+  color: string | null;
 }
 
 export interface ArtworkRequest {
@@ -109,7 +110,7 @@ export async function dislikeArtwork(artworkId: number): Promise<void> {
 export async function updateArtwork(
   artworkId: number,
   request: ArtworkRequest,
-  artworkImage: File
+  artworkImage: File | null
 ): Promise<void> {
   try {
     const formData = new FormData();
@@ -117,7 +118,10 @@ export async function updateArtwork(
       const value = (request as any)[key];
       formData.append(key, value !== null ? value.toString() : "");
     }
-    formData.append("artworkImage", artworkImage);
+
+    if (artworkImage) {
+      formData.append("artworkImage", artworkImage);
+    }
 
     await authAxios.put(`/artwork/${artworkId}`, formData, {
       headers: { "Content-Type": "multipart/form-data" },

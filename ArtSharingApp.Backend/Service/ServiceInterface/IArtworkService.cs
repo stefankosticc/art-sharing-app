@@ -7,7 +7,7 @@ public interface IArtworkService
     Task<IEnumerable<ArtworkResponseDTO>> GetAllAsync();
     Task<ArtworkResponseDTO?> GetByIdAsync(int id, int loggedInUserId);
     Task AddAsync(ArtworkRequestDTO artworkDto, IFormFile artworkImage);
-    Task UpdateAsync(int id, ArtworkRequestDTO artworkDto, IFormFile artworkImage);
+    Task UpdateAsync(int id, ArtworkRequestDTO artworkDto, IFormFile? artworkImage);
     Task DeleteAsync(int id);
     Task<IEnumerable<ArtworkSearchResponseDTO>?> SearchByTitle(string title);
     Task ChangeVisibilityAsync(int id, bool isPrivate);

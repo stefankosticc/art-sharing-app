@@ -160,12 +160,11 @@ const ArtworkPage = ({ isNew = false }: ArtworkPageProps) => {
       return;
     }
 
-    if (!artworkImageFile) {
-      alert("Please upload an image.");
-      return;
-    }
-
     if (isNew) {
+      if (!artworkImageFile) {
+        alert("Please upload an image.");
+        return;
+      }
       await addNewArtwork(
         {
           ...editingArtworkData,
@@ -198,13 +197,19 @@ const ArtworkPage = ({ isNew = false }: ArtworkPageProps) => {
 
   return (
     <div className="artwork-page fixed-page">
-      <div className="ap-image-container">
+      <div
+        className="ap-image-container"
+        style={
+          {
+            "--artwork-background-color": artwork?.color,
+          } as React.CSSProperties
+        }
+      >
         {imgSrc ? (
-          <>
+          <div className="ap-image-wrapper">
             <img
               src={imgSrc}
               alt={artwork?.title || "artwork image"}
-              className="ap-image"
               onError={() => setImgSrc(fallbackImage)}
             />
             {isEditing && (
@@ -221,7 +226,7 @@ const ArtworkPage = ({ isNew = false }: ArtworkPageProps) => {
                 />
               </div>
             )}
-          </>
+          </div>
         ) : isNew && !loadingArtwork ? (
           <div className="ap-upload-image ap-image" title="Upload image">
             <FiUpload />

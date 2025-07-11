@@ -42,7 +42,7 @@ public class ArtworkController : AuthenticatedUserBaseController
 
     [Authorize(Roles = "Admin, Artist")]
     [HttpPut("artwork/{id}")]
-    public async Task<IActionResult> Update(int id, [FromForm] ArtworkRequestDTO artworkDto, [FromForm] IFormFile artworkImage)
+    public async Task<IActionResult> Update(int id, [FromForm] ArtworkRequestDTO artworkDto, [FromForm] IFormFile? artworkImage)
     {
         await _artworkService.UpdateAsync(id, artworkDto, artworkImage);
         return Ok(new {message = "Artwork updated successfully."});
