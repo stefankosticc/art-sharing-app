@@ -5,6 +5,8 @@ using ArtSharingApp.Backend.DTO;
 using AutoMapper;
 using ArtSharingApp.Backend.Exceptions;
 using ArtSharingApp.Backend.Models.Enums;
+using ArtSharingApp.Backend.Utils;
+using Microsoft.AspNetCore.Mvc;
 using UnauthorizedAccessException = ArtSharingApp.Backend.Exceptions.UnauthorizedAccessException;
 
 namespace ArtSharingApp.Backend.Service;
@@ -56,31 +58,33 @@ public class ArtworkService : IArtworkService
             artwork.Image = ms.ToArray();
         }
         artwork.ContentType = artworkImage.ContentType;
-        
+
         await _artworkRepository.AddAsync(artwork);
         await _artworkRepository.SaveAsync();
     }
 
-    public async Task UpdateAsync(int id, ArtworkRequestDTO artworkDto, IFormFile artworkImage)
+    public async Task UpdateAsync(int id, ArtworkRequestDTO artworkDto, IFormFile? artworkImage)
     {
         if (artworkDto == null)
             throw new BadRequestException("Artwork parameters not provided correctly.");
-        if (artworkImage == null || artworkImage.Length == 0)
-            throw new BadRequestException("Image not provided correctly.");
         
         var artwork = await _artworkRepository.GetByIdAsync(id);
         if (artwork == null)
             throw new NotFoundException($"Artwork with id {id} not found.");
         
         _mapper.Map(artworkDto, artwork);
-        
-        using (var ms = new MemoryStream())
+
+        if (artworkImage != null && artworkImage.Length > 0)
         {
-            await artworkImage.CopyToAsync(ms);
-            artwork.Image = ms.ToArray();
+            using (var ms = new MemoryStream())
+            {
+                await artworkImage.CopyToAsync(ms);
+                artwork.Image = ms.ToArray();
+            }
+
+            artwork.ContentType = artworkImage.ContentType;
         }
-        artwork.ContentType = artworkImage.ContentType;
-        
+
         _artworkRepository.Update(artwork);
         await _artworkRepository.SaveAsync();
     }
@@ -178,5 +182,28 @@ public class ArtworkService : IArtworkService
             throw new NotFoundException("Image not found.");
 
         return (result.Image, string.IsNullOrWhiteSpace(result.ContentType) ? "image/jpeg" : result.ContentType);
+    }
+
+    public async Task<string?> ExtractColorAsync(IFormFile image)
+    {
+        if (image == null || image.Length == 0)
+            throw new BadRequestException("Image is required.");
+
+        byte[] imageBytes;
+        using (var ms = new MemoryStream())
+        {
+            await image.CopyToAsync(ms);
+            imageBytes = ms.ToArray();
+        }
+
+        try
+        {
+            var color = ImageColorHelper.ExtractSaturationWeightedAverageColor(imageBytes);
+            return color;
+        }
+        catch
+        {
+            return null;
+        }
     }
 }
