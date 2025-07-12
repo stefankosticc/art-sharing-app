@@ -73,4 +73,22 @@ public class CityService : ICityService
             return null;
         return _mapper.Map<IEnumerable<CityResponseDTO>>(galleries);
     }
+
+    public async Task<IEnumerable<ArtworkResponseDTO>?> GetArtworksByCityId(int id)
+    {
+        var city = await _cityRepository.GetByIdAsync(id, c => c.Artworks);
+        if (city == null)
+            throw new NotFoundException($"City with id {id} not found.");
+        var artworks = city.Artworks;
+        return _mapper.Map<IEnumerable<ArtworkResponseDTO>>(artworks);
+    }
+
+    public async Task<IEnumerable<GalleryResponseDTO>?> GetGalleriesByCityId(int id)
+    {
+        var city = await _cityRepository.GetByIdAsync(id, c => c.Galleries);
+        if (city == null)
+            throw new NotFoundException($"City with id {id} not found.");
+        var galleries = city.Galleries;
+        return _mapper.Map<IEnumerable<GalleryResponseDTO>>(galleries);
+    }
 }

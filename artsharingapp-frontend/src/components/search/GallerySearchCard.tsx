@@ -2,16 +2,22 @@ import { FaLandmark } from "react-icons/fa6";
 import "../../styles/GallerySearchCard.css";
 import { FaCity } from "react-icons/fa";
 import { Gallery } from "../../services/gallery";
+import { useNavigate } from "react-router-dom";
 
 type GallerySearchCardProps = {
   gallery: Gallery;
 };
 
 const GallerySearchCard = ({ gallery }: GallerySearchCardProps) => {
+  const navigate = useNavigate();
+
   if (!gallery) return null;
 
   return (
-    <div className="gallery-sc-container">
+    <div
+      className="gallery-sc-container"
+      onClick={() => navigate(`/gallery/${gallery.id}`)}
+    >
       <div className="gallery-sc-icon-container">
         <FaLandmark />
       </div>
