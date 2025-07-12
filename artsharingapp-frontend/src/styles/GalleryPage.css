@@ -50,9 +50,24 @@
     width: fit-content;
 }
 
+.gp-city-name:hover {
+    background-color: rgba(30, 144, 255, 0.2);
+    color: var(--blue);
+    border-color: var(--blue);
+    cursor: pointer;
+}
+
 .gp-artwork-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(15rem, 1fr));
-    gap: 1rem;
+    grid-template-columns: repeat(auto-fill, minmax(13rem, 1fr));
+    column-gap: 3rem;
+    row-gap: 1rem;
+    width: 100%;
+    padding-inline: 0.5rem;
     box-sizing: border-box;
+}
+
+.gp-artwork-grid .artwork-card {
+    width: 100%;
+    height: 100%;
 }

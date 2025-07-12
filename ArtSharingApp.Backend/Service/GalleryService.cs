@@ -28,7 +28,7 @@ public class GalleryService : IGalleryService
 
     public async Task<GalleryResponseDTO?> GetByIdAsync(int id)
     {
-        var gallery = await _galleryRepository.GetByIdAsync(id);
+        var gallery = await _galleryRepository.GetByIdAsync(id, g => g.City);
         if (gallery == null)
             throw new NotFoundException($"Gallery with id {id} not found.");
         return _mapper.Map<GalleryResponseDTO>(gallery);

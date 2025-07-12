@@ -1,14 +1,14 @@
 import { FaLandmark } from "react-icons/fa6";
-import { FaCity } from "react-icons/fa";
 import "../styles/GalleryPage.css";
 import Dock from "../components/Dock";
-import { useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import { useGallery } from "../hooks/useGallery";
 import { useGalleryArtworks } from "../hooks/useGalleryArtworks";
 import ArtworkCard from "../components/ArtworkCard";
 
 const GalleryPage = () => {
   const { galleryId } = useParams();
+  const navigate = useNavigate();
 
   const { gallery } = useGallery(galleryId ? parseInt(galleryId) : -1);
   const { galleryArtworks, loadingGalleryArtworks } = useGalleryArtworks(
@@ -27,7 +27,14 @@ const GalleryPage = () => {
 
         <div className="gp-content">
           <div className="gp-info">
-            <p>City Name</p>
+            <p
+              className="gp-city-name"
+              onClick={() => {
+                if (gallery?.cityId) navigate(`/city/${gallery.cityId}`);
+              }}
+            >
+              {gallery?.cityName}
+            </p>
             <p>{gallery?.address}</p>
           </div>
 
