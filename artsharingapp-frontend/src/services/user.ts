@@ -4,6 +4,12 @@ export interface UpdateUserBiographyRequest {
   biography: string;
 }
 
+export interface UserSearchResponse {
+  id: number;
+  name: string;
+  userName: string;
+}
+
 export const updateUserBiography = async (
   request: UpdateUserBiographyRequest
 ): Promise<void> => {
@@ -17,3 +23,12 @@ export const updateUserBiography = async (
     console.error("Error:", message);
   }
 };
+
+export async function searchArtists(
+  searchString: string
+): Promise<UserSearchResponse[]> {
+  const response = await authAxios.get(`/users/search`, {
+    params: { searchString },
+  });
+  return response.data;
+}

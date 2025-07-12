@@ -68,6 +68,7 @@ builder.Services.AddScoped(typeof(IGenericRepository<>), typeof(GenericRepositor
 builder.Services.AddScoped<IUserRepository, UserRepository>();
 builder.Services.AddScoped<IArtworkRepository, ArtworkRepository>();
 builder.Services.AddScoped<IGalleryRepository, GalleryRepository>();
+builder.Services.AddScoped<ICityRepository, CityRepository>();
 builder.Services.AddScoped<IFavoritesRepository, FavoritesRepository>();
 builder.Services.AddScoped<IFollowersRepository, FollowersRepository>();
 builder.Services.AddScoped<INotificationRepository, NotificationRepository>();

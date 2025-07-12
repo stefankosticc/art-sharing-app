@@ -33,18 +33,20 @@ public class ArtworkController : AuthenticatedUserBaseController
     }
 
     [Authorize(Roles = "Admin, Artist")]
+    [RequestSizeLimit(5 * 1024 * 1024)] 
     [HttpPost("artwork")]
-    public async Task<IActionResult> Add([FromBody] ArtworkRequestDTO artworkDto)
+    public async Task<IActionResult> Add([FromForm] ArtworkRequestDTO artworkDto, [FromForm] IFormFile artworkImage)
     {
-        await _artworkService.AddAsync(artworkDto);
-        return Ok(new {message = "Artwork added successfully."});
+        await _artworkService.AddAsync(artworkDto, artworkImage);
+        return Ok(new { message = "Artwork added successfully." });
     }
 
     [Authorize(Roles = "Admin, Artist")]
+    [RequestSizeLimit(5 * 1024 * 1024)] 
     [HttpPut("artwork/{id}")]
-    public async Task<IActionResult> Update(int id, [FromBody] ArtworkRequestDTO artworkDto)
+    public async Task<IActionResult> Update(int id, [FromForm] ArtworkRequestDTO artworkDto, [FromForm] IFormFile? artworkImage)
     {
-        await _artworkService.UpdateAsync(id, artworkDto);
+        await _artworkService.UpdateAsync(id, artworkDto, artworkImage);
         return Ok(new {message = "Artwork updated successfully."});
     }
 
@@ -103,5 +105,21 @@ public class ArtworkController : AuthenticatedUserBaseController
     {
         var loggedInUserId = GetLoggedInUserId();
         return Ok(await _artworkService.GetMyArtworksAsync(loggedInUserId));
+    }
+    
+    [AllowAnonymous]
+    [HttpGet("artwork/{id}/image")]
+    public async Task<IActionResult> GetArtworkImage(int id)
+    {
+        var response = await _artworkService.GetArtworkImageAsync(id);
+        return File(response.Image, response.ContentType);
+    }
+    
+    [HttpPost("artwork/extract-color")]
+    public async Task<IActionResult> ExtractColor([FromForm] IFormFile image)
+    {
+        var color = await _artworkService.ExtractColorAsync(image);
+        if (color == null) return BadRequest(new { message = "Failed to extract color."});
+        return Ok(color);
     }
 }

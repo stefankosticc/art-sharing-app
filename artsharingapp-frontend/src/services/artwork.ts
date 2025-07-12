@@ -35,12 +35,12 @@ export interface Artwork {
   galleryId: number | null;
   galleryName: string | null;
   isLikedByLoggedInUser: boolean | null;
+  color: string | null;
 }
 
 export interface ArtworkRequest {
   title: string;
   story: string;
-  image: string;
   date: Date | string;
   tipsAndTricks: string;
   isPrivate: boolean;
@@ -48,6 +48,21 @@ export interface ArtworkRequest {
   postedByUserId: number;
   cityId: number | null;
   galleryId: number | null;
+  color: string | null;
+}
+
+export interface ArtworkSearchResponse {
+  id: number;
+  title: string;
+  image: string;
+  isOnSale: boolean;
+  postedByUserId: number;
+  postedByUserName: string;
+  cityId: number | null;
+  cityName: string | null;
+  country: string | null;
+  galleryId: number | null;
+  galleryName: string | null;
 }
 
 export async function getMyArtworks(): Promise<ArtworkCardData[]> {
@@ -95,10 +110,23 @@ export async function dislikeArtwork(artworkId: number): Promise<void> {
 
 export async function updateArtwork(
   artworkId: number,
-  request: ArtworkRequest
+  request: ArtworkRequest,
+  artworkImage: File | null
 ): Promise<void> {
   try {
-    await authAxios.put(`/artwork/${artworkId}`, request);
+    const formData = new FormData();
+    for (const key in request) {
+      const value = (request as any)[key];
+      formData.append(key, value !== null ? value.toString() : "");
+    }
+
+    if (artworkImage) {
+      formData.append("artworkImage", artworkImage);
+    }
+
+    await authAxios.put(`/artwork/${artworkId}`, formData, {
+      headers: { "Content-Type": "multipart/form-data" },
+    });
   } catch (error: any) {
     const message =
       error?.response?.data?.error ||
@@ -108,14 +136,69 @@ export async function updateArtwork(
   }
 }
 
-export async function addNewArtwork(artwork: ArtworkRequest): Promise<void> {
+export async function addNewArtwork(
+  artwork: ArtworkRequest,
+  artworkImage: File
+): Promise<void> {
   try {
-    await authAxios.post(`/artwork`, artwork);
+    const formData = new FormData();
+    for (const key in artwork) {
+      const value = (artwork as any)[key];
+      formData.append(key, value !== null ? value.toString() : "");
+    }
+    formData.append("artworkImage", artworkImage);
+
+    await authAxios.post(`/artwork`, formData, {
+      headers: { "Content-Type": "multipart/form-data" },
+    });
   } catch (error: any) {
     const message =
       error?.response?.data?.error ||
       error?.message ||
       "An unknown error occurred.";
     console.error("Error:", message);
+  }
+}
+
+export async function searchArtworks(
+  title: string
+): Promise<ArtworkSearchResponse[]> {
+  const response = await authAxios.get(`/artworks/search`, {
+    params: { title },
+  });
+  return response.data;
+}
+
+export async function getArtworkImage(imageUrl: string): Promise<string> {
+  try {
+    const response = await authAxios.get(imageUrl, { responseType: "blob" });
+    const url = URL.createObjectURL(response.data);
+    return url;
+  } catch (error: any) {
+    const message =
+      error?.response?.data?.error ||
+      error?.message ||
+      "An unknown error occurred.";
+    console.error("Error:", message);
+    return "";
+  }
+}
+
+export async function extractArtworkColor(
+  imageFile: File
+): Promise<string | null> {
+  const formData = new FormData();
+  formData.append("image", imageFile);
+
+  try {
+    const response = await authAxios.post("/artwork/extract-color", formData, {
+      headers: {
+        "Content-Type": "multipart/form-data",
+      },
+    });
+    return response.data;
+  } catch (err) {
+    console.error("Failed to extract color", err);
+    return null;
   }
 }

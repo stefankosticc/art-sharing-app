@@ -5,8 +5,23 @@
 }
 
 .ap-image-container {
-    background-color: royalblue;
+    position: relative;
     border-radius: 0 1rem 1rem 0;
+
+    display: flex;
+    height: 100%;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+
+    --_artwork-background-color: var(--artwork-background-color, var(--black));
+    background: var(--_artwork-background-color);
+    background: radial-gradient(at center top, var(--_artwork-background-color), var(--black));
+}
+
+.ap-image-wrapper {
+    position: relative;
+    border-radius: 0.6rem;
 }
 
 .ap-image {
@@ -17,8 +32,54 @@
     border-radius: 0.6rem;
 }
 
+.ap-replace-image-overlay {
+    position: absolute;
+    inset: 0;
+    background-color: rgba(28, 28, 28, 0.1);
+    color: var(--black);
+    font-size: 5rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    display: none;
+    z-index: 10;
+    margin: 2rem;
+}
+
+.ap-image-wrapper:hover .ap-replace-image-overlay {
+    display: flex;
+}
+
 .ap-image-placeholder {
     height: 80vh;
+}
+
+.ap-upload-image {
+    height: 80vh;
+    background-color: var(--gray);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 5rem;
+    cursor: pointer;
+    color: var(--black);
+    position: relative;
+}
+
+.ap-upload-image:hover {
+    background-color: var(--gray-light);
+}
+
+.ap-file-input-overlay {
+    position: absolute;
+    inset: 0;
+    opacity: 0;
+    cursor: pointer;
+}
+
+.ap-image-container:has(.ap-upload-image) {
+    background-color: transparent;
 }
 
 .ap-info {
@@ -30,7 +91,6 @@
     flex-direction: column;
     gap: 2rem;
     background-color: var(--black);
-    scrollbar-color: var(--purple);
 }
 
 .ap-info-header {
@@ -160,4 +220,47 @@
 
 .ap-title-editing:focus {
     outline: none;
+}
+
+/* Color changing */
+.ap-change-color-container {
+    display: flex;
+    align-items: center;
+    gap: 0.8rem;
+    margin: 0 1rem 1rem 2rem;
+
+    position: absolute;
+    bottom: -1rem;
+    left: 1rem;
+}
+
+.ap-color-picker {
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    appearance: none;
+    width: 2rem;
+    height: 2rem;
+    background-color: transparent;
+    border: none;
+    cursor: pointer;
+}
+
+.ap-color-picker::-webkit-color-swatch {
+    border-radius: 0.2rem;
+    border: none;
+}
+
+.ap-color-picker::-moz-color-swatch {
+    border-radius: 0.2rem;
+    border: none;
+}
+
+.ap-color-btn {
+    background-color: var(--gray-light);
+    color: var(--gray-ligther);
+    border: none;
+    padding: 0.2rem 0.6rem;
+    border-radius: 1rem;
+    font-size: 0.8rem;
+    cursor: pointer;
 }

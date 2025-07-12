@@ -19,14 +19,6 @@ public class UserService : IUserService
         _mapper = mapper;
     }
 
-    public async Task<IEnumerable<UserResponseDTO>> GetUsersByName(string name)
-    {
-        if (string.IsNullOrWhiteSpace(name))
-            throw new BadRequestException("Name parameter is required.");
-        var users = await _userRepository.GetUsersByName(name);
-        return _mapper.Map<IEnumerable<UserResponseDTO>>(users);
-    }
-
     public async Task AddUserAsync(UserRequestDTO userDto)
     {
         if (userDto == null)
@@ -67,5 +59,13 @@ public class UserService : IUserService
         user.Biography = biography;
         _userRepository.UpdateBiography(user);
         await _userRepository.SaveAsync();
+    }
+
+    public async Task<IEnumerable<UserSearchResponseDTO?>> GetUsersByNameAndUserName(string searchString)
+    {
+        if (string.IsNullOrWhiteSpace(searchString))
+            throw new BadRequestException("Username parameter is required.");
+        var users = await _userRepository.GetUsersByNameAndUserName(searchString);
+        return _mapper.Map<IEnumerable<UserSearchResponseDTO>>(users);
     }
 }

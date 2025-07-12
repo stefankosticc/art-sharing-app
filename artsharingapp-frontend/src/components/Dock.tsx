@@ -5,32 +5,60 @@ import "../styles/Dock.css";
 import { FaWindowMaximize } from "react-icons/fa6";
 import { MdOutlineChatBubble } from "react-icons/md";
 import { IoNotifications } from "react-icons/io5";
+import { useEffect, useState } from "react";
+import Search from "./search/Search";
 
 const Dock = () => {
+  const [isSearchOpen, setIsSearchOpen] = useState<boolean>(false);
+
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === "Escape") {
+        setIsSearchOpen(false);
+      }
+    };
+
+    if (isSearchOpen) {
+      window.addEventListener("keydown", handleKeyDown);
+    }
+
+    return () => {
+      window.removeEventListener("keydown", handleKeyDown);
+    };
+  }, [isSearchOpen]);
+
   return (
-    <div className="dock">
-      <NavLink to={"/notifications"} title="Notifications">
-        <IoNotifications />
-      </NavLink>
-      <NavLink to={"/map"} title="Map">
-        <FaMap />
-      </NavLink>
-      <NavLink to={"/feed"} title="Feed">
-        <FaWindowMaximize />
-      </NavLink>
-      <NavLink to={"/search"} title="Search">
-        <FiSearch />
-      </NavLink>
-      <NavLink to={"/profile"} title="Profile">
-        <FaUser />
-      </NavLink>
-      <NavLink to={"/artwork/new"} title="New Artwork">
-        <FaPlusSquare />
-      </NavLink>
-      <NavLink to={"/chat"} title="Chat">
-        <MdOutlineChatBubble />
-      </NavLink>
-    </div>
+    <>
+      {isSearchOpen && <Search onClose={() => setIsSearchOpen(false)} />}
+      <div className="dock">
+        <NavLink to={"/notifications"} title="Notifications">
+          <IoNotifications />
+        </NavLink>
+        <NavLink to={"/map"} title="Map">
+          <FaMap />
+        </NavLink>
+        <NavLink to={"/feed"} title="Feed">
+          <FaWindowMaximize />
+        </NavLink>
+        <div
+          onClick={(e) => {
+            e.stopPropagation();
+            setIsSearchOpen(!isSearchOpen);
+          }}
+        >
+          <FiSearch id="search-icon" />
+        </div>
+        <NavLink to={"/profile"} title="Profile">
+          <FaUser />
+        </NavLink>
+        <NavLink to={"/artwork/new"} title="New Artwork">
+          <FaPlusSquare />
+        </NavLink>
+        <NavLink to={"/chat"} title="Chat">
+          <MdOutlineChatBubble />
+        </NavLink>
+      </div>
+    </>
   );
 };
 

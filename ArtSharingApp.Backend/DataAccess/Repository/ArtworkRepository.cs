@@ -35,7 +35,12 @@ public class ArtworkRepository : GenericRepository<Artwork>,IArtworkRepository
     {
         if (string.IsNullOrEmpty(title))
             return null;
-        var artworks = await _context.Artworks.Where(a => a.Title.ToLower().Contains(title.ToLower())).ToListAsync();
+        var artworks = await _context.Artworks
+            .Include(a => a.PostedByUser)
+            .Include(a => a.City)
+            .Include(a => a.Gallery)
+            .Where(a => !a.IsPrivate && a.Title.ToLower().Contains(title.ToLower()))
+            .ToListAsync();
         return artworks;
     }
 
@@ -65,5 +70,15 @@ public class ArtworkRepository : GenericRepository<Artwork>,IArtworkRepository
             .Where(a => a.PostedByUserId == postedByUserId)
             .Include(a => a.PostedByUser)
             .ToListAsync();
+    }
+
+    public async Task<(byte[]? Image, string? ContentType)> GetArtworkImageAsync(int id)
+    {
+        var result = await _dbSet
+            .Where(a => a.Id == id)
+            .Select(a => new { a.Image, a.ContentType })
+            .FirstOrDefaultAsync();
+
+        return (result?.Image, result?.ContentType);
     }
 }

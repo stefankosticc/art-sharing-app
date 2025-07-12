@@ -7,6 +7,8 @@ import PrivateRoute from "./components/PrivateRoute";
 import Profile from "./pages/Profile";
 import ArtworkPage from "./pages/ArtworkPage";
 import NotFound from "./pages/NotFound";
+import GalleryPage from "./pages/GalleryPage";
+import CityPage from "./pages/CityPage";
 
 function App() {
   return (
@@ -37,6 +39,22 @@ function App() {
             element={
               <PrivateRoute>
                 <ArtworkPage />
+              </PrivateRoute>
+            }
+          />
+          <Route
+            path="/gallery/:galleryId"
+            element={
+              <PrivateRoute>
+                <GalleryPage />
+              </PrivateRoute>
+            }
+          />
+          <Route
+            path="/city/:cityId"
+            element={
+              <PrivateRoute>
+                <CityPage />
               </PrivateRoute>
             }
           />

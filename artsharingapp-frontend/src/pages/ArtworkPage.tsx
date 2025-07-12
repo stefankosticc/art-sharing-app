@@ -5,23 +5,27 @@ import { PiDotsThreeOutlineVerticalFill } from "react-icons/pi";
 import { useLoggedInUser } from "../hooks/useLoggedInUser";
 import { MdEdit } from "react-icons/md";
 import { IoMdHeartEmpty, IoMdHeart } from "react-icons/io";
+import { FiUpload } from "react-icons/fi";
+import { HiArrowPathRoundedSquare } from "react-icons/hi2";
 import { useEffect, useState } from "react";
 import {
   addNewArtwork,
   ArtworkRequest,
   dislikeArtwork,
+  extractArtworkColor,
   likeArtwork,
   updateArtwork,
 } from "../services/artwork";
 import { useNavigate, useParams } from "react-router-dom";
 import TextEditor from "../components/TextEditor";
+import { BACKEND_BASE_URL } from "../config/constants";
 
 type ArtworkPageProps = {
   isNew?: boolean;
 };
 
 const fallbackImage =
-  "https://cdn.shopify.com/s/files/1/0047/4231/6066/files/The_Scream_by_Edvard_Munch_1893_800x.png";
+  "https://upload.wikimedia.org/wikipedia/commons/a/a3/Image-not-found.png?20210521171500";
 
 const getFormattedDateOnly = (date: Date): string => {
   return date.toISOString().split("T")[0];
@@ -29,15 +33,15 @@ const getFormattedDateOnly = (date: Date): string => {
 
 const getInitialArtworkData = (userId: number): ArtworkRequest => ({
   title: "",
-  story: "",
-  image: "",
+  story: "<p></p>",
   date: getFormattedDateOnly(new Date()),
-  tipsAndTricks: "",
+  tipsAndTricks: "<p></p>",
   isPrivate: false,
   createdByArtistId: userId,
   postedByUserId: userId,
   cityId: null,
   galleryId: null,
+  color: null,
 });
 
 const ArtworkPage = ({ isNew = false }: ArtworkPageProps) => {
@@ -47,11 +51,13 @@ const ArtworkPage = ({ isNew = false }: ArtworkPageProps) => {
 
   const [isEditing, setIsEditing] = useState<boolean>(isNew);
   const [isLiked, setIsLiked] = useState<boolean>(false);
-  const [imgSrc, setImgSrc] = useState<string>("");
   const [refetchArtwork, setRefetchArtwork] = useState<boolean>(false);
+  const [imgSrc, setImgSrc] = useState<string>("");
+  const [artworkImageFile, setArtworkImageFile] = useState<File | null>(null);
+  const [extractedColor, setExtractedColor] = useState<string | null>(null);
 
   // Fetch artwork if not new
-  const { artwork } = useArtwork(
+  const { artwork, loadingArtwork } = useArtwork(
     !isNew && artworkId ? parseInt(artworkId) : -1,
     refetchArtwork
   );
@@ -61,7 +67,10 @@ const ArtworkPage = ({ isNew = false }: ArtworkPageProps) => {
   );
 
   useEffect(() => {
-    if (artwork?.image) setImgSrc(artwork.image);
+    if (artwork?.image) {
+      setImgSrc(`${BACKEND_BASE_URL}${artwork.image}?t=${Date.now()}`);
+      setExtractedColor(artwork.color);
+    }
     if (artwork?.isLikedByLoggedInUser)
       setIsLiked(artwork.isLikedByLoggedInUser);
   }, [artwork]);
@@ -72,7 +81,6 @@ const ArtworkPage = ({ isNew = false }: ArtworkPageProps) => {
       setEditingArtworkData({
         title: artwork.title || "",
         story: artwork.story || "",
-        image: artwork.image || "",
         date: artwork.date || getFormattedDateOnly(new Date()),
         tipsAndTricks: artwork.tipsAndTricks || "",
         isPrivate: artwork.isPrivate || false,
@@ -80,6 +88,7 @@ const ArtworkPage = ({ isNew = false }: ArtworkPageProps) => {
         postedByUserId: artwork.postedByUserId || -1,
         cityId: artwork.cityId || null,
         galleryId: artwork.galleryId || null,
+        color: artwork.color || null,
       });
     }
     if (isEditing && isNew) {
@@ -91,8 +100,13 @@ const ArtworkPage = ({ isNew = false }: ArtworkPageProps) => {
     if (isNew) {
       setIsEditing(isNew);
       setImgSrc("");
+      setExtractedColor(null);
     }
   }, [isNew]);
+
+  useEffect(() => {
+    if (!isNew) setIsEditing(false);
+  }, [artworkId]);
 
   const handleInputChange = (
     e: React.ChangeEvent<HTMLTextAreaElement | HTMLInputElement>
@@ -121,7 +135,6 @@ const ArtworkPage = ({ isNew = false }: ArtworkPageProps) => {
       setEditingArtworkData({
         title: artwork.title || "",
         story: artwork.story || "",
-        image: artwork.image || "",
         date: artwork.date || getFormattedDateOnly(new Date()),
         tipsAndTricks: artwork.tipsAndTricks || "",
         isPrivate: artwork.isPrivate || false,
@@ -129,9 +142,28 @@ const ArtworkPage = ({ isNew = false }: ArtworkPageProps) => {
         postedByUserId: artwork.postedByUserId || -1,
         cityId: artwork.cityId || null,
         galleryId: artwork.galleryId || null,
+        color: artwork.color || null,
       });
+      setExtractedColor(artwork.color);
+      setImgSrc(`${BACKEND_BASE_URL}${artwork.image}?t=${Date.now()}`);
     } else if (isNew) {
       navigate(-1);
+    }
+  };
+
+  const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0] || null;
+    setArtworkImageFile(file);
+    if (file) {
+      const url = URL.createObjectURL(file);
+      setImgSrc(url);
+
+      const color = await extractArtworkColor(file);
+      setExtractedColor(color);
+      setEditingArtworkData((prev) => ({
+        ...prev,
+        color: color,
+      }));
     }
   };
 
@@ -146,16 +178,22 @@ const ArtworkPage = ({ isNew = false }: ArtworkPageProps) => {
     }
 
     if (isNew) {
-      await addNewArtwork({
-        ...editingArtworkData,
-        image: editingArtworkData.image || "new",
-        createdByArtistId: loggedInUser?.id ?? -1,
-        postedByUserId: loggedInUser?.id ?? -1,
-      });
+      if (!artworkImageFile) {
+        alert("Please upload an image.");
+        return;
+      }
+      await addNewArtwork(
+        {
+          ...editingArtworkData,
+          createdByArtistId: loggedInUser?.id ?? -1,
+          postedByUserId: loggedInUser?.id ?? -1,
+        },
+        artworkImageFile
+      );
       navigate("/profile");
     } else if (artwork) {
-      await updateArtwork(artwork.id, editingArtworkData);
-      setRefetchArtwork(!refetchArtwork);
+      await updateArtwork(artwork.id, editingArtworkData, artworkImageFile);
+      setRefetchArtwork((prev) => !prev);
       setIsEditing(false);
     }
   };
@@ -176,14 +214,85 @@ const ArtworkPage = ({ isNew = false }: ArtworkPageProps) => {
 
   return (
     <div className="artwork-page fixed-page">
-      <div className="ap-image-container">
+      <div
+        className="ap-image-container"
+        style={
+          {
+            "--artwork-background-color": extractedColor,
+          } as React.CSSProperties
+        }
+      >
         {imgSrc ? (
-          <img
-            src={imgSrc}
-            alt={artwork?.title || "artwork image"}
-            className="ap-image"
-            onError={() => setImgSrc(fallbackImage)}
-          />
+          <div className="ap-image-wrapper">
+            <img
+              src={imgSrc}
+              alt={artwork?.title || "artwork image"}
+              onError={() => setImgSrc(fallbackImage)}
+              className="ap-image"
+            />
+            {isEditing && (
+              <>
+                <div
+                  className="ap-image ap-replace-image-overlay"
+                  title="Replace image"
+                >
+                  <HiArrowPathRoundedSquare />
+                  <input
+                    type="file"
+                    accept="image/*"
+                    onChange={handleFileChange}
+                    className="ap-file-input-overlay"
+                  />
+                </div>
+
+                <div className="ap-change-color-container">
+                  <input
+                    type="color"
+                    name="color"
+                    className="ap-color-picker"
+                    title="Change color background"
+                    value={extractedColor || artwork?.color || "#5c5c5c"}
+                    onChange={(e) => {
+                      handleInputChange(e);
+                      setExtractedColor(e.target.value);
+                    }}
+                  />
+                  <button
+                    className="ap-color-btn"
+                    title="Remove color background"
+                    onClick={() => {
+                      setExtractedColor(null);
+                      setEditingArtworkData((prev) => ({
+                        ...prev,
+                        color: null,
+                      }));
+                    }}
+                  >
+                    Clear Color
+                  </button>
+                  <button
+                    className="ap-color-btn"
+                    title="Revert color background"
+                    onClick={() => {
+                      if (artwork) setExtractedColor(artwork.color);
+                    }}
+                  >
+                    Revert Color
+                  </button>
+                </div>
+              </>
+            )}
+          </div>
+        ) : isNew && !loadingArtwork ? (
+          <div className="ap-upload-image ap-image" title="Upload image">
+            <FiUpload />
+            <input
+              type="file"
+              accept="image/*"
+              onChange={handleFileChange}
+              className="ap-file-input-overlay"
+            />
+          </div>
         ) : (
           <div className="ap-image ap-image-placeholder skeleton"></div>
         )}
@@ -199,6 +308,7 @@ const ArtworkPage = ({ isNew = false }: ArtworkPageProps) => {
               onChange={handleInputChange}
               rows={1}
               maxLength={100}
+              placeholder="Title"
             />
           ) : (
             <h1 className="ap-title">{artwork?.title || ""}</h1>

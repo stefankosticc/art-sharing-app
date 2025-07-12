@@ -33,6 +33,13 @@ namespace ArtSharingApp.Backend.Migrations
                     b.Property<int?>("CityId")
                         .HasColumnType("integer");
 
+                    b.Property<string>("Color")
+                        .HasColumnType("text");
+
+                    b.Property<string>("ContentType")
+                        .IsRequired()
+                        .HasColumnType("text");
+
                     b.Property<int>("CreatedByArtistId")
                         .HasColumnType("integer");
 
@@ -46,9 +53,9 @@ namespace ArtSharingApp.Backend.Migrations
                     b.Property<int?>("GalleryId")
                         .HasColumnType("integer");
 
-                    b.Property<string>("Image")
+                    b.Property<byte[]>("Image")
                         .IsRequired()
-                        .HasColumnType("text");
+                        .HasColumnType("bytea");
 
                     b.Property<bool>("IsOnSale")
                         .HasColumnType("boolean");
@@ -302,6 +309,9 @@ namespace ArtSharingApp.Backend.Migrations
                         .IsConcurrencyToken()
                         .HasColumnType("text");
 
+                    b.Property<string>("ContentType")
+                        .HasColumnType("text");
+
                     b.Property<string>("Email")
                         .HasMaxLength(256)
                         .HasColumnType("character varying(256)");
@@ -335,6 +345,9 @@ namespace ArtSharingApp.Backend.Migrations
 
                     b.Property<bool>("PhoneNumberConfirmed")
                         .HasColumnType("boolean");
+
+                    b.Property<byte[]>("ProfilePhoto")
+                        .HasColumnType("bytea");
 
                     b.Property<string>("RefreshToken")
                         .HasColumnType("text");

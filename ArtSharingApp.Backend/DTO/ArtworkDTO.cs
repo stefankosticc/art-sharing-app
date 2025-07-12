@@ -21,13 +21,13 @@ public class ArtworkResponseDTO
     public int? GalleryId { get; set; }
     public string? GalleryName { get; set; }
     public bool? IsLikedByLoggedInUser { get; set; }
+    public string? Color { get; set; }
 }
 
 public class ArtworkRequestDTO
 {
     public string Title { get; set; }
     public string Story { get; set; }
-    public string Image { get; set; }
     public DateOnly Date { get; set; }
     public string TipsAndTricks { get; set; }
     public bool IsPrivate { get; set; }
@@ -35,6 +35,7 @@ public class ArtworkRequestDTO
     public int PostedByUserId { get; set; }
     public int? CityId { get; set; }
     public int? GalleryId { get; set; }
+    public string? Color { get; set; }
 }
 
 public class ChangeArtworkVisibilityDTO
@@ -58,4 +59,19 @@ public class ArtworkPreviewDTO
     public bool IsPrivate { get; set; }
     public int PostedByUserId { get; set; }
     public string PostedByUserName { get; set; }
+}
+
+public class ArtworkSearchResponseDTO
+{
+    public int Id { get; set; }
+    public string Title { get; set; }
+    public string Image { get; set; }
+    public bool IsOnSale { get; set; }
+    public int PostedByUserId { get; set; }
+    public string PostedByUserName { get; set; }
+    public int? CityId { get; set; }
+    public string? CityName { get; set; }
+    public string? Country { get; set; }
+    public int? GalleryId { get; set; }
+    public string? GalleryName { get; set; }
 }
