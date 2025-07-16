@@ -12,6 +12,8 @@ public class ArtworkResponseDTO
     public string TipsAndTricks { get; set; }
     public bool IsPrivate { get; set; }
     public bool IsOnSale { get; set; }
+    public decimal? Price { get; set; }
+    public Currency Currency { get; set; }
     public int CreatedByArtistId { get; set; }
     public string CreatedByArtistUserName { get; set; }
     public int PostedByUserId { get; set; }

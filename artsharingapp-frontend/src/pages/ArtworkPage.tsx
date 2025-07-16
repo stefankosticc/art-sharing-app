@@ -19,6 +19,9 @@ import {
 import { useNavigate, useParams } from "react-router-dom";
 import TextEditor from "../components/TextEditor";
 import { BACKEND_BASE_URL } from "../config/constants";
+import AuctionSection from "../components/AuctionSection";
+import ThreeDotsMenu from "../components/ThreeDotsMenu";
+import FixedSaleSection from "../components/FixedSaleSection";
 
 type ArtworkPageProps = {
   isNew?: boolean;
@@ -55,6 +58,7 @@ const ArtworkPage = ({ isNew = false }: ArtworkPageProps) => {
   const [imgSrc, setImgSrc] = useState<string>("");
   const [artworkImageFile, setArtworkImageFile] = useState<File | null>(null);
   const [extractedColor, setExtractedColor] = useState<string | null>(null);
+  const [is3DotsMenuOpen, setIs3DotsMenuOpen] = useState<boolean>(false);
 
   // Fetch artwork if not new
   const { artwork, loadingArtwork } = useArtwork(
@@ -339,11 +343,24 @@ const ArtworkPage = ({ isNew = false }: ArtworkPageProps) => {
                   title="Edit"
                   onClick={() => setIsEditing((prev) => !prev)}
                 />
-                <PiDotsThreeOutlineVerticalFill
-                  className="ap-info-header-icon"
-                  id="ap-3-dots-menu"
-                  title="Options"
-                />
+                <>
+                  <PiDotsThreeOutlineVerticalFill
+                    className="ap-info-header-icon"
+                    id="ap-3-dots-menu"
+                    title="Options"
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      setIs3DotsMenuOpen((prev) => !prev);
+                    }}
+                  />
+                  {is3DotsMenuOpen && (
+                    <ThreeDotsMenu
+                      artworkId={artworkId ? parseInt(artworkId) : -1}
+                      onClose={() => setIs3DotsMenuOpen(false)}
+                      refetchArtwork={() => setRefetchArtwork((prev) => !prev)}
+                    />
+                  )}
+                </>
               </div>
             )}
           </div>
@@ -396,6 +413,10 @@ const ArtworkPage = ({ isNew = false }: ArtworkPageProps) => {
             )}
           </div>
         </div>
+
+        {artwork?.isOnSale && <FixedSaleSection artwork={artwork} />}
+
+        <AuctionSection />
 
         {((artwork?.story && artwork.story !== "<p></p>") || isEditing) && (
           <div className="ap-story">
