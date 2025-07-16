@@ -30,6 +30,8 @@
     -moz-box-shadow: -10px 23px 133px -17px rgba(0, 0, 0, 0.75);
 }
 
+/* TABS */
+
 .psm-tabs {
     display: flex;
     align-items: center;
@@ -55,6 +57,8 @@
     font-weight: 500;
 }
 
+/* BUTTONS */
+
 .psm-buttons {
     width: 100%;
     display: flex;
@@ -78,7 +82,7 @@
     background-color: var(--purple);
 }
 
-/* FIXED PRICE */
+/* FORMS */
 
 .psm-fixed-form {
     width: 50%;
@@ -88,20 +92,20 @@
     flex-wrap: wrap;
 }
 
-.psm-fixed-form-field {
+.psm-form-field {
     display: flex;
     flex-direction: column;
     width: 50%;
     gap: 0.4rem;
 }
 
-.psm-fixed-form-field label {
+.psm-form-field label {
     font-size: 0.9rem;
     color: var(--gray-light);
 }
 
-.psm-fixed-form-field input,
-.psm-fixed-currency-select {
+.psm-form-field input,
+.psm-currency-select {
     border: 1px solid var(--gray);
     outline: none;
     background-color: transparent;
@@ -111,6 +115,32 @@
     border-radius: 0.2rem;
 }
 
-.psm-fixed-form-field:has(.psm-fixed-currency-select) {
+.psm-form-field:has(.psm-currency-select) {
     width: 5rem;
+}
+
+.psm-auction-form {
+    width: 50%;
+    display: flex;
+    gap: 2rem;
+    flex-wrap: wrap;
+}
+
+.psm-auction-time {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.2rem;
+
+}
+
+.psm-auction-time .psm-form-field {
+    width: 44%;
+}
+
+.psm-auction-time span {
+    align-self: flex-end;
+    margin-bottom: 0.5rem;
+    color: var(--gray-light);
 }

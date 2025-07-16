@@ -67,4 +67,11 @@ public class AuctionController : AuthenticatedUserBaseController
         await _auctionService.WithdrawOfferAsync(offerId, userId);
         return Ok(new { message = "Offer withdrawn." });
     }
+    
+    [HttpGet("artwork/{artworkId}/auction/active")]
+    public async Task<IActionResult> GetActiveAuction(int artworkId)
+    {
+        var auction = await _auctionService.GetActiveAuctionAsync(artworkId);
+        return Ok(auction);
+    }
 }

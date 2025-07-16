@@ -2,6 +2,7 @@ using ArtSharingApp.Backend.DataAccess.Repository.RepositoryInterface;
 using ArtSharingApp.Backend.DTO;
 using ArtSharingApp.Backend.Exceptions;
 using ArtSharingApp.Backend.Models;
+using ArtSharingApp.Backend.Models.Enums;
 using ArtSharingApp.Backend.Service;
 using ArtSharingApp.Backend.Service.ServiceInterface;
 using AutoMapper;
@@ -48,6 +49,9 @@ public class AuctionServiceTests
             .ReturnsAsync(new Artwork { Id = artworkId, PostedByUserId = userId });
         _mockAuctionRepository.Setup(repo => repo.IsAuctionScheduledAsync(
                 artworkId, request.StartTime, request.EndTime))
+            .ReturnsAsync(false);
+        _mockAuctionRepository.Setup(repo => repo.HasFutureAuctionScheduledAsync(
+                artworkId, It.IsAny<DateTime>()))
             .ReturnsAsync(false);
         _mockMapper.Setup(m => m.Map<Auction>(request))
             .Returns(new Auction
@@ -98,7 +102,7 @@ public class AuctionServiceTests
         int userId = 1;
         var request = new AuctionStartDTO
         {
-            StartTime = DateTime.UtcNow.AddHours(startTimeOffset),
+            StartTime = DateTime.UtcNow.AddHours(startTimeOffset).AddMinutes(-1),
             EndTime = DateTime.UtcNow.AddHours(endTimeOffset)
         };
         
@@ -108,6 +112,35 @@ public class AuctionServiceTests
         // Act & Assert
         await Assert.ThrowsAsync<BadRequestException>(() =>
             _auctionService.StartAuctionAsync(artworkId, userId, request));
+        _mockAuctionRepository.Verify(repo => repo.AddAsync(It.IsAny<Auction>()), Times.Never);
+        _mockAuctionRepository.Verify(repo => repo.SaveAsync(), Times.Never);
+    }
+    
+    [Fact]
+    public async Task StartAuctionAsync_ThrowBadRequestException_WhenFutureAuctionAlreadyExists()
+    {
+        // Arrange
+        int artworkId = 1;
+        int userId = 1;
+        var request = new AuctionStartDTO
+        {
+            StartTime = DateTime.UtcNow.AddHours(3),
+            EndTime = DateTime.UtcNow.AddHours(4)
+        };
+
+        _mockArtworkRepository.Setup(repo => repo.GetByIdAsync(artworkId))
+            .ReturnsAsync(new Artwork { Id = artworkId, PostedByUserId = userId });
+        _mockAuctionRepository.Setup(repo =>
+                repo.HasFutureAuctionScheduledAsync(artworkId, It.IsAny<DateTime>()))
+            .ReturnsAsync(true);
+        _mockAuctionRepository.Setup(repo =>
+                repo.IsAuctionScheduledAsync(artworkId, request.StartTime, request.EndTime))
+            .ReturnsAsync(false);
+
+        // Act & Assert
+        await Assert.ThrowsAsync<BadRequestException>(() =>
+            _auctionService.StartAuctionAsync(artworkId, userId, request));
+
         _mockAuctionRepository.Verify(repo => repo.AddAsync(It.IsAny<Auction>()), Times.Never);
         _mockAuctionRepository.Verify(repo => repo.SaveAsync(), Times.Never);
     }
@@ -177,7 +210,7 @@ public class AuctionServiceTests
     
     [Theory]
     [InlineData(1,2)] // Auction not yet started
-    [InlineData(-2,-1)] // Auction ended]
+    [InlineData(-2,-1)] // Auction ended
     public async Task MakeAnOfferAsync_ThrowBadRequestException_WhenAuctionNotActive(int startTimeOffset, int endTimeOffset)
     {
         // Arrange
@@ -265,6 +298,66 @@ public class AuctionServiceTests
             _auctionService.MakeAnOfferAsync(auctionId, userId, request));
         _mockOfferRepository.Verify(repo => repo.AddAsync(It.IsAny<Offer>()), Times.Never);
         _mockOfferRepository.Verify(repo => repo.SaveAsync(), Times.Never);
+    }
+    
+    [Theory]
+    [InlineData(0,0, 100)]  // No offers, current price = starting price
+    [InlineData(2,150, 150)] // Max offer present, current price = max offer
+    public async Task GetActiveAuctionAsync_Success(int offerCount, decimal maxOffer, decimal expectedCurrentPrice)
+    {
+        // Arrange
+        int artworkId = 1;
+        int auctionId = 123;
+        decimal startingPrice = 100;
+        var now = DateTime.UtcNow;
+
+        var auction = new Auction
+        {
+            Id = auctionId,
+            StartTime = now.AddMinutes(-15),
+            EndTime = now.AddMinutes(15),
+            StartingPrice = startingPrice,
+            Currency = Currency.GBP
+        };
+
+        _mockAuctionRepository
+            .Setup(repo => repo.GetActiveAuctionByArtworkIdAsync(artworkId, It.IsAny<DateTime>()))
+            .ReturnsAsync(auction);
+        _mockOfferRepository
+            .Setup(repo => repo.GetMaxOfferAmountAsync(auctionId))
+            .ReturnsAsync(maxOffer);
+        _mockOfferRepository
+            .Setup(repo => repo.GetOfferCountByAuctionIdAsync(auctionId))
+            .ReturnsAsync(offerCount);
+
+        // Act
+        var result = await _auctionService.GetActiveAuctionAsync(artworkId);
+
+        // Assert
+        Assert.NotNull(result);
+        Assert.Equal(auctionId, result.Id);
+        Assert.Equal(auction.StartTime, result.StartTime);
+        Assert.Equal(auction.EndTime, result.EndTime);
+        Assert.Equal(auction.Currency, result.Currency);
+        Assert.Equal(offerCount, result.OfferCount);
+        Assert.Equal(expectedCurrentPrice, result.CurrentPrice);
+    }
+    
+    [Fact]
+    public async Task GetActiveAuctionAsync_ReturnsNull_WhenNoActiveAuctionExists()
+    {
+        // Arrange
+        int artworkId = 1;
+
+        _mockAuctionRepository
+            .Setup(repo => repo.GetActiveAuctionByArtworkIdAsync(artworkId, It.IsAny<DateTime>()))
+            .ReturnsAsync((Auction?)null);
+
+        // Act
+        var result = await _auctionService.GetActiveAuctionAsync(artworkId);
+
+        // Assert
+        Assert.Null(result);
     }
     
 }

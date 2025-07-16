@@ -37,7 +37,7 @@ public class AuctionService : IAuctionService
         if (artwork.PostedByUserId != userId)
             throw new UnauthorizedAccessException("You are not authorized to start an auction for this artwork.");
         
-        if (request.StartTime < DateTime.UtcNow)
+        if (request.StartTime < DateTime.UtcNow.AddMinutes(-1))
             throw new BadRequestException("Auction start time cannot be in the past.");
         
         if (request.EndTime <= request.StartTime)
@@ -45,6 +45,10 @@ public class AuctionService : IAuctionService
         
         if (await _auctionRepository.IsAuctionScheduledAsync(artworkId, request.StartTime, request.EndTime))
             throw new BadRequestException("An auction is already scheduled for this artwork during the specified time.");
+        
+        if (await _auctionRepository.HasFutureAuctionScheduledAsync(artworkId, DateTime.UtcNow))
+            throw new BadRequestException("An auction is already scheduled for this artwork in the future.");
+        
         
         var auction = _mapper.Map<Auction>(request);
         auction.ArtworkId = artworkId;
@@ -130,5 +134,25 @@ public class AuctionService : IAuctionService
         offer.Status = OfferStatus.WITHDRAWN;
         _offerRepository.UpdateOfferStatus(offer);
         await _offerRepository.SaveAsync();
+    }
+
+    public async Task<AuctionResponseDTO?> GetActiveAuctionAsync(int artworkId)
+    {
+        var auction = await _auctionRepository.GetActiveAuctionByArtworkIdAsync(artworkId, DateTime.UtcNow);
+        if (auction == null)
+            return null;
+
+        var maxOffer = await _offerRepository.GetMaxOfferAmountAsync(auction.Id);
+        var offerCount = await _offerRepository.GetOfferCountByAuctionIdAsync(auction.Id);
+
+        return new AuctionResponseDTO
+        {
+            Id = auction.Id,
+            StartTime = auction.StartTime,
+            EndTime = auction.EndTime,
+            Currency = auction.Currency,
+            OfferCount = offerCount,
+            CurrentPrice = maxOffer == 0 ? auction.StartingPrice : maxOffer
+        };
     }
 }

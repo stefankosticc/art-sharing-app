@@ -416,7 +416,7 @@ const ArtworkPage = ({ isNew = false }: ArtworkPageProps) => {
 
         {artwork?.isOnSale && <FixedSaleSection artwork={artwork} />}
 
-        <AuctionSection />
+        <AuctionSection artworkId={artwork?.id ?? 0} />
 
         {((artwork?.story && artwork.story !== "<p></p>") || isEditing) && (
           <div className="ap-story">

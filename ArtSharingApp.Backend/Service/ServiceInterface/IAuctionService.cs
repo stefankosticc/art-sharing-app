@@ -10,4 +10,5 @@ public interface IAuctionService
     Task<decimal?> GetMaxOfferAsync(int auctionId);
     Task AcceptOfferAsync(int offerId, int userId);
     Task WithdrawOfferAsync(int offerId, int userId);
+    Task<AuctionResponseDTO?> GetActiveAuctionAsync(int artworkId);
 }

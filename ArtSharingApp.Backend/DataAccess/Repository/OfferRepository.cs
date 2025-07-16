@@ -32,4 +32,9 @@ public class OfferRepository : GenericRepository<Offer>, IOfferRepository
         _context.Attach(offer);
         _context.Entry(offer).Property(o => o.Status).IsModified = true;
     }
+
+    public async Task<int> GetOfferCountByAuctionIdAsync(int auctionId)
+    {
+        return await _dbSet.Where(o => o.AuctionId == auctionId).CountAsync();
+    }
 }
