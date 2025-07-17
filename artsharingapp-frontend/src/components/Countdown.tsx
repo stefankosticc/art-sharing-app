@@ -25,6 +25,11 @@ const Countdown = ({ endTime }: CountdownProps) => {
   const [timeLeft, setTimeLeft] = useState(calculateTimeLeft());
 
   useEffect(() => {
+    console.count("first");
+    setTimeLeft(calculateTimeLeft());
+  }, [endTime]);
+
+  useEffect(() => {
     if (!timeLeft) return;
 
     const intervalMs = timeLeft.totalSeconds > 3600 ? 60_000 : 1000;

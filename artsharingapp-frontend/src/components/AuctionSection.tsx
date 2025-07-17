@@ -1,17 +1,36 @@
-import { useAuction } from "../hooks/useActiveAuction";
+import { useActiveAuction } from "../hooks/useActiveAuction";
 import { Currency } from "../services/enums";
 import "../styles/AuctionSection.css";
 import { AiOutlineSend } from "react-icons/ai";
 import Countdown from "./Countdown";
+import { useState } from "react";
+import { makeAnOffer, OfferRequest } from "../services/auction";
+import { useAuctionContext } from "../context/AuctionContext";
 
 type AuctionSectionProps = {
   artworkId: number;
 };
 
 const AuctionSection = ({ artworkId }: AuctionSectionProps) => {
-  const { auction } = useAuction(artworkId);
+  const [offerRequest, setOfferRequest] = useState<OfferRequest>({ amount: 0 });
+  const { triggerRefetchAuction } = useAuctionContext();
+
+  const { auction } = useActiveAuction(artworkId);
 
   if (!auction) return null;
+
+  const handleSendAnOffer = async () => {
+    if (
+      window.confirm(
+        `Confirm your offer for the amount of ${offerRequest.amount.toLocaleString(
+          "en-US"
+        )} ${Currency[auction.currency]}`
+      )
+    ) {
+      const success = await makeAnOffer(auction.id, offerRequest);
+      if (success) triggerRefetchAuction();
+    }
+  };
 
   return (
     <div className="auction-section-container">
@@ -58,8 +77,15 @@ const AuctionSection = ({ artworkId }: AuctionSectionProps) => {
               id="aso-amount"
               min={auction.currentPrice}
               placeholder={`${auction.currentPrice}`}
+              step={10}
+              onChange={(e) =>
+                setOfferRequest({
+                  ...offerRequest,
+                  amount: Number(e.target.value),
+                })
+              }
             />
-            <button title="Send offer">
+            <button title="Send offer" onClick={handleSendAnOffer}>
               <AiOutlineSend />
             </button>
           </div>

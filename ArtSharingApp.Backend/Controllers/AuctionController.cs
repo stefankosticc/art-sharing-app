@@ -74,4 +74,13 @@ public class AuctionController : AuthenticatedUserBaseController
         var auction = await _auctionService.GetActiveAuctionAsync(artworkId);
         return Ok(auction);
     }
+    
+    [Authorize(Roles = "Artist, Admin")]
+    [HttpPut("auction/{auctionId}")]
+    public async Task<IActionResult> UpdateAuction(int auctionId, [FromBody] AuctionUpdateEndDTO request)
+    {
+        var userId = GetLoggedInUserId();
+        await _auctionService.UpdateAuctionEndTimeAsync(auctionId, userId, request);
+        return Ok(new { message = "Auction updated successfully." });
+    }
 }

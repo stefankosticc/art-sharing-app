@@ -1,9 +1,11 @@
 import { useState, useEffect } from "react";
 import { AuctionResponse, getActiveAuction } from "../services/auction";
+import { useAuctionContext } from "../context/AuctionContext";
 
-export const useAuction = (artworkId: number, refetch: boolean = false) => {
+export const useActiveAuction = (artworkId: number) => {
   const [auction, setAuction] = useState<AuctionResponse | null>(null);
   const [loadingAuction, setLoadingAuction] = useState<boolean>(false);
+  const { refetchAuction } = useAuctionContext();
 
   useEffect(() => {
     let isCancelled = false;
@@ -27,6 +29,7 @@ export const useAuction = (artworkId: number, refetch: boolean = false) => {
         }
       } finally {
         if (!isCancelled) {
+          console.count("fetching auction");
           setLoadingAuction(false);
         }
       }
@@ -37,7 +40,7 @@ export const useAuction = (artworkId: number, refetch: boolean = false) => {
     return () => {
       isCancelled = true;
     };
-  }, [artworkId, refetch]);
+  }, [artworkId, refetchAuction]);
 
   return { auction, loadingAuction };
 };

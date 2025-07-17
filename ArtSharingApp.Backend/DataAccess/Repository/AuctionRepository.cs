@@ -28,4 +28,10 @@ public class AuctionRepository : GenericRepository<Auction>, IAuctionRepository
             .Where(a => a.ArtworkId == artworkId && a.StartTime <= now && a.EndTime >= now)
             .FirstOrDefaultAsync();
     }
+
+    public void UpdateEndTime(Auction auction)
+    {
+        _context.Attach(auction);
+        _context.Entry(auction).Property(a => a.EndTime).IsModified = true;
+    }
 }
