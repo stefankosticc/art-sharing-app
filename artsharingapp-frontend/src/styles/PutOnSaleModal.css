@@ -82,6 +82,13 @@
     background-color: var(--purple);
 }
 
+#psm-end-auction-btn {
+    white-space: nowrap;
+    width: auto;
+    background-color: var(--red);
+    color: var(--red-light);
+}
+
 /* FORMS */
 
 .psm-fixed-form {
@@ -124,6 +131,12 @@
     display: flex;
     gap: 2rem;
     flex-wrap: wrap;
+    margin-bottom: 1.8rem;
+}
+
+.psm-auction-title {
+    width: 100%;
+    text-align: center;
 }
 
 .psm-auction-time {

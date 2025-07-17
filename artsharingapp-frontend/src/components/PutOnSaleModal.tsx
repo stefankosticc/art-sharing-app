@@ -1,8 +1,17 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import "../styles/PutOnSaleModal.css";
 import { Currency } from "../services/enums";
 import { putArtworkOnSale, PutArtworkOnSaleRequest } from "../services/artwork";
-import { AuctionStartRequest, startAnAuction } from "../services/auction";
+import {
+  AuctionStartRequest,
+  AuctionUpdateRequest,
+  startAnAuction,
+  updateAuction,
+} from "../services/auction";
+import { useActiveAuction } from "../hooks/useActiveAuction";
+import NewAuctionForm from "./NewAuctionForm";
+import EditAuctionForm from "./EditAuctionForm";
+import { useAuctionContext } from "../context/AuctionContext";
 
 type PutOnSaleModalProps = {
   onClose: () => void;
@@ -18,6 +27,7 @@ const PutOnSaleModal = ({
   const [activeTab, setActiveTab] = useState<string>("fixed");
   const [fixedPrice, setFixedPrice] = useState<number>(0);
   const [fixedCurrency, setFixedCurrency] = useState<Currency>(Currency.USD);
+  const { triggerRefetchAuction } = useAuctionContext();
 
   const [auctionData, setAuctionData] = useState<AuctionStartRequest>({
     startTime: new Date(),
@@ -26,26 +36,52 @@ const PutOnSaleModal = ({
     currency: Currency.USD,
   });
 
+  const [editActiveAuctionData, setEditActiveAuctionData] =
+    useState<AuctionUpdateRequest>({
+      endTime: new Date(),
+    });
+
+  const { auction } = useActiveAuction(artworkId);
+
+  useEffect(() => {
+    if (auction) setEditActiveAuctionData({ endTime: auction.endTime });
+  }, [auction]);
+
   const handleSave = async () => {
     if (!artworkId) return;
 
+    let success = false;
     if (activeTab === "fixed") {
       const request: PutArtworkOnSaleRequest = {
         isOnSale: true,
         price: fixedPrice,
         currency: fixedCurrency,
       };
-      const success = await putArtworkOnSale(artworkId, request);
+      success = await putArtworkOnSale(artworkId, request);
       if (success) {
         onClose();
         refetchArtwork();
       }
     } else {
-      const success = await startAnAuction(artworkId, auctionData);
+      if (activeTab === "auction" && auction) {
+        success = await updateAuction(auction.id, editActiveAuctionData);
+      } else {
+        success = await startAnAuction(artworkId, auctionData);
+      }
       if (success) {
         onClose();
-        refetchArtwork();
+        triggerRefetchAuction();
       }
+    }
+  };
+
+  const handleEndAuction = async () => {
+    if (!auction) return;
+
+    const success = await updateAuction(auction.id, { endTime: new Date() });
+    if (success) {
+      onClose();
+      triggerRefetchAuction();
     }
   };
 
@@ -101,80 +137,20 @@ const PutOnSaleModal = ({
           </div>
         )}
 
-        {activeTab === "auction" && (
-          <div className="psm-auction-form">
-            <div className="psm-form-field">
-              <label htmlFor="auction-starting-price">Starting Price:</label>
-              <input
-                type="number"
-                id="auction-starting-price"
-                placeholder="0"
-                onChange={(e) =>
-                  setAuctionData({
-                    ...auctionData,
-                    startingPrice: Number(e.target.value),
-                  })
-                }
-              />
-            </div>
-            <div className="psm-form-field">
-              <label htmlFor="auction-currency">Currency:</label>
-              <select
-                value={auctionData.currency}
-                id="auction-currency"
-                className="psm-currency-select"
-                onChange={(e) =>
-                  setAuctionData({
-                    ...auctionData,
-                    currency: Number(e.target.value),
-                  })
-                }
-              >
-                {Object.keys(Currency)
-                  .filter((key) => isNaN(Number(key)))
-                  .map((cur) => (
-                    <option
-                      key={cur}
-                      value={Currency[cur as keyof typeof Currency]}
-                    >
-                      {cur}
-                    </option>
-                  ))}
-              </select>
-            </div>
-
-            <div className="psm-auction-time">
-              <div className="psm-form-field">
-                <label htmlFor="auction-start">Start Time:</label>
-                <input
-                  id="auction-start"
-                  type="datetime-local"
-                  min={new Date().toISOString().slice(0, 16)}
-                  onChange={(e) =>
-                    setAuctionData({
-                      ...auctionData,
-                      startTime: new Date(e.target.value),
-                    })
-                  }
-                />
-              </div>
-              <span>→</span>
-              <div className="psm-form-field">
-                <label htmlFor="auction-end">End Time:</label>
-                <input
-                  id="auction-end"
-                  type="datetime-local"
-                  onChange={(e) =>
-                    setAuctionData({
-                      ...auctionData,
-                      endTime: new Date(e.target.value),
-                    })
-                  }
-                />
-              </div>
-            </div>
-          </div>
-        )}
+        {activeTab === "auction" &&
+          (auction ? (
+            <EditAuctionForm
+              auction={auction}
+              auctionData={editActiveAuctionData}
+              setAuctionData={setEditActiveAuctionData}
+              handleEndAuction={handleEndAuction}
+            />
+          ) : (
+            <NewAuctionForm
+              auctionData={auctionData}
+              setAuctionData={setAuctionData}
+            />
+          ))}
 
         <div className="psm-buttons">
           <button id="psm-cancel" onClick={onClose}>

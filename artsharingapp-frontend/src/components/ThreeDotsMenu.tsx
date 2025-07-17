@@ -75,7 +75,7 @@ const ThreeDotsMenu = ({
             onClose();
           }}
           artworkId={artworkId}
-          refetchArtwork={() => refetchArtwork()}
+          refetchArtwork={refetchArtwork}
         />
       )}
     </>

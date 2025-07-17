@@ -155,4 +155,21 @@ public class AuctionService : IAuctionService
             CurrentPrice = maxOffer == 0 ? auction.StartingPrice : maxOffer
         };
     }
+
+    public async Task UpdateAuctionEndTimeAsync(int auctionId, int userId, AuctionUpdateEndDTO request)
+    {
+        var auction = await _auctionRepository.GetByIdAsync(auctionId, includes: ac => ac.Artwork);
+        if (auction == null)
+            throw new NotFoundException("Auction not found.");
+        
+        if (auction.Artwork.PostedByUserId != userId)
+            throw new UnauthorizedAccessException("You are not authorized to update this auction.");
+        
+        if (request.EndTime <= auction.StartTime)
+            throw new BadRequestException("Auction end time must be after the start time.");
+        
+        auction.EndTime = request.EndTime;
+        _auctionRepository.UpdateEndTime(auction);
+        await _auctionRepository.SaveAsync();
+    }
 }

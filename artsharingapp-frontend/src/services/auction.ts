@@ -8,6 +8,10 @@ export interface AuctionStartRequest {
   currency: Currency;
 }
 
+export interface AuctionUpdateRequest {
+  endTime: Date;
+}
+
 export interface AuctionResponse {
   id: number;
   startTime: Date;
@@ -15,6 +19,17 @@ export interface AuctionResponse {
   currentPrice: number;
   offerCount: number;
   currency: Currency;
+}
+
+export interface OfferRequest {
+  amount: number;
+}
+
+export interface OfferResponse {
+  id: number;
+  amount: number;
+  userId: number;
+  userName: string;
 }
 
 export async function startAnAuction(
@@ -39,4 +54,38 @@ export async function getActiveAuction(
 ): Promise<AuctionResponse> {
   const response = await authAxios.get(`artwork/${artworkId}/auction/active`);
   return response.data;
+}
+
+export async function makeAnOffer(
+  auctionId: number,
+  request: OfferRequest
+): Promise<boolean> {
+  try {
+    await authAxios.post(`auction/${auctionId}/make-an-offer`, request);
+    return true;
+  } catch (error: any) {
+    const message =
+      error?.response?.data?.error ||
+      error?.message ||
+      "An unknown error occurred.";
+    console.error("Error:", message);
+    return false;
+  }
+}
+
+export async function updateAuction(
+  auctionId: number,
+  request: AuctionUpdateRequest
+): Promise<boolean> {
+  try {
+    await authAxios.put(`auction/${auctionId}`, request);
+    return true;
+  } catch (error: any) {
+    const message =
+      error?.response?.data?.error ||
+      error?.message ||
+      "An unknown error occurred.";
+    console.error("Error:", message);
+    return false;
+  }
 }

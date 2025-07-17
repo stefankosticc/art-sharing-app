@@ -19,3 +19,8 @@ public class AuctionResponseDTO
     public int OfferCount { get; set; }
     public Currency Currency { get; set; }
 }
+
+public class AuctionUpdateEndDTO
+{
+    public DateTime EndTime { get; set; }
+}
