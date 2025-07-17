@@ -29,6 +29,7 @@ export const useActiveAuction = (artworkId: number) => {
         }
       } finally {
         if (!isCancelled) {
+          console.count("fetching auction");
           setLoadingAuction(false);
         }
       }
