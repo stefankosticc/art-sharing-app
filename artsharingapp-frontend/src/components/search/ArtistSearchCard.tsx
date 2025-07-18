@@ -6,12 +6,13 @@ const fallbackImage =
 
 type ArtistSearchCardProps = {
   artist: UserSearchResponse;
+  onClick?: () => void;
 };
 
-const ArtistSearchCard = ({ artist }: ArtistSearchCardProps) => {
+const ArtistSearchCard = ({ artist, onClick }: ArtistSearchCardProps) => {
   if (!artist) return null;
   return (
-    <div className="artist-sc-container">
+    <div className="artist-sc-container" onClick={onClick}>
       <div className="artist-sc-img-container">
         <img
           src={fallbackImage}

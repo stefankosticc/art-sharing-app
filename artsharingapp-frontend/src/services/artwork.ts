@@ -258,3 +258,20 @@ export async function removeArtworkFromSale(
     return false;
   }
 }
+
+export async function transferArtwork(
+  artworkId: number,
+  userId: number
+): Promise<boolean> {
+  try {
+    await authAxios.put(`artwork/${artworkId}/transfer/to-user/${userId}`);
+    return true;
+  } catch (error: any) {
+    const message =
+      error?.response?.data?.error ||
+      error?.message ||
+      "An unknown error occurred.";
+    console.error("Error:", message);
+    return false;
+  }
+}

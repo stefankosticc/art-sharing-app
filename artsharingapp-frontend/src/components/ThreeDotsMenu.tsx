@@ -5,6 +5,7 @@ import { deleteArtwork, removeArtworkFromSale } from "../services/artwork";
 import { useNavigate } from "react-router-dom";
 import PutOnSaleModal from "./auctions-and-sales/PutOnSaleModal";
 import AuctionAnalyticsModal from "./auctions-and-sales/AuctionAnalyticsModal";
+import TransferModal from "./auctions-and-sales/TransferModal";
 
 type ThreeDotsMenuProps = {
   onClose: () => void;
@@ -20,10 +21,12 @@ const ThreeDotsMenu = ({
   const [isSaleModalOpen, setIsSaleModalOpen] = useState<boolean>(false);
   const [isAnalyticsModalOpen, setIsAnalyticsModalOpen] =
     useState<boolean>(false);
+  const [isTransferModalOpen, setIsTransferModalOpen] =
+    useState<boolean>(false);
 
   const threeDotMenuRef = useRef<HTMLDivElement>(null);
   useClickOutside(threeDotMenuRef, () => {
-    if (!isSaleModalOpen && !isAnalyticsModalOpen) {
+    if (!isSaleModalOpen && !isAnalyticsModalOpen && !isTransferModalOpen) {
       onClose();
     }
   });
@@ -52,7 +55,7 @@ const ThreeDotsMenu = ({
     { label: "Put On Sale", action: () => setIsSaleModalOpen(true) },
     { label: "Remove From Sale", action: handleRemoveFromSale },
     { label: "Auction Analytics", action: () => setIsAnalyticsModalOpen(true) },
-    { label: "Transfer", action: () => {} },
+    { label: "Transfer", action: () => setIsTransferModalOpen(true) },
     { label: "Delete", action: handleDelete },
   ];
 
@@ -90,6 +93,17 @@ const ThreeDotsMenu = ({
             setIsAnalyticsModalOpen(false);
             onClose();
           }}
+        />
+      )}
+
+      {isTransferModalOpen && (
+        <TransferModal
+          artworkId={artworkId}
+          onClose={() => {
+            setIsTransferModalOpen(false);
+            onClose();
+          }}
+          refetchArtwork={refetchArtwork}
         />
       )}
     </>
