@@ -1,4 +1,5 @@
 import authAxios from "./authAxios";
+import { Currency } from "./enums";
 
 export interface ArtworkCardData {
   id: number;
@@ -26,6 +27,8 @@ export interface Artwork {
   tipsAndTricks: string;
   isPrivate: boolean;
   isOnSale: boolean;
+  price: number | null;
+  currency: Currency;
   createdByArtistId: number;
   createdByArtistUserName: string;
   postedByUserId: number;
@@ -63,6 +66,12 @@ export interface ArtworkSearchResponse {
   country: string | null;
   galleryId: number | null;
   galleryName: string | null;
+}
+
+export interface PutArtworkOnSaleRequest {
+  isOnSale: boolean;
+  price: number;
+  currency: Currency;
 }
 
 export async function getMyArtworks(): Promise<ArtworkCardData[]> {
@@ -200,5 +209,69 @@ export async function extractArtworkColor(
   } catch (err) {
     console.error("Failed to extract color", err);
     return null;
+  }
+}
+
+export async function deleteArtwork(artworkId: number): Promise<boolean> {
+  try {
+    await authAxios.delete(`/artwork/${artworkId}`);
+    return true;
+  } catch (error: any) {
+    const message =
+      error?.response?.data?.error ||
+      error?.message ||
+      "An unknown error occurred.";
+    console.error("Error:", message);
+    return false;
+  }
+}
+
+export async function putArtworkOnSale(
+  artworkId: number,
+  request: PutArtworkOnSaleRequest
+): Promise<boolean> {
+  try {
+    await authAxios.put(`artwork/${artworkId}/put-on-sale`, request);
+    return true;
+  } catch (error: any) {
+    const message =
+      error?.response?.data?.error ||
+      error?.message ||
+      "An unknown error occurred.";
+    console.error("Error:", message);
+    return false;
+  }
+}
+
+export async function removeArtworkFromSale(
+  artworkId: number
+): Promise<boolean> {
+  try {
+    await authAxios.put(`artwork/${artworkId}/remove-from-sale`);
+    return true;
+  } catch (error: any) {
+    const message =
+      error?.response?.data?.error ||
+      error?.message ||
+      "An unknown error occurred.";
+    console.error("Error:", message);
+    return false;
+  }
+}
+
+export async function transferArtwork(
+  artworkId: number,
+  userId: number
+): Promise<boolean> {
+  try {
+    await authAxios.put(`artwork/${artworkId}/transfer/to-user/${userId}`);
+    return true;
+  } catch (error: any) {
+    const message =
+      error?.response?.data?.error ||
+      error?.message ||
+      "An unknown error occurred.";
+    console.error("Error:", message);
+    return false;
   }
 }

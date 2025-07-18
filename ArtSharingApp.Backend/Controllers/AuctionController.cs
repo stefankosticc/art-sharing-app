@@ -60,11 +60,35 @@ public class AuctionController : AuthenticatedUserBaseController
         return Ok(new { message = "Offer accepted." });
     }
     
+    [HttpPut("offer/{offerId}/reject")]
+    public async Task<IActionResult> RejectOffer(int offerId)
+    {
+        var userId = GetLoggedInUserId();
+        await _auctionService.RejectOfferAsync(offerId, userId);
+        return Ok(new { message = "Offer rejected." });
+    }
+    
     [HttpPut("offer/{offerId}/withdraw")]
     public async Task<IActionResult> WithdrawOffer(int offerId)
     {
         var userId = GetLoggedInUserId();
         await _auctionService.WithdrawOfferAsync(offerId, userId);
         return Ok(new { message = "Offer withdrawn." });
+    }
+    
+    [HttpGet("artwork/{artworkId}/auction/active")]
+    public async Task<IActionResult> GetActiveAuction(int artworkId)
+    {
+        var auction = await _auctionService.GetActiveAuctionAsync(artworkId);
+        return Ok(auction);
+    }
+    
+    [Authorize(Roles = "Artist, Admin")]
+    [HttpPut("auction/{auctionId}")]
+    public async Task<IActionResult> UpdateAuction(int auctionId, [FromBody] AuctionUpdateEndDTO request)
+    {
+        var userId = GetLoggedInUserId();
+        await _auctionService.UpdateAuctionEndTimeAsync(auctionId, userId, request);
+        return Ok(new { message = "Auction updated successfully." });
     }
 }

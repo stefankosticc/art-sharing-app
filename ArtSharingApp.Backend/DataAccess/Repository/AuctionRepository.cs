@@ -16,4 +16,22 @@ public class AuctionRepository : GenericRepository<Auction>, IAuctionRepository
                                  a.StartTime < requestEndTime && 
                                  a.EndTime > requestStartTime);
     }
+
+    public async Task<bool> HasFutureAuctionScheduledAsync(int artworkId, DateTime fromTime)
+    {
+        return await _dbSet.AnyAsync(a => a.ArtworkId == artworkId && a.EndTime >= fromTime);
+    }
+
+    public async Task<Auction?> GetActiveAuctionByArtworkIdAsync(int artworkId, DateTime now)
+    {
+        return await _dbSet
+            .Where(a => a.ArtworkId == artworkId && a.StartTime <= now && a.EndTime >= now)
+            .FirstOrDefaultAsync();
+    }
+
+    public void UpdateEndTime(Auction auction)
+    {
+        _context.Attach(auction);
+        _context.Entry(auction).Property(a => a.EndTime).IsModified = true;
+    }
 }
