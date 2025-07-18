@@ -1,11 +1,11 @@
-import { useActiveAuction } from "../hooks/useActiveAuction";
-import { Currency } from "../services/enums";
-import "../styles/AuctionSection.css";
+import { useActiveAuction } from "../../hooks/useActiveAuction";
+import { Currency } from "../../services/enums";
+import "../../styles/AuctionSection.css";
 import { AiOutlineSend } from "react-icons/ai";
-import Countdown from "./Countdown";
+import Countdown from "../Countdown";
 import { useState } from "react";
-import { makeAnOffer, OfferRequest } from "../services/auction";
-import { useAuctionContext } from "../context/AuctionContext";
+import { makeAnOffer, OfferRequest } from "../../services/auction";
+import { useAuctionContext } from "../../context/AuctionContext";
 
 type AuctionSectionProps = {
   artworkId: number;

@@ -1,17 +1,20 @@
 import { useEffect, useState } from "react";
-import "../styles/PutOnSaleModal.css";
-import { Currency } from "../services/enums";
-import { putArtworkOnSale, PutArtworkOnSaleRequest } from "../services/artwork";
+import "../../styles/PutOnSaleModal.css";
+import { Currency } from "../../services/enums";
+import {
+  putArtworkOnSale,
+  PutArtworkOnSaleRequest,
+} from "../../services/artwork";
 import {
   AuctionStartRequest,
   AuctionUpdateRequest,
   startAnAuction,
   updateAuction,
-} from "../services/auction";
-import { useActiveAuction } from "../hooks/useActiveAuction";
+} from "../../services/auction";
+import { useActiveAuction } from "../../hooks/useActiveAuction";
 import NewAuctionForm from "./NewAuctionForm";
+import { useAuctionContext } from "../../context/AuctionContext";
 import EditAuctionForm from "./EditAuctionForm";
-import { useAuctionContext } from "../context/AuctionContext";
 
 type PutOnSaleModalProps = {
   onClose: () => void;

@@ -1,5 +1,5 @@
 import authAxios from "./authAxios";
-import { Currency } from "./enums";
+import { Currency, OfferStatus } from "./enums";
 
 export interface AuctionStartRequest {
   startTime: Date;
@@ -30,6 +30,7 @@ export interface OfferResponse {
   amount: number;
   userId: number;
   userName: string;
+  status: OfferStatus;
 }
 
 export async function startAnAuction(
@@ -79,6 +80,39 @@ export async function updateAuction(
 ): Promise<boolean> {
   try {
     await authAxios.put(`auction/${auctionId}`, request);
+    return true;
+  } catch (error: any) {
+    const message =
+      error?.response?.data?.error ||
+      error?.message ||
+      "An unknown error occurred.";
+    console.error("Error:", message);
+    return false;
+  }
+}
+
+export async function getOffers(auctionId: number): Promise<OfferResponse[]> {
+  const response = await authAxios.get(`auction/${auctionId}/offers`);
+  return response.data;
+}
+
+export async function acceptOffer(offerId: number): Promise<boolean> {
+  try {
+    await authAxios.put(`offer/${offerId}/accept`);
+    return true;
+  } catch (error: any) {
+    const message =
+      error?.response?.data?.error ||
+      error?.message ||
+      "An unknown error occurred.";
+    console.error("Error:", message);
+    return false;
+  }
+}
+
+export async function rejectOffer(offerId: number): Promise<boolean> {
+  try {
+    await authAxios.put(`offer/${offerId}/reject`);
     return true;
   } catch (error: any) {
     const message =

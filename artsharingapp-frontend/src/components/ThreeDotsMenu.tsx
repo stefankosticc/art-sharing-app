@@ -3,7 +3,8 @@ import { useClickOutside } from "../hooks/useClickOutside";
 import "../styles/ThreeDotsMenu.css";
 import { deleteArtwork, removeArtworkFromSale } from "../services/artwork";
 import { useNavigate } from "react-router-dom";
-import PutOnSaleModal from "./PutOnSaleModal";
+import PutOnSaleModal from "./auctions-and-sales/PutOnSaleModal";
+import AuctionAnalyticsModal from "./auctions-and-sales/AuctionAnalyticsModal";
 
 type ThreeDotsMenuProps = {
   onClose: () => void;
@@ -17,10 +18,12 @@ const ThreeDotsMenu = ({
   refetchArtwork,
 }: ThreeDotsMenuProps) => {
   const [isSaleModalOpen, setIsSaleModalOpen] = useState<boolean>(false);
+  const [isAnalyticsModalOpen, setIsAnalyticsModalOpen] =
+    useState<boolean>(false);
 
   const threeDotMenuRef = useRef<HTMLDivElement>(null);
   useClickOutside(threeDotMenuRef, () => {
-    if (!isSaleModalOpen) {
+    if (!isSaleModalOpen && !isAnalyticsModalOpen) {
       onClose();
     }
   });
@@ -48,6 +51,7 @@ const ThreeDotsMenu = ({
   }[] = [
     { label: "Put On Sale", action: () => setIsSaleModalOpen(true) },
     { label: "Remove From Sale", action: handleRemoveFromSale },
+    { label: "Auction Analytics", action: () => setIsAnalyticsModalOpen(true) },
     { label: "Transfer", action: () => {} },
     { label: "Delete", action: handleDelete },
   ];
@@ -76,6 +80,16 @@ const ThreeDotsMenu = ({
           }}
           artworkId={artworkId}
           refetchArtwork={refetchArtwork}
+        />
+      )}
+
+      {isAnalyticsModalOpen && (
+        <AuctionAnalyticsModal
+          artworkId={artworkId}
+          onClose={() => {
+            setIsAnalyticsModalOpen(false);
+            onClose();
+          }}
         />
       )}
     </>

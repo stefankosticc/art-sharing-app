@@ -1,5 +1,5 @@
-import { AuctionStartRequest } from "../services/auction";
-import { Currency } from "../services/enums";
+import { AuctionStartRequest } from "../../services/auction";
+import { Currency } from "../../services/enums";
 
 type NewAuctionFormProps = {
   auctionData: AuctionStartRequest;

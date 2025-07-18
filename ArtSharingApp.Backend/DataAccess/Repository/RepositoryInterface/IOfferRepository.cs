@@ -8,4 +8,5 @@ public interface IOfferRepository : IGenericRepository<Offer>
     Task<IEnumerable<Offer>> GetOffersByAuctionIdAsync(int auctionId);
     void UpdateOfferStatus(Offer offer);
     Task<int> GetOfferCountByAuctionIdAsync(int auctionId);
+    Task<bool> AuctionHasAcceptedOffer(int auctionId);
 }

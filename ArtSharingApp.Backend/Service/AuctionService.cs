@@ -113,10 +113,28 @@ public class AuctionService : IAuctionService
         if (auction.Artwork.PostedByUserId != userId)
             throw new UnauthorizedAccessException("You are not authorized to accept this offer.");
         
+        if (await _offerRepository.AuctionHasAcceptedOffer(auction.Id))
+            throw new BadRequestException("Offer is already accepted.");
+        
         if (offer.Status != OfferStatus.SUBMITTED)
             throw new BadRequestException("Offer cannot be or is already accepted.");
         
         offer.Status = OfferStatus.ACCEPTED;
+        _offerRepository.UpdateOfferStatus(offer);
+        await _offerRepository.SaveAsync();
+    }
+    
+    public async Task RejectOfferAsync(int offerId, int userId)
+    {
+        var offer = await _offerRepository.GetByIdAsync(offerId, includes: o => o.Auction);
+        if (offer == null)
+            throw new NotFoundException("Offer not found.");
+        
+        var auction = await _auctionRepository.GetByIdAsync(offer.AuctionId, includes: ac => ac.Artwork);
+        if (auction.Artwork.PostedByUserId != userId || offer.UserId == userId)
+            throw new UnauthorizedAccessException("You are not authorized to reject this offer.");
+        
+        offer.Status = OfferStatus.REJECTED;
         _offerRepository.UpdateOfferStatus(offer);
         await _offerRepository.SaveAsync();
     }

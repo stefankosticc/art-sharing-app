@@ -3,3 +3,10 @@ export enum Currency {
   EUR,
   GBP,
 }
+
+export enum OfferStatus {
+  SUBMITTED,
+  ACCEPTED,
+  REJECTED,
+  WITHDRAWN,
+}

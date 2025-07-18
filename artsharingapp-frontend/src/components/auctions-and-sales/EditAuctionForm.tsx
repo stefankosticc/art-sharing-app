@@ -1,6 +1,6 @@
-import { AuctionResponse, AuctionUpdateRequest } from "../services/auction";
-import { Currency } from "../services/enums";
-import "../styles/EditAuctionForm.css";
+import { AuctionResponse, AuctionUpdateRequest } from "../../services/auction";
+import { Currency } from "../../services/enums";
+import "../../styles/EditAuctionForm.css";
 
 type NewAuctionFormProps = {
   auction: AuctionResponse;

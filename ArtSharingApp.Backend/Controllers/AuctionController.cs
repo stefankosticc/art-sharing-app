@@ -60,6 +60,14 @@ public class AuctionController : AuthenticatedUserBaseController
         return Ok(new { message = "Offer accepted." });
     }
     
+    [HttpPut("offer/{offerId}/reject")]
+    public async Task<IActionResult> RejectOffer(int offerId)
+    {
+        var userId = GetLoggedInUserId();
+        await _auctionService.RejectOfferAsync(offerId, userId);
+        return Ok(new { message = "Offer rejected." });
+    }
+    
     [HttpPut("offer/{offerId}/withdraw")]
     public async Task<IActionResult> WithdrawOffer(int offerId)
     {

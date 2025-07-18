@@ -19,9 +19,9 @@ import {
 import { useNavigate, useParams } from "react-router-dom";
 import TextEditor from "../components/TextEditor";
 import { BACKEND_BASE_URL } from "../config/constants";
-import AuctionSection from "../components/AuctionSection";
+import AuctionSection from "../components/auctions-and-sales/AuctionSection";
 import ThreeDotsMenu from "../components/ThreeDotsMenu";
-import FixedSaleSection from "../components/FixedSaleSection";
+import FixedSaleSection from "../components/auctions-and-sales/FixedSaleSection";
 import { AuctionProvider } from "../context/AuctionContext";
 
 type ArtworkPageProps = {
