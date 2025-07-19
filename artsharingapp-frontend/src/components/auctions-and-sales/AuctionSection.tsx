@@ -1,6 +1,6 @@
 import { useActiveAuction } from "../../hooks/useActiveAuction";
 import { Currency } from "../../services/enums";
-import "../../styles/AuctionSection.css";
+import "./styles/AuctionSection.css";
 import { AiOutlineSend } from "react-icons/ai";
 import Countdown from "../Countdown";
 import { useState } from "react";

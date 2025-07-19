@@ -1,4 +1,4 @@
-import "../../styles/ArtworkSearchCard.css";
+import "./styles/ArtworkSearchCard.css";
 import { FaLandmark } from "react-icons/fa6";
 import { FaCity } from "react-icons/fa";
 import { ArtworkSearchResponse } from "../../services/artwork";

@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { FiSearch } from "react-icons/fi";
-import "../../styles/TransferModal.css";
+import "./styles/TransferModal.css";
 import { useSearch } from "../../hooks/useSearch";
 import ArtistSearchCard from "../search/ArtistSearchCard";
 import { UserSearchResponse } from "../../services/user";

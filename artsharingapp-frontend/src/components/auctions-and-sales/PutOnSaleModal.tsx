@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import "../../styles/PutOnSaleModal.css";
+import "./styles/PutOnSaleModal.css";
 import { Currency } from "../../services/enums";
 import {
   putArtworkOnSale,

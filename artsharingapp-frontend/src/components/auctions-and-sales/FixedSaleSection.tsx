@@ -1,7 +1,7 @@
 import { Artwork } from "../../services/artwork";
 import { Currency } from "../../services/enums";
-import "../../styles/AuctionSection.css";
-import "../../styles/FixedSaleSection.css";
+import "./styles/AuctionSection.css";
+import "./styles/FixedSaleSection.css";
 import { AiOutlineSend } from "react-icons/ai";
 
 type FixedSaleSectionProps = {

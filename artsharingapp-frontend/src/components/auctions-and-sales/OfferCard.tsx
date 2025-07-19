@@ -4,7 +4,7 @@ import {
   rejectOffer,
 } from "../../services/auction";
 import { Currency, OfferStatus } from "../../services/enums";
-import "../../styles/OfferCard.css";
+import "./styles/OfferCard.css";
 
 type OfferCardProps = {
   offer: OfferResponse;

@@ -1,4 +1,4 @@
-import "../../styles/Search.css";
+import "./styles/Search.css";
 import { FiSearch } from "react-icons/fi";
 import { FaLandmark } from "react-icons/fa6";
 import { FaCity, FaUser } from "react-icons/fa";

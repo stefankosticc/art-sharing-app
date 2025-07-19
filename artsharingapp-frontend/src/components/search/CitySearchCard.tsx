@@ -1,5 +1,5 @@
 import { FaCity } from "react-icons/fa";
-import "../../styles/CitySearchCard.css";
+import "./styles/CitySearchCard.css";
 import { City } from "../../services/city";
 import { useNavigate } from "react-router-dom";
 

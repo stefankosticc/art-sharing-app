@@ -1,6 +1,6 @@
 import { useActiveAuction } from "../../hooks/useActiveAuction";
 import { useOffers } from "../../hooks/useOffers";
-import "../../styles/AuctionAnalyticsModal.css";
+import "./styles/AuctionAnalyticsModal.css";
 import { IoCloseCircleOutline } from "react-icons/io5";
 import OfferCard from "./OfferCard";
 import { useState } from "react";

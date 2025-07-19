@@ -1,5 +1,5 @@
 import { FaLandmark } from "react-icons/fa6";
-import "../../styles/GallerySearchCard.css";
+import "./styles/GallerySearchCard.css";
 import { FaCity } from "react-icons/fa";
 import { Gallery } from "../../services/gallery";
 import { useNavigate } from "react-router-dom";
