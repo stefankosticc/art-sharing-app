@@ -25,9 +25,10 @@ public class NotificationService : INotificationService
         _mapper = mapper;
     }
     
-    public async Task<IEnumerable<Notification>?> GetNotificationsAsync(int loggedInUserId)
+    public async Task<IEnumerable<NotificationResponseDTO>?> GetNotificationsAsync(int loggedInUserId, int skip, int take)
     {
-        return await _notificationRepository.GetAllReadAndUnreadNotificationsAsync(loggedInUserId);
+        var notifications = await _notificationRepository.GetAllReadAndUnreadNotificationsAsync(loggedInUserId, skip, take);
+        return _mapper.Map<IEnumerable<NotificationResponseDTO>>(notifications);
     }
 
     public async Task CreateNotificationAsync(NotificationRequestDTO request)
@@ -51,7 +52,7 @@ public class NotificationService : INotificationService
         await ChangeNotificationStatus(notificationId, loggedInUserId, NotificationStatus.READ);
     }
 
-    public async Task MarkNotificationAsUneadAsync(int notificationId, int loggedInUserId)
+    public async Task MarkNotificationAsUnreadAsync(int notificationId, int loggedInUserId)
     {
         await ChangeNotificationStatus(notificationId, loggedInUserId, NotificationStatus.UNREAD);
     }

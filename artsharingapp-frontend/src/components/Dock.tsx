@@ -7,9 +7,12 @@ import { MdOutlineChatBubble } from "react-icons/md";
 import { IoNotifications } from "react-icons/io5";
 import { useEffect, useState } from "react";
 import Search from "./search/Search";
+import Notifications from "./Notifications";
 
 const Dock = () => {
   const [isSearchOpen, setIsSearchOpen] = useState<boolean>(false);
+  const [isNotificationsOpen, setIsNotificationsOpen] =
+    useState<boolean>(false);
 
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
@@ -31,9 +34,19 @@ const Dock = () => {
     <>
       {isSearchOpen && <Search onClose={() => setIsSearchOpen(false)} />}
       <div className="dock">
-        <NavLink to={"/notifications"} title="Notifications">
-          <IoNotifications />
-        </NavLink>
+        <div className="notifications-container">
+          <IoNotifications
+            id="notifications-icon"
+            onClick={(e) => {
+              e.stopPropagation();
+              if (isSearchOpen) setIsSearchOpen(false);
+              setIsNotificationsOpen(!isNotificationsOpen);
+            }}
+          />
+          {isNotificationsOpen && (
+            <Notifications onClose={() => setIsNotificationsOpen(false)} />
+          )}
+        </div>
         <NavLink to={"/map"} title="Map">
           <FaMap />
         </NavLink>
@@ -43,6 +56,7 @@ const Dock = () => {
         <div
           onClick={(e) => {
             e.stopPropagation();
+            if (isNotificationsOpen) setIsNotificationsOpen(false);
             setIsSearchOpen(!isSearchOpen);
           }}
         >

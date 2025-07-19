@@ -10,3 +10,9 @@ export enum OfferStatus {
   REJECTED,
   WITHDRAWN,
 }
+
+export enum NotificationStatus {
+  READ,
+  UNREAD,
+  DELETED,
+}

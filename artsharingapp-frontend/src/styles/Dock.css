@@ -24,12 +24,14 @@
 }
 
 .dock a,
-#search-icon {
+#search-icon,
+#notifications-icon {
     color: var(--white);
     display: flex;
     font-size: 1.2rem;
 }
 
-#search-icon {
+#search-icon,
+#notifications-icon {
     cursor: pointer;
 }

@@ -11,11 +11,13 @@ public class NotificationRepository : GenericRepository<Notification>, INotifica
     {
     }
 
-    public async Task<IEnumerable<Notification>?> GetAllReadAndUnreadNotificationsAsync(int loggedInUserId)
+    public async Task<IEnumerable<Notification>?> GetAllReadAndUnreadNotificationsAsync(int loggedInUserId, int skip, int take)
     {
         return await _dbSet
             .Where(n => n.RecipientId == loggedInUserId && n.Status != NotificationStatus.DELETED)
             .OrderByDescending(n => n.CreatedAt)
+            .Skip(skip)
+            .Take(take)
             .ToListAsync();
     }
 

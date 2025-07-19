@@ -9,5 +9,7 @@ public class NotificationProfile : AutoMapper.Profile
     {
         CreateMap<NotificationRequestDTO, Notification>()
             .ForMember(dest => dest.Recipient, opt => opt.Ignore());
+
+        CreateMap<Notification, NotificationResponseDTO>();
     }
 }

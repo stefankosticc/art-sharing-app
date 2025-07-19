@@ -43,6 +43,7 @@ const Search = ({ onClose }: { onClose: () => void }) => {
         <div className="search-bar">
           <input
             type="text"
+            id="search-input"
             placeholder="Search for artworks, artists, or galleries..."
             value={searchString}
             onChange={(e) => setSearchString(e.target.value)}

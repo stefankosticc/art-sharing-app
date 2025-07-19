@@ -19,10 +19,10 @@ public class NotificationController : AuthenticatedUserBaseController
     }
     
     [HttpGet("notifications")]
-    public async Task<IActionResult> GetNotifications()
+    public async Task<IActionResult> GetNotifications([FromQuery] int skip = 0, [FromQuery] int take = 10)
     {
         var userId = GetLoggedInUserId();
-        var notifications = await _notificationService.GetNotificationsAsync(userId);
+        var notifications = await _notificationService.GetNotificationsAsync(userId, skip, take);
         return Ok(notifications);
     }
 
@@ -42,10 +42,10 @@ public class NotificationController : AuthenticatedUserBaseController
     }
     
     [HttpPut("notification/{id}/unread")]
-    public async Task<IActionResult> MarkNotificationAsUnead(int id)
+    public async Task<IActionResult> MarkNotificationAsUnread(int id)
     {
         var userId = GetLoggedInUserId();
-        await _notificationService.MarkNotificationAsUneadAsync(id, userId);
+        await _notificationService.MarkNotificationAsUnreadAsync(id, userId);
         return Ok(new { message = "Notification marked as unread." });
     }
     
