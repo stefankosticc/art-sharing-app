@@ -56,3 +56,10 @@ public class UserSearchResponseDTO
     public string Name { get; set; }
     public string UserName { get; set; }
 }
+
+public class TopArtistResponseDTO
+{
+    public int Id { get; set; }
+    public string Name { get; set; }
+    public string UserName { get; set; }
+}

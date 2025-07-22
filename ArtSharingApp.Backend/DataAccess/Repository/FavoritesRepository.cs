@@ -26,4 +26,23 @@ public class FavoritesRepository : GenericRepository<Favorites>, IFavoritesRepos
             .Include(f => f.Artwork)
             .ToListAsync();
     }
+
+    public async Task<IEnumerable<User>> GetTopArtistsByLikesAsync(int count)
+    {
+        var topArtistLikes = await _dbSet
+            .Where(f => !f.Artwork.IsPrivate)
+            .GroupBy(f => f.Artwork.CreatedByArtistId)
+            .Select(g => new { ArtistId = g.Key, TotalLikes = g.Count() })
+            .OrderByDescending(x => x.TotalLikes)
+            .Take(count)
+            .ToListAsync();
+
+        var topArtistIds = topArtistLikes.Select(x => x.ArtistId).ToList();
+
+        var artists = await _context.Users.Where(u => topArtistIds.Contains(u.Id)).ToListAsync();
+
+        // Preserve ranking order
+        var artistDict = artists.ToDictionary(a => a.Id);
+        return topArtistIds.Select(id => artistDict[id]).ToList();
+    }
 }

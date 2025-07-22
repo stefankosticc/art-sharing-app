@@ -106,4 +106,10 @@ public class FollowersService : IFollowersService
         var followingCount = await _followersRepository.GetFollowingCountAsync(loggedInUserId);
         return followingCount;
     }
+
+    public async Task<IEnumerable<FollowedUserArtworkDTO>?> GetFollowedUsersArtworksAsync(int loggedInUserId, int skip, int take)
+    {
+        var artworks = await _followersRepository.GetFollowedUsersArtworksAsync(loggedInUserId, skip, take);
+        return _mapper.Map<IEnumerable<FollowedUserArtworkDTO>>(artworks);
+    }
 }

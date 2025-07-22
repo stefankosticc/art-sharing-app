@@ -1,0 +1,10 @@
+.discover-page {
+    height: 100%;
+    width: 100%;
+    padding: 8rem 20% 4rem 20%;
+    overflow-y: scroll;
+}
+
+.discover-page h1 {
+    margin-bottom: 2rem;
+}

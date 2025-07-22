@@ -6,4 +6,5 @@ public interface IFavoritesRepository : IGenericRepository<Favorites>
 {
     Task DeleteAsync(int userId, int artworkId);
     Task<IEnumerable<Favorites>> GetLikedArtworks(int userId);
+    Task<IEnumerable<User>> GetTopArtistsByLikesAsync(int count);
 }

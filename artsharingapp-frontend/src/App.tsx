@@ -9,6 +9,7 @@ import ArtworkPage from "./pages/ArtworkPage";
 import NotFound from "./pages/NotFound";
 import GalleryPage from "./pages/GalleryPage";
 import CityPage from "./pages/CityPage";
+import DiscoverPage from "./pages/DiscoverPage";
 
 function App() {
   return (
@@ -55,6 +56,14 @@ function App() {
             element={
               <PrivateRoute>
                 <CityPage />
+              </PrivateRoute>
+            }
+          />
+          <Route
+            path="/discover"
+            element={
+              <PrivateRoute>
+                <DiscoverPage />
               </PrivateRoute>
             }
           />

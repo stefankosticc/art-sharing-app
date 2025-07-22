@@ -10,4 +10,5 @@ public interface IFollowersService
     Task<IEnumerable<FollowingDTO>?> GetFollowingAsync(int loggedInUserId);
     Task<int> GetFollowersCountAsync(int loggedInUserId);
     Task<int> GetFollowingCountAsync(int loggedInUserId);
+    Task<IEnumerable<FollowedUserArtworkDTO>?> GetFollowedUsersArtworksAsync(int loggedInUserId, int skip, int take);
 }

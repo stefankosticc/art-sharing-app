@@ -42,5 +42,11 @@ public class ArtworkProfile : AutoMapper.Profile
                 opt.MapFrom(src => src.Gallery != null ? src.Gallery.Name : null))
             .ForMember(dest => dest.Image, opt =>
                 opt.MapFrom(src => $"/api/artwork/{src.Id}/image"));
+        
+        CreateMap<Artwork, FollowedUserArtworkDTO>()
+            .ForMember(dest => dest.PostedByUserName, opt =>
+                opt.MapFrom(src => src.PostedByUser.UserName))
+            .ForMember(dest => dest.Image, opt =>
+                opt.MapFrom(src => $"/api/artwork/{src.Id}/image"));
     }
 }

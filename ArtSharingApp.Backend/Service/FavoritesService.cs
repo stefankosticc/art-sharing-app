@@ -88,4 +88,10 @@ public class FavoritesService : IFavoritesService
         var likedArtworksDto = _mapper.Map<List<FavoritesDTO>>(likedArtworks);
         return likedArtworksDto;
     }
+
+    public async Task<IEnumerable<TopArtistResponseDTO>?> GetTop10ArtistsByLikesAsync()
+    {
+        var artists = await _favoritesRepository.GetTopArtistsByLikesAsync(10);
+        return _mapper.Map<IEnumerable<TopArtistResponseDTO>>(artists);
+    }
 }
