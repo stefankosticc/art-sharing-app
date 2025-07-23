@@ -1,113 +1,12 @@
 .sign-up-page {
     display: flex;
     align-items: center;
-    justify-content: end;
+    justify-content: center;
     height: 100vh;
-    background-color: #f0f0f0;
-    background-image: url('../../public/pictures/The\ School\ of\ Athens\ by\ Raphael.jpg');
-    background-size: cover;
-    background-position: center;
-    background-repeat: no-repeat;
-}
-
-.sign-up-back-link {
-    position: absolute;
-    top: 1.2rem;
-    left: 1.2rem;
-    color: var(--paperwhite);
-    font-size: 2rem;
-    background-color: var(--gray);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    padding: 0.2rem 0;
-    border-radius: 0.5rem;
-}
-
-.sign-up-card {
-    background: rgba(0, 0, 0, 0.5);
-    -webkit-backdrop-filter: blur(10px);
-    backdrop-filter: blur(10px);
-    border: 1px solid rgba(222, 218, 255, 0.25);
-    padding: 20px;
-    border-radius: 8px;
-    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-    height: inherit;
-    width: 30vw;
-}
-
-.sign-up-card h1 {
-    color: var(--paperwhite);
-    margin-bottom: 1.4rem;
-}
-
-.sign-up-form {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    width: 80%;
-}
-
-.sign-up-form-field {
     position: relative;
-    width: 100%;
-    margin-bottom: 1.2rem;
-}
-
-.sign-up-form-field label {
-    position: absolute;
-    left: 0.6rem;
-    top: 1rem;
-    color: var(--paperwhite);
-    background: transparent;
-    pointer-events: none;
-    transition: all 0.18s cubic-bezier(0.4, 0, 0.2, 1);
-    font-size: 1rem;
-    padding: 0 0.2rem;
-}
-
-.sign-up-form-field input {
-    width: 100%;
-    padding: 1.2rem 0.5rem 0.5rem 0.5rem;
-    border: 1px solid var(--paperwhite);
-    border-radius: 0.5rem;
-    font-size: 1rem;
-    background: none;
-    outline: none;
-    color: var(--purple);
-}
-
-.sign-up-form-field input:focus,
-.sign-up-form-field input:not(:placeholder-shown) {
-    border-color: var(--purple);
-}
-
-.sign-up-form-field input:focus+label,
-.sign-up-form-field input:not(:placeholder-shown)+label {
-    top: 0.2rem;
-    left: 0.5rem;
-    font-size: 0.82rem;
-    color: var(--purple);
-}
-
-.sign-up-form button {
-    width: 80%;
-    padding: 0.6rem 0.4rem;
-    background-color: var(--black);
-    color: var(--white);
-    border: none;
-    border-radius: 0.5rem;
-    cursor: pointer;
-    font-size: 1rem;
-}
-
-.sign-up-form button:hover {
-    background-color: var(--purple);
+    padding: 0 5rem;
+    gap: 4rem;
+    background-color: var(--purple-light);
     color: var(--black);
 }
 
@@ -119,6 +18,27 @@
     border-radius: 0.4rem;
     font-weight: bold;
     text-align: center;
-    font-size: 0.9rem;
-    margin: 0.6rem 0;
+    font-size: 0.8rem;
+    margin-top: 0.6rem;
+}
+
+#signup-go-to-login {
+    margin: 0.8rem 0 0.4rem 0;
+    font-size: 0.8rem;
+    color: var(--gray-light);
+}
+
+#signup-go-to-login a {
+    color: var(--black);
+}
+
+#signup-go-to-login a:hover {
+    color: var(--cyan);
+}
+
+.signup-placeholder {
+    height: 90%;
+    width: 100%;
+    background: radial-gradient(circle at 50% 50%, #aca3ff, #3c21ba, #08060e);
+    border-radius: 1rem;
 }

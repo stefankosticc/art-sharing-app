@@ -5,9 +5,12 @@ const Navbar = () => {
   const handleScroll = (e: React.MouseEvent, id: string) => {
     e.preventDefault();
     const element = document.getElementById(id);
-    if (element) {
+    const scrollContainer = document.querySelector(".landing-page");
+    if (element && scrollContainer) {
       const offset = 8 * 16;
-      window.scrollTo({
+      const elementPosition =
+        element.getBoundingClientRect().top + scrollContainer.scrollTop;
+      scrollContainer.scrollTo({
         top: element.offsetTop - offset,
         behavior: "smooth",
       });
@@ -20,8 +23,12 @@ const Navbar = () => {
         <a href="#lp-header" onClick={(e) => handleScroll(e, "lp-header")}>
           Home
         </a>
-        <a href="">About</a>
-        <a href="">Services</a>
+        <a href="#features" onClick={(e) => handleScroll(e, "features")}>
+          Features
+        </a>
+        <a href="#faq" onClick={(e) => handleScroll(e, "faq")}>
+          FAQ
+        </a>
         <a href="#contact" onClick={(e) => handleScroll(e, "contact")}>
           Contact
         </a>
