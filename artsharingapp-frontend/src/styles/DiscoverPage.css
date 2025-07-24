@@ -1,10 +1,29 @@
 .discover-page {
     height: 100%;
     width: 100%;
-    padding: 8rem 20% 4rem 20%;
+    padding: 2rem 20% 4rem 20%;
     overflow-y: scroll;
 }
 
 .discover-page h1 {
+    margin-top: 6rem;
     margin-bottom: 2rem;
+}
+
+.discover-nav-container {
+    display: flex;
+    gap: 1rem;
+    align-items: center;
+    justify-content: center;
+}
+
+.discover-nav-container a {
+    color: var(--gray-light);
+    text-decoration: underline;
+    text-underline-offset: 0.4rem;
+    font-size: 1rem;
+}
+
+.discover-nav-container a.active {
+    color: var(--purple);
 }

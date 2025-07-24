@@ -84,4 +84,5 @@ public class FollowedUserArtworkDTO
     public string Title { get; set; }
     public string Image { get; set; }
     public string PostedByUserName { get; set; }
+    public string? Color { get; set; }
 }

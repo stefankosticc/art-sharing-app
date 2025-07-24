@@ -1,6 +1,5 @@
 import { JSX, useEffect, useState } from "react";
 import { Navigate } from "react-router-dom";
-import axios from "axios";
 import Loading from "../pages/Loading";
 import authAxios from "../services/authAxios";
 
@@ -15,16 +14,15 @@ function PrivateRoute({ children }: { children: JSX.Element }) {
         .get("/auth/loggedin-user")
         .then(() => {
           setAuth(true);
-          // TODO: DELETE DELAYS LATER
-          setTimeout(() => setLoading(false), 1500);
+          setLoading(false);
         })
         .catch(() => {
           setAuth(false);
-          setTimeout(() => setLoading(false), 1500);
+          setLoading(false);
         });
     } else {
       setAuth(false);
-      setTimeout(() => setLoading(false), 1500);
+      setLoading(false);
     }
   }, []);
 

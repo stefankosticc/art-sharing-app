@@ -2,7 +2,7 @@ import { useState } from "react";
 import { ArtworkCardData, FavoriteArtwork } from "../services/artwork";
 import "../styles/ArtworkCard.css";
 import { useNavigate } from "react-router-dom";
-import { BACKEND_BASE_URL } from "../config/constants";
+import { ARTWORK_FALLBACK_IMAGE, BACKEND_BASE_URL } from "../config/constants";
 
 type ArtworkCardProps = {
   artwork: ArtworkCardData | FavoriteArtwork | null;
@@ -11,9 +11,6 @@ type ArtworkCardProps = {
 
 const ArtworkCard = ({ artwork, loading = false }: ArtworkCardProps) => {
   const navigate = useNavigate();
-
-  const fallbackImage =
-    "https://upload.wikimedia.org/wikipedia/commons/a/a3/Image-not-found.png?20210521171500";
 
   const getTitle = (): string | null => {
     if (!artwork) return null;
@@ -32,7 +29,7 @@ const ArtworkCard = ({ artwork, loading = false }: ArtworkCardProps) => {
     return "id" in artwork ? artwork.id : artwork.artworkId;
   };
 
-  const [imgSrc, setImgSrc] = useState(getImage() || fallbackImage);
+  const [imgSrc, setImgSrc] = useState(getImage() || ARTWORK_FALLBACK_IMAGE);
 
   if (loading) {
     return (
@@ -53,7 +50,7 @@ const ArtworkCard = ({ artwork, loading = false }: ArtworkCardProps) => {
         className="artwork-card-image"
         src={imgSrc}
         alt={getTitle() || "artwork image not found"}
-        onError={() => setImgSrc(fallbackImage)}
+        onError={() => setImgSrc(ARTWORK_FALLBACK_IMAGE)}
       />
       <div className="artwork-card-details">
         <p>{getTitle() || "Error: Title Not Found"}</p>
