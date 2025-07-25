@@ -1,14 +1,14 @@
 import { NavLink } from "react-router-dom";
 import Dock from "../components/Dock";
 import "../styles/FollowingPage.css";
-import { useFollowedUsersArtworks } from "../hooks/useFollowedUsersArtworks";
+import { useDiscoverArtworks } from "../hooks/useDiscoverArtworks";
 import { useRef } from "react";
 import { useScroll } from "../hooks/useScroll";
-import ArtworkFeedCard from "../components/ArtworkFeedCard";
+import ArtworkFeedCard from "../components/discover-page/ArtworkFeedCard";
 
 const FollowingPage = () => {
   const { artworks, loadingArtworks, loadMoreArtworks } =
-    useFollowedUsersArtworks();
+    useDiscoverArtworks("following");
 
   const followedUsersArtworksRef = useRef<HTMLDivElement>(null);
 

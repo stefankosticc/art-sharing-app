@@ -8,4 +8,5 @@ public interface IFavoritesService
     Task<bool> DislikeArtwork(int userId, int artworkId);
     Task<IEnumerable<FavoritesDTO>?> GetLikedArtworks(int userId);
     Task<IEnumerable<TopArtistResponseDTO>?> GetTop10ArtistsByLikesAsync();
+    Task<IEnumerable<DiscoverArtworkDTO>?> GetTrendingArtworksAsync(int count);
 }

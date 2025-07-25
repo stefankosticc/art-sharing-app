@@ -10,4 +10,5 @@ public interface IArtworkRepository : IGenericRepository<Artwork>
     void UpdateOwner(Artwork artwork);
     Task<IEnumerable<Artwork>?> GetMyArtworksAsync(int postedByUserId);
     Task<(byte[]? Image, string? ContentType)> GetArtworkImageAsync(int id);
+    Task<IEnumerable<Artwork>?> GetDiscoverArtworksAsync(int loggedInUserId, int skip, int take);
 }

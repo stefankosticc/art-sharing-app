@@ -18,4 +18,5 @@ public interface IArtworkService
     Task<IEnumerable<ArtworkPreviewDTO>?>  GetMyArtworksAsync(int loggedInUserId);
     Task<(byte[] Image, string ContentType)> GetArtworkImageAsync(int id);
     Task<string?> ExtractColorAsync(IFormFile image);
+    Task<IEnumerable<DiscoverArtworkDTO>?> GetDiscoverArtworksAsync(int loggedInUserId, int skip, int take);
 }

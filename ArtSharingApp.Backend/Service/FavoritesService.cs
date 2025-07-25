@@ -94,4 +94,11 @@ public class FavoritesService : IFavoritesService
         var artists = await _favoritesRepository.GetTopArtistsByLikesAsync(10);
         return _mapper.Map<IEnumerable<TopArtistResponseDTO>>(artists);
     }
+
+    public async Task<IEnumerable<DiscoverArtworkDTO>?> GetTrendingArtworksAsync(int count)
+    {
+        var fromDate = DateTime.UtcNow.AddDays(-30);
+        var artworks = await _favoritesRepository.GetTrendingArtworksAsync(fromDate, count);
+        return _mapper.Map<IEnumerable<DiscoverArtworkDTO>>(artworks);
+    }
 }

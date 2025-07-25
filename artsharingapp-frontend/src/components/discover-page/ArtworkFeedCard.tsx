@@ -1,11 +1,14 @@
 import { useState } from "react";
-import { FollowedUserArtworkResponse } from "../services/artwork";
-import "../styles/ArtworkFeedCard.css";
-import { ARTWORK_FALLBACK_IMAGE, BACKEND_BASE_URL } from "../config/constants";
+import {
+  DiscoverArtworkResponse,
+  FollowedUserArtworkResponse,
+} from "../../services/artwork";
+import "./styles/ArtworkFeedCard.css";
+import { ARTWORK_FALLBACK_IMAGE, BACKEND_BASE_URL } from "../../config/constants";
 import { useNavigate } from "react-router-dom";
 
 type ArtworkFeedCardProps = {
-  artwork: FollowedUserArtworkResponse;
+  artwork: FollowedUserArtworkResponse | DiscoverArtworkResponse;
 };
 
 const ArtworkFeedCard = ({ artwork }: ArtworkFeedCardProps) => {
@@ -15,10 +18,17 @@ const ArtworkFeedCard = ({ artwork }: ArtworkFeedCardProps) => {
 
   const navigate = useNavigate();
 
+  const hasColor = (artwork: any): artwork is FollowedUserArtworkResponse =>
+    "color" in artwork && typeof artwork.color === "string";
+
   return (
     <div
       className="afc-container"
-      style={{ "--artwork-color": artwork.color } as React.CSSProperties}
+      style={
+        hasColor(artwork)
+          ? ({ "--artwork-color": artwork.color } as React.CSSProperties)
+          : ({ boxShadow: "none" } as React.CSSProperties)
+      }
       title={artwork.title}
       onClick={() => navigate(`/artwork/${artwork.id}`)}
     >

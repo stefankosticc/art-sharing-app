@@ -59,4 +59,11 @@ public class FavoritesController : AuthenticatedUserBaseController
         var users = await _favoritesService.GetTop10ArtistsByLikesAsync();
         return Ok(users);
     }
+    
+    [HttpGet("trending-artworks")]
+    public async Task<IActionResult> GetTrendingArtworks([FromQuery] int count)
+    {
+        var artworks = await _favoritesService.GetTrendingArtworksAsync(count);
+        return Ok(artworks);
+    }
 }

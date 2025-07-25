@@ -190,4 +190,10 @@ public class AuctionService : IAuctionService
         _auctionRepository.UpdateEndTime(auction);
         await _auctionRepository.SaveAsync();
     }
+
+    public async Task<IEnumerable<HighStakesAuctionDTO>?> GetHighStakesAuctionsAsync(int count)
+    {
+        var now = DateTime.UtcNow;
+        return await _auctionRepository.GetHighStakesAuctionsAsync(count, now);
+    }
 }

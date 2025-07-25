@@ -82,6 +82,13 @@ export interface FollowedUserArtworkResponse {
   color: string;
 }
 
+export interface DiscoverArtworkResponse {
+  id: number;
+  title: string;
+  image: string;
+  postedByUserName: string;
+}
+
 export async function getMyArtworks(): Promise<ArtworkCardData[]> {
   const response = await authAxios.get(`/artworks/mine`);
   return response.data;
@@ -289,6 +296,16 @@ export async function getFollowedUsersArtworks(
   take = 30
 ): Promise<FollowedUserArtworkResponse[]> {
   const response = await authAxios.get(`followed-users/artworks`, {
+    params: { skip, take },
+  });
+  return response.data;
+}
+
+export async function getDiscoverArtworks(
+  skip = 0,
+  take = 30
+): Promise<DiscoverArtworkResponse[]> {
+  const response = await authAxios.get(`artworks/discover`, {
     params: { skip, take },
   });
   return response.data;

@@ -5,13 +5,13 @@ using Microsoft.EntityFrameworkCore;
 
 namespace ArtSharingApp.Backend.DataAccess.Repository;
 
-public class ArtworkRepository : GenericRepository<Artwork>,IArtworkRepository
+public class ArtworkRepository : GenericRepository<Artwork>, IArtworkRepository
 {
     protected Expression<Func<Artwork, object>>[] DefaultIncludes => new Expression<Func<Artwork, object>>[]
     {
         a => a.CreatedByArtist,
-        a => a.PostedByUser, 
-        a => a.City, 
+        a => a.PostedByUser,
+        a => a.City,
         a => a.Gallery
     };
 
@@ -21,13 +21,15 @@ public class ArtworkRepository : GenericRepository<Artwork>,IArtworkRepository
 
     public async Task<IEnumerable<Artwork>> GetAllAsync(params Expression<Func<Artwork, object>>[] includes)
     {
-        var combinedIncludes = DefaultIncludes.Concat(includes ?? Enumerable.Empty<Expression<Func<Artwork, object>>>()).ToArray();
+        var combinedIncludes = DefaultIncludes.Concat(includes ?? Enumerable.Empty<Expression<Func<Artwork, object>>>())
+            .ToArray();
         return await base.GetAllAsync(combinedIncludes);
     }
-    
+
     public async Task<Artwork> GetByIdAsync(object id, params Expression<Func<Artwork, object>>[] includes)
     {
-        var combinedIncludes = DefaultIncludes.Concat(includes ?? Enumerable.Empty<Expression<Func<Artwork, object>>>()).ToArray();
+        var combinedIncludes = DefaultIncludes.Concat(includes ?? Enumerable.Empty<Expression<Func<Artwork, object>>>())
+            .ToArray();
         return await base.GetByIdAsync(id, combinedIncludes);
     }
 
@@ -80,5 +82,29 @@ public class ArtworkRepository : GenericRepository<Artwork>,IArtworkRepository
             .FirstOrDefaultAsync();
 
         return (result?.Image, result?.ContentType);
+    }
+
+    public async Task<IEnumerable<Artwork>?> GetDiscoverArtworksAsync(int loggedInUserId, int skip, int take)
+    {
+        // Get IDs of users the current user follows
+        var followedUserIds = await _context.Followers
+            .Where(f => f.FollowerId == loggedInUserId)
+            .Select(f => f.FollowerId)
+            .ToListAsync();
+
+        // Query artworks not posted by followed users or by the current user
+        var artworks = await _context.Artworks
+            .Where(a =>
+                !a.IsPrivate &&
+                !followedUserIds.Contains(a.PostedByUserId) &&
+                a.PostedByUserId != loggedInUserId)
+            .Include(a => a.PostedByUser)
+            .OrderByDescending(a => a.Date)
+            .ThenByDescending(a => a.Favorites.Count)
+            .Skip(skip)
+            .Take(take)
+            .ToListAsync();
+
+        return artworks;
     }
 }
