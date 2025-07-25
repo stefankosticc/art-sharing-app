@@ -29,6 +29,7 @@ export interface User {
   roleName?: string;
   followersCount: number;
   followingCount: number;
+  profilePhoto: string;
 }
 
 export async function login(request: LoginRequest): Promise<LoginResponse> {

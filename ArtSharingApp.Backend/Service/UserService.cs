@@ -24,7 +24,7 @@ public class UserService : IUserService
         if (userDto == null)
             throw new BadRequestException("User parameters not provided correctly.");
         var user = _mapper.Map<User>(userDto);
-        await _userRepository.AddAsync(user); 
+        await _userRepository.AddAsync(user);
         await _userRepository.SaveAsync();
     }
 
@@ -67,5 +67,14 @@ public class UserService : IUserService
             throw new BadRequestException("Username parameter is required.");
         var users = await _userRepository.GetUsersByNameAndUserName(searchString);
         return _mapper.Map<IEnumerable<UserSearchResponseDTO>>(users);
+    }
+
+    public async Task<(byte[] ProfilePhoto, string ContentType)> GetProfilePhotoAsync(int id)
+    {
+        var result = await _userRepository.GetProfilePhotoAsync(id);
+        if (result.ProfilePhoto == null || result.ProfilePhoto.Length == 0)
+            throw new NotFoundException("Profile photo not found.");
+
+        return (result.ProfilePhoto, string.IsNullOrWhiteSpace(result.ContentType) ? "image/jpeg" : result.ContentType);
     }
 }

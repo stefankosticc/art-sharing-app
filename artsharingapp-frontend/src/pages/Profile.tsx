@@ -9,6 +9,7 @@ import Dock from "../components/Dock";
 import TextEditor from "../components/TextEditor";
 import { MdEdit } from "react-icons/md";
 import { updateUserBiography } from "../services/user";
+import { ARTIST_FALLBACK_IMAGE, BACKEND_BASE_URL } from "../config/constants";
 
 const TABS: {
   key: string;
@@ -25,6 +26,7 @@ const Profile = () => {
   const [loadingArtwork, setLoadingArtwork] = useState<boolean>(true);
   const [isEditingBiography, setIsEditingBiography] = useState<boolean>(false);
   const [biography, setBiography] = useState<string>("");
+  const [imgSrc, setImgSrc] = useState<string>("");
 
   const { loggedInUser, loading, error } = useLoggedInUser();
 
@@ -44,6 +46,10 @@ const Profile = () => {
   }, []);
 
   useEffect(() => {
+    if (loggedInUser?.profilePhoto)
+      setImgSrc(
+        `${BACKEND_BASE_URL}${loggedInUser.profilePhoto}?t=${Date.now()}`
+      );
     setBiography(loggedInUser?.biography || "");
   }, [loggedInUser]);
 
@@ -56,9 +62,10 @@ const Profile = () => {
     <div className="profile-page page">
       <div className="profile-info">
         <img
-          src="https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_1280.png"
-          alt="Default profile picture"
+          src={imgSrc ? imgSrc : ARTIST_FALLBACK_IMAGE}
+          alt="Profile picture"
           className="profile-picture"
+          onError={() => setImgSrc(ARTIST_FALLBACK_IMAGE)}
         />
         <h1 className="profile-name">
           {loading ? (

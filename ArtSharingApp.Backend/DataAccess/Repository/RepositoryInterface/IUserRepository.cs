@@ -6,4 +6,5 @@ public interface IUserRepository : IGenericRepository<User>
 {
     void UpdateBiography(User user);
     Task<IEnumerable<User>> GetUsersByNameAndUserName(string searchString);
+    Task<(byte[]? ProfilePhoto, string? ContentType)> GetProfilePhotoAsync(int id);
 }

@@ -10,6 +10,7 @@ public class UserResponseDTO
     public string? Biography { get; set; }
     public int RoleId { get; set; }
     public string? RoleName { get; set; }
+    public string? ProfilePhoto { get; set; }
 }
 
 // DTO for creating/updating users (request)
@@ -55,6 +56,7 @@ public class UserSearchResponseDTO
     public int Id { get; set; }
     public string Name { get; set; }
     public string UserName { get; set; }
+    public string? ProfilePhoto { get; set; }
 }
 
 public class TopArtistResponseDTO
@@ -62,4 +64,5 @@ public class TopArtistResponseDTO
     public int Id { get; set; }
     public string Name { get; set; }
     public string UserName { get; set; }
+    public string? ProfilePhoto { get; set; }
 }
