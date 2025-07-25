@@ -206,4 +206,10 @@ public class ArtworkService : IArtworkService
             return null;
         }
     }
+
+    public async Task<IEnumerable<DiscoverArtworkDTO>?> GetDiscoverArtworksAsync(int loggedInUserId, int skip, int take)
+    {
+        var artworks = await _artworkRepository.GetDiscoverArtworksAsync(loggedInUserId, skip, take);
+        return _mapper.Map<IEnumerable<DiscoverArtworkDTO>>(artworks);
+    }
 }

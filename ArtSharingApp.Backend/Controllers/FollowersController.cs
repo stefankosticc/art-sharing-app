@@ -52,4 +52,12 @@ public class FollowersController : AuthenticatedUserBaseController
         var following = await _followersService.GetFollowingAsync(loggedInUserId);
         return Ok(following);
     }
+    
+    [HttpGet("followed-users/artworks")]
+    public async Task<IActionResult> GetFollowedUsersArtworks([FromQuery] int skip, [FromQuery] int take)
+    {
+        var loggedInUserId = GetLoggedInUserId();
+        var artworks = await _followersService.GetFollowedUsersArtworksAsync(loggedInUserId, skip, take);
+        return Ok(artworks);
+    }
 }

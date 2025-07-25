@@ -50,4 +50,16 @@ public class FollowersRepository : GenericRepository<Followers>, IFollowersRepos
     {
         return _dbSet.CountAsync(f => f.UserId == loggedInUserId);
     }
+
+    public async Task<IEnumerable<Artwork>?> GetFollowedUsersArtworksAsync(int loggedInUserId, int skip, int take)
+    {
+        return await _dbSet
+            .Where(f => f.UserId == loggedInUserId)
+            .SelectMany(f => f.Follower.PostedArtworks.Where(a => !a.IsPrivate))
+            .OrderByDescending(a => a.Date)
+            .Include(a => a.PostedByUser)
+            .Skip(skip)
+            .Take(take)
+            .ToListAsync();
+    }
 }

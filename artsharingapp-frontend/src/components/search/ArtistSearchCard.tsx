@@ -1,8 +1,6 @@
+import { ARTIST_FALLBACK_IMAGE } from "../../config/constants";
 import { UserSearchResponse } from "../../services/user";
 import "./styles/ArtistSearchCard.css";
-
-const fallbackImage =
-  "https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_1280.png";
 
 type ArtistSearchCardProps = {
   artist: UserSearchResponse;
@@ -15,7 +13,7 @@ const ArtistSearchCard = ({ artist, onClick }: ArtistSearchCardProps) => {
     <div className="artist-sc-container" onClick={onClick}>
       <div className="artist-sc-img-container">
         <img
-          src={fallbackImage}
+          src={ARTIST_FALLBACK_IMAGE}
           alt="Default profile picture"
           className="artist-sc-picture"
         />

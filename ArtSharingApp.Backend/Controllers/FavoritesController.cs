@@ -52,4 +52,18 @@ public class FavoritesController : AuthenticatedUserBaseController
         }
         throw new NotFoundException("No liked artworks found.");
     }
+    
+    [HttpGet("top-artists")]
+    public async Task<IActionResult> GetTop10ArtistsByLikes()
+    {
+        var users = await _favoritesService.GetTop10ArtistsByLikesAsync();
+        return Ok(users);
+    }
+    
+    [HttpGet("trending-artworks")]
+    public async Task<IActionResult> GetTrendingArtworks([FromQuery] int count)
+    {
+        var artworks = await _favoritesService.GetTrendingArtworksAsync(count);
+        return Ok(artworks);
+    }
 }

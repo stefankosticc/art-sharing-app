@@ -50,7 +50,7 @@ const Dock = () => {
         <NavLink to={"/map"} title="Map">
           <FaMap />
         </NavLink>
-        <NavLink to={"/feed"} title="Feed">
+        <NavLink to={"/discover"} title="Discover">
           <FaWindowMaximize />
         </NavLink>
         <div

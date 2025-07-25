@@ -1,7 +1,7 @@
-using Microsoft.EntityFrameworkCore;
 using ArtSharingApp.Backend.Models;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore;
 
 namespace ArtSharingApp.Backend.DataAccess;
 
@@ -22,11 +22,11 @@ public class ApplicationDbContext : IdentityDbContext<User, Role, int>
     public DbSet<Notification> Notifications { get; set; }
     public DbSet<Auction> Auctions { get; set; }
     public DbSet<Offer> Offers { get; set; }
-    
+
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         base.OnModelCreating(modelBuilder);
-        
+
         modelBuilder.Entity<User>().ToTable("Users");
         modelBuilder.Entity<Role>().ToTable("Roles");
         modelBuilder.Entity<IdentityUserRole<int>>().ToTable("UserRoles");
@@ -34,7 +34,7 @@ public class ApplicationDbContext : IdentityDbContext<User, Role, int>
         modelBuilder.Entity<IdentityUserClaim<int>>().ToTable("UserClaims");
         modelBuilder.Entity<IdentityRoleClaim<int>>().ToTable("RoleClaims");
         modelBuilder.Entity<IdentityUserToken<int>>().ToTable("UserTokens");
-        
+
         modelBuilder.Entity<Gallery>()
             .HasOne(g => g.City)
             .WithMany(c => c.Galleries)
@@ -86,16 +86,16 @@ public class ApplicationDbContext : IdentityDbContext<User, Role, int>
             .WithMany(a => a.Favorites)
             .HasForeignKey(f => f.ArtworkId)
             .IsRequired();
-        
+
         modelBuilder.Entity<Followers>()
             .HasKey(f => new { f.UserId, f.FollowerId });
-        
+
         modelBuilder.Entity<Followers>()
             .HasOne(f => f.User)
             .WithMany(u => u.Followers)
             .HasForeignKey(f => f.UserId)
             .IsRequired();
-        
+
         modelBuilder.Entity<Followers>()
             .HasOne(f => f.Follower)
             .WithMany(u => u.Following)
@@ -120,7 +120,7 @@ public class ApplicationDbContext : IdentityDbContext<User, Role, int>
             .WithMany(ac => ac.Offers)
             .HasForeignKey(o => o.AuctionId)
             .IsRequired();
-        
+
         modelBuilder.Entity<Offer>()
             .HasOne(o => o.User)
             .WithMany(u => u.Offers)
@@ -134,5 +134,34 @@ public class ApplicationDbContext : IdentityDbContext<User, Role, int>
         modelBuilder.Entity<Auction>()
             .Property(ac => ac.Currency)
             .HasConversion<string>();
+
+        // Artwork indexes
+        modelBuilder.Entity<Artwork>()
+            .HasIndex(a => a.IsPrivate)
+            .HasDatabaseName("IX_Artwork_IsPrivate");
+
+        modelBuilder.Entity<Artwork>()
+            .HasIndex(a => new { a.IsPrivate, a.Date, a.CreatedByArtistId })
+            .HasDatabaseName("IX_Artwork_IsPrivate_Date_CreatedByArtistId");
+
+        // Favorites index
+        modelBuilder.Entity<Favorites>()
+            .HasIndex(f => f.ArtworkId)
+            .HasDatabaseName("IX_Favorites_ArtworkId");
+
+        // Auctions index
+        modelBuilder.Entity<Auction>()
+            .HasIndex(a => new { a.StartTime, a.EndTime })
+            .HasDatabaseName("IX_Auction_StartTime_EndTime");
+
+        // Offers index
+        modelBuilder.Entity<Offer>()
+            .HasIndex(o => new { o.AuctionId, o.Amount })
+            .HasDatabaseName("IX_Offer_AuctionId_Amount");
+
+        // Followers index
+        modelBuilder.Entity<Followers>()
+            .HasIndex(f => f.FollowerId)
+            .HasDatabaseName("IX_Followers_FollowerId");
     }
 }

@@ -77,3 +77,20 @@ public class ArtworkSearchResponseDTO
     public int? GalleryId { get; set; }
     public string? GalleryName { get; set; }
 }
+
+public class FollowedUserArtworkDTO
+{
+    public int Id { get; set; }
+    public string Title { get; set; }
+    public string Image { get; set; }
+    public string PostedByUserName { get; set; }
+    public string? Color { get; set; }
+}
+
+public class DiscoverArtworkDTO
+{
+    public int Id { get; set; }
+    public string Title { get; set; }
+    public string Image { get; set; }
+    public string PostedByUserName { get; set; }
+}

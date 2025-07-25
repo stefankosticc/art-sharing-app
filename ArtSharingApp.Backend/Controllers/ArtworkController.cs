@@ -122,4 +122,12 @@ public class ArtworkController : AuthenticatedUserBaseController
         if (color == null) return BadRequest(new { message = "Failed to extract color."});
         return Ok(color);
     }
+    
+    [HttpGet("artworks/discover")]
+    public async Task<IActionResult> GetDiscoverArtworks([FromQuery] int skip, [FromQuery] int take)
+    {
+        var loggedInUserId = GetLoggedInUserId();
+        var artworks = await _artworkService.GetDiscoverArtworksAsync(loggedInUserId, skip, take);
+        return Ok(artworks);
+    }
 }

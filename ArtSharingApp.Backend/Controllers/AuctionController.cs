@@ -91,4 +91,11 @@ public class AuctionController : AuthenticatedUserBaseController
         await _auctionService.UpdateAuctionEndTimeAsync(auctionId, userId, request);
         return Ok(new { message = "Auction updated successfully." });
     }
+    
+    [HttpGet("auctions/high-stakes")]
+    public async Task<IActionResult> GetHighStakesAuctions([FromQuery]int count)
+    {
+        var auctions = await _auctionService.GetHighStakesAuctionsAsync(count);
+        return Ok(auctions);
+    }
 }

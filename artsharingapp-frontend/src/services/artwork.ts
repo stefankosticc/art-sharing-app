@@ -74,6 +74,21 @@ export interface PutArtworkOnSaleRequest {
   currency: Currency;
 }
 
+export interface FollowedUserArtworkResponse {
+  id: number;
+  title: string;
+  image: string;
+  postedByUserName: string;
+  color: string;
+}
+
+export interface DiscoverArtworkResponse {
+  id: number;
+  title: string;
+  image: string;
+  postedByUserName: string;
+}
+
 export async function getMyArtworks(): Promise<ArtworkCardData[]> {
   const response = await authAxios.get(`/artworks/mine`);
   return response.data;
@@ -274,4 +289,24 @@ export async function transferArtwork(
     console.error("Error:", message);
     return false;
   }
+}
+
+export async function getFollowedUsersArtworks(
+  skip = 0,
+  take = 30
+): Promise<FollowedUserArtworkResponse[]> {
+  const response = await authAxios.get(`followed-users/artworks`, {
+    params: { skip, take },
+  });
+  return response.data;
+}
+
+export async function getDiscoverArtworks(
+  skip = 0,
+  take = 30
+): Promise<DiscoverArtworkResponse[]> {
+  const response = await authAxios.get(`artworks/discover`, {
+    params: { skip, take },
+  });
+  return response.data;
 }

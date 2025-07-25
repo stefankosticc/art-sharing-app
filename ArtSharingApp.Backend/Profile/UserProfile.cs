@@ -18,5 +18,6 @@ public class UserProfile : AutoMapper.Profile
             .ForMember(dest => dest.Role, opt => opt.Ignore());
 
         CreateMap<User, UserSearchResponseDTO>();
+        CreateMap<User, TopArtistResponseDTO>();
     }
 }

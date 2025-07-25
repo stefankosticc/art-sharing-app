@@ -18,7 +18,7 @@ import {
 } from "../services/artwork";
 import { useNavigate, useParams } from "react-router-dom";
 import TextEditor from "../components/TextEditor";
-import { BACKEND_BASE_URL } from "../config/constants";
+import { ARTWORK_FALLBACK_IMAGE, BACKEND_BASE_URL } from "../config/constants";
 import AuctionSection from "../components/auctions-and-sales/AuctionSection";
 import ThreeDotsMenu from "../components/ThreeDotsMenu";
 import FixedSaleSection from "../components/auctions-and-sales/FixedSaleSection";
@@ -27,9 +27,6 @@ import { AuctionProvider } from "../context/AuctionContext";
 type ArtworkPageProps = {
   isNew?: boolean;
 };
-
-const fallbackImage =
-  "https://upload.wikimedia.org/wikipedia/commons/a/a3/Image-not-found.png?20210521171500";
 
 const getFormattedDateOnly = (date: Date): string => {
   return date.toISOString().split("T")[0];
@@ -233,7 +230,7 @@ const ArtworkPage = ({ isNew = false }: ArtworkPageProps) => {
               <img
                 src={imgSrc}
                 alt={artwork?.title || "artwork image"}
-                onError={() => setImgSrc(fallbackImage)}
+                onError={() => setImgSrc(ARTWORK_FALLBACK_IMAGE)}
                 className="ap-image"
               />
               {isEditing && (
