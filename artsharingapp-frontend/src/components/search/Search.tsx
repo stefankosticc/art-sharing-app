@@ -14,6 +14,7 @@ import { useClickOutside } from "../../hooks/useClickOutside";
 import { Gallery } from "../../services/gallery";
 import { City } from "../../services/city";
 import { UserSearchResponse } from "../../services/user";
+import { useNavigate } from "react-router-dom";
 
 const setFilterOptionColors = (
   background: string,
@@ -28,6 +29,8 @@ const setFilterOptionColors = (
 const Search = ({ onClose }: { onClose: () => void }) => {
   const [searchString, setSearchString] = useState<string>("");
   const [filter, setFilter] = useState<string>("artwork");
+
+  const navigate = useNavigate();
 
   const containerRef = useRef<HTMLDivElement>(null);
   useClickOutside(containerRef, onClose);
@@ -155,6 +158,9 @@ const Search = ({ onClose }: { onClose: () => void }) => {
                     <ArtistSearchCard
                       key={result.id}
                       artist={result as UserSearchResponse}
+                      onClick={() =>
+                        navigate(`/${(result as UserSearchResponse).userName}`)
+                      }
                     />
                   );
                 case "city":

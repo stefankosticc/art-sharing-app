@@ -23,7 +23,7 @@ public class FavoritesRepository : GenericRepository<Favorites>, IFavoritesRepos
     public async Task<IEnumerable<Favorites>> GetLikedArtworks(int userId)
     {
         return await _dbSet
-            .Where(f => f.UserId == userId)
+            .Where(f => f.UserId == userId && !f.Artwork.IsPrivate)
             .Include(f => f.Artwork)
             .ToListAsync();
     }

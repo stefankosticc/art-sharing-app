@@ -14,7 +14,7 @@ public class FollowersRepository : GenericRepository<Followers>, IFollowersRepos
     {
         return await _dbSet.AnyAsync(f => f.UserId == loggedInUserId && f.FollowerId == userId);
     }
-    
+
     public async Task DeleteAsync(int loggedInUserId, int userId)
     {
         var follower = await _dbSet.FirstOrDefaultAsync(f => f.UserId == loggedInUserId && f.FollowerId == userId);
@@ -30,7 +30,7 @@ public class FollowersRepository : GenericRepository<Followers>, IFollowersRepos
             .Where(f => f.FollowerId == loggedInUserId)
             .Include(f => f.User)
             .ToListAsync();
-        
+
     }
 
     public async Task<IEnumerable<Followers>> GetFollowingAsync(int loggedInUserId)

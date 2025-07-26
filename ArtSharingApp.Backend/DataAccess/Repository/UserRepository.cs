@@ -52,4 +52,19 @@ public class UserRepository : GenericRepository<User>, IUserRepository
 
         return (result?.ProfilePhoto, result?.ContentType);
     }
+
+    public async Task<User?> GetUserByUserNameAsync(string username)
+    {
+        return await _dbSet
+            .Where(u => u.UserName != null && u.UserName.ToLower() == username.ToLower())
+            .FirstOrDefaultAsync();
+    }
+
+    public void UpdateUserProfile(User user)
+    {
+        _context.Attach(user);
+        _context.Entry(user).Property(u => u.Name).IsModified = true;
+        _context.Entry(user).Property(u => u.ProfilePhoto).IsModified = true;
+        _context.Entry(user).Property(u => u.ContentType).IsModified = true;
+    }
 }

@@ -18,11 +18,16 @@ import {
 } from "../services/artwork";
 import { useNavigate, useParams } from "react-router-dom";
 import TextEditor from "../components/TextEditor";
-import { ARTWORK_FALLBACK_IMAGE, BACKEND_BASE_URL } from "../config/constants";
+import {
+  ARTIST_FALLBACK_IMAGE,
+  ARTWORK_FALLBACK_IMAGE,
+  BACKEND_BASE_URL,
+} from "../config/constants";
 import AuctionSection from "../components/auctions-and-sales/AuctionSection";
 import ThreeDotsMenu from "../components/ThreeDotsMenu";
 import FixedSaleSection from "../components/auctions-and-sales/FixedSaleSection";
 import { AuctionProvider } from "../context/AuctionContext";
+import NotFound from "./NotFound";
 
 type ArtworkPageProps = {
   isNew?: boolean;
@@ -214,6 +219,10 @@ const ArtworkPage = ({ isNew = false }: ArtworkPageProps) => {
     }
   };
 
+  if (!loadingArtwork && !artwork && !isNew) {
+    return <NotFound />;
+  }
+
   return (
     <AuctionProvider>
       <div className="artwork-page fixed-page">
@@ -381,9 +390,14 @@ const ArtworkPage = ({ isNew = false }: ArtworkPageProps) => {
               (isEditing && loggedInUser?.userName) ? (
                 <div className="ap-user-info">
                   <img
-                    src="https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_1280.png"
-                    alt="Default profile picture"
+                    src={`${BACKEND_BASE_URL}/api/user/${
+                      artwork?.createdByArtistId || loggedInUser?.id
+                    }/profile-photo`}
+                    alt=""
                     className="ap-user-profile-picture"
+                    onError={(e) => {
+                      e.currentTarget.src = ARTIST_FALLBACK_IMAGE;
+                    }}
                   />
                   <span className="ap-details-text">
                     {"@" +
@@ -401,9 +415,14 @@ const ArtworkPage = ({ isNew = false }: ArtworkPageProps) => {
               (isEditing && loggedInUser?.userName) ? (
                 <div className="ap-user-info">
                   <img
-                    src="https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_1280.png"
-                    alt="Default profile picture"
+                    src={`${BACKEND_BASE_URL}/api/user/${
+                      artwork?.postedByUserId || loggedInUser?.id
+                    }/profile-photo`}
+                    alt=""
                     className="ap-user-profile-picture"
+                    onError={(e) => {
+                      e.currentTarget.src = ARTIST_FALLBACK_IMAGE;
+                    }}
                   />
                   <span className="ap-details-text">
                     {"@" +

@@ -12,11 +12,13 @@ public class UserService : IUserService
 {
     private readonly IUserRepository _userRepository;
     private readonly IMapper _mapper;
+    private readonly IFollowersRepository _followersRepository;
 
-    public UserService(IUserRepository userRepository, IMapper mapper)
+    public UserService(IUserRepository userRepository, IMapper mapper, IFollowersRepository followersRepository)
     {
         _userRepository = userRepository;
         _mapper = mapper;
+        _followersRepository = followersRepository;
     }
 
     public async Task AddUserAsync(UserRequestDTO userDto)
@@ -28,12 +30,62 @@ public class UserService : IUserService
         await _userRepository.SaveAsync();
     }
 
+    public async Task UpdateAsync(int userId, UpdateUserProfileRequestDTO userDto, IFormFile? profilePhoto)
+    {
+        if (userDto == null)
+            throw new BadRequestException("User parameters not provided correctly.");
+
+        var user = await _userRepository.GetByIdAsync(userId);
+        if (user == null)
+            throw new NotFoundException($"User with id {userId} not found.");
+
+        _mapper.Map(userDto, user);
+
+        if (profilePhoto != null && profilePhoto.Length > 0)
+        {
+            using (var ms = new MemoryStream())
+            {
+                await profilePhoto.CopyToAsync(ms);
+                user.ProfilePhoto = ms.ToArray();
+            }
+
+            user.ContentType = profilePhoto.ContentType;
+        }
+        else if (userDto.RemovePhoto)
+        {
+            user.ProfilePhoto = null;
+            user.ContentType = null;
+        }
+
+        _userRepository.UpdateUserProfile(user);
+        await _userRepository.SaveAsync();
+    }
+
     public async Task<UserResponseDTO?> GetUserByIdAsync(int id)
     {
         var user = await _userRepository.GetByIdAsync(id);
         if (user == null)
             throw new NotFoundException($"User with id {id} not found.");
         return _mapper.Map<UserResponseDTO>(user);
+    }
+
+    public async Task<UserByUserNameResponseDTO?> GetUserByUserNameAsync(string username, int loggedInUserId)
+    {
+        var user = await _userRepository.GetUserByUserNameAsync(username);
+        if (user == null)
+            throw new NotFoundException($"User with username @{username} not found.");
+        var response = _mapper.Map<UserByUserNameResponseDTO>(user);
+
+        if (loggedInUserId != user.Id)
+            response.IsFollowedByLoggedInUser = (await _followersRepository.GetAllAsync())
+                .Any(f => f.UserId == loggedInUserId && f.FollowerId == user.Id);
+        else
+            response.IsFollowedByLoggedInUser = null;
+
+        response.FollowersCount = await _followersRepository.GetFollowersCountAsync(user.Id);
+        response.FollowingCount = await _followersRepository.GetFollowingCountAsync(user.Id);
+
+        return response;
     }
 
     public async Task<IEnumerable<UserResponseDTO>> GetAllUsersAsync()

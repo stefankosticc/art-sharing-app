@@ -1,4 +1,7 @@
-import { ARTIST_FALLBACK_IMAGE } from "../../config/constants";
+import {
+  ARTIST_FALLBACK_IMAGE,
+  BACKEND_BASE_URL,
+} from "../../config/constants";
 import { UserSearchResponse } from "../../services/user";
 import "./styles/ArtistSearchCard.css";
 
@@ -13,9 +16,16 @@ const ArtistSearchCard = ({ artist, onClick }: ArtistSearchCardProps) => {
     <div className="artist-sc-container" onClick={onClick}>
       <div className="artist-sc-img-container">
         <img
-          src={ARTIST_FALLBACK_IMAGE}
+          src={
+            artist.profilePhoto
+              ? `${BACKEND_BASE_URL}${artist.profilePhoto}`
+              : ARTIST_FALLBACK_IMAGE
+          }
           alt="Default profile picture"
           className="artist-sc-picture"
+          onError={(e) => {
+            e.currentTarget.src = ARTIST_FALLBACK_IMAGE;
+          }}
         />
       </div>
       <div className="artist-sc-details">

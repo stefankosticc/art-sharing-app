@@ -8,11 +8,14 @@ import { IoNotifications } from "react-icons/io5";
 import { useEffect, useState } from "react";
 import Search from "./search/Search";
 import Notifications from "./Notifications";
+import { useLoggedInUser } from "../hooks/useLoggedInUser";
 
 const Dock = () => {
   const [isSearchOpen, setIsSearchOpen] = useState<boolean>(false);
   const [isNotificationsOpen, setIsNotificationsOpen] =
     useState<boolean>(false);
+
+  const { loggedInUser } = useLoggedInUser();
 
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
@@ -62,7 +65,7 @@ const Dock = () => {
         >
           <FiSearch id="search-icon" />
         </div>
-        <NavLink to={"/profile"} title="Profile">
+        <NavLink to={`/${loggedInUser?.userName}`} title="Profile">
           <FaUser />
         </NavLink>
         <NavLink to={"/artwork/new"} title="New Artwork">

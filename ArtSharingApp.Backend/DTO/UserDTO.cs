@@ -13,6 +13,11 @@ public class UserResponseDTO
     public string? ProfilePhoto { get; set; }
 }
 
+public class UserByUserNameResponseDTO : LoggedInUserDTO
+{
+    public bool? IsFollowedByLoggedInUser { get; set; }
+}
+
 // DTO for creating/updating users (request)
 public class UserRequestDTO
 {
@@ -65,4 +70,10 @@ public class TopArtistResponseDTO
     public string Name { get; set; }
     public string UserName { get; set; }
     public string? ProfilePhoto { get; set; }
+}
+
+public class UpdateUserProfileRequestDTO
+{
+    public string Name { get; set; }
+    public bool RemovePhoto { get; set; } = false;
 }

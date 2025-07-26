@@ -9,61 +9,11 @@
     position: fixed;
 }
 
-.profile-info {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    margin: 4rem 0 4rem 2rem;
-    white-space: nowrap;
-    max-width: 20%;
-    min-width: 15%;
-    overflow-wrap: anywhere;
-}
-
-.profile-picture {
-    width: 4rem;
-    height: 4rem;
-    border-radius: 50%;
-    object-fit: cover;
-    border: 1px solid var(--gray-light);
-}
-
-.profile-name {
-    font-size: 1rem;
-    white-space: wrap;
-    text-align: center;
-    margin: 1rem 0 0.5rem 0;
-}
-
-.profile-username {
-    font-size: 0.9rem;
-    margin-top: 0.5rem;
-}
-
-.profile-following {
-    display: flex;
-    flex-wrap: wrap;
-    align-items: center;
-    justify-content: center;
-    gap: 2rem;
-    margin-top: 1rem;
-    width: 100%;
-}
-
-.profile-follow-count {
-    font-size: 0.8rem;
-    margin-top: 0.5rem;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    cursor: pointer;
-}
-
 .profile-divider {
     height: 94vh;
     align-self: center;
     margin: 0 2rem;
-    border: solid 1px var(--gray);
+    border: solid 1px var(--black-highlight);
     border-radius: 2px;
 }
 

@@ -26,5 +26,11 @@ public class UserProfile : AutoMapper.Profile
         CreateMap<User, TopArtistResponseDTO>()
             .ForMember(dest => dest.ProfilePhoto, opt =>
                 opt.MapFrom(src => $"/api/user/{src.Id}/profile-photo"));
+
+        CreateMap<User, UserByUserNameResponseDTO>()
+        .ForMember(dest => dest.ProfilePhoto, opt =>
+                opt.MapFrom(src => $"/api/user/{src.Id}/profile-photo")); ;
+
+        CreateMap<UpdateUserProfileRequestDTO, User>();
     }
 }

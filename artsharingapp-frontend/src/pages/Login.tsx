@@ -18,7 +18,7 @@ const Login = () => {
       const response = await login({ email, password });
       localStorage.setItem("accessToken", response.accessToken);
       localStorage.setItem("refreshToken", response.refreshToken);
-      navigate("/profile");
+      navigate("/discover");
     } catch (err: any) {
       const message: string =
         err?.response?.data?.error || "Invalid email or password";

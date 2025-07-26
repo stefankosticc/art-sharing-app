@@ -4,9 +4,7 @@ using ArtSharingApp.Backend.Service.ServiceInterface;
 using ArtSharingApp.Backend.DTO;
 using AutoMapper;
 using ArtSharingApp.Backend.Exceptions;
-using ArtSharingApp.Backend.Models.Enums;
 using ArtSharingApp.Backend.Utils;
-using Microsoft.AspNetCore.Mvc;
 using UnauthorizedAccessException = ArtSharingApp.Backend.Exceptions.UnauthorizedAccessException;
 
 namespace ArtSharingApp.Backend.Service;
@@ -18,7 +16,8 @@ public class ArtworkService : IArtworkService
     private readonly IMapper _mapper;
     private readonly IFavoritesRepository _favoritesRepository;
 
-    public ArtworkService(IArtworkRepository artworkRepository, IUserRepository userRepository, IMapper mapper, IFavoritesRepository favoritesRepository)
+    public ArtworkService(IArtworkRepository artworkRepository, IUserRepository userRepository, IMapper mapper,
+        IFavoritesRepository favoritesRepository)
     {
         _artworkRepository = artworkRepository;
         _userRepository = userRepository;
@@ -49,7 +48,7 @@ public class ArtworkService : IArtworkService
             throw new BadRequestException("Artwork parameters not provided correctly.");
         if (artworkImage == null || artworkImage.Length == 0)
             throw new BadRequestException("Image not provided correctly.");
-        
+
         var artwork = _mapper.Map<Artwork>(artworkDto);
 
         using (var ms = new MemoryStream())
@@ -57,6 +56,7 @@ public class ArtworkService : IArtworkService
             await artworkImage.CopyToAsync(ms);
             artwork.Image = ms.ToArray();
         }
+
         artwork.ContentType = artworkImage.ContentType;
 
         await _artworkRepository.AddAsync(artwork);
@@ -67,11 +67,11 @@ public class ArtworkService : IArtworkService
     {
         if (artworkDto == null)
             throw new BadRequestException("Artwork parameters not provided correctly.");
-        
+
         var artwork = await _artworkRepository.GetByIdAsync(id);
         if (artwork == null)
             throw new NotFoundException($"Artwork with id {id} not found.");
-        
+
         _mapper.Map(artworkDto, artwork);
 
         if (artworkImage != null && artworkImage.Length > 0)
@@ -123,10 +123,10 @@ public class ArtworkService : IArtworkService
         var artwork = await _artworkRepository.GetByIdAsync(id);
         if (artwork == null)
             throw new NotFoundException($"Artwork with id {id} not found.");
-        
+
         if (artwork.PostedByUserId != loggedInUserId)
             throw new UnauthorizedAccessException("You are not authorized to put this artwork on sale.");
-        
+
         artwork.IsOnSale = request.IsOnSale;
         artwork.Price = request.Price;
         artwork.Currency = request.Currency;
@@ -139,10 +139,10 @@ public class ArtworkService : IArtworkService
         var artwork = await _artworkRepository.GetByIdAsync(id);
         if (artwork == null)
             throw new NotFoundException($"Artwork with id {id} not found.");
-        
+
         if (artwork.PostedByUserId != loggedInUserId)
             throw new UnauthorizedAccessException("You are not authorized to remove this artwork from sale.");
-        
+
         artwork.IsOnSale = false;
         _artworkRepository.UpdateSaleProperties(artwork);
         await _artworkRepository.SaveAsync();
@@ -153,26 +153,40 @@ public class ArtworkService : IArtworkService
         var artwork = await _artworkRepository.GetByIdAsync(artworkId);
         if (artwork == null)
             throw new NotFoundException($"Artwork with id {artworkId} not found.");
-        
+
         if (artwork.PostedByUserId != fromUserId)
             throw new UnauthorizedAccessException("You are not authorized to transfer this artwork.");
-        
+
         var toUser = await _userRepository.GetByIdAsync(toUserId);
         if (toUser == null)
             throw new NotFoundException($"User with id {toUserId} not found.");
-        
+
         if (fromUserId == toUserId)
             throw new BadRequestException("You already own this artwork, no transfer needed.");
-        
+
         artwork.PostedByUserId = toUserId;
         _artworkRepository.UpdateOwner(artwork);
         await _artworkRepository.SaveAsync();
     }
 
-    public async Task<IEnumerable<ArtworkPreviewDTO>?> GetMyArtworksAsync(int loggedInUserId)
+    public async Task<UserArtworksDTO> GetUserArtworksAsync(int userId, int loggedInUserId)
     {
-        var artworks = await _artworkRepository.GetMyArtworksAsync(loggedInUserId);
-        return _mapper.Map<IEnumerable<ArtworkPreviewDTO>>(artworks);
+        var user = await _userRepository.GetByIdAsync(userId);
+        if (user == null)
+            throw new NotFoundException($"User with id {userId} not found.");
+
+        var response = new UserArtworksDTO();
+
+        if (userId == loggedInUserId)
+        {
+            var privateArtworks = await _artworkRepository.GetPrivateArtworksByUserAsync(userId);
+            response.PrivateArtworks = _mapper.Map<IEnumerable<ArtworkPreviewDTO>>(privateArtworks);
+        }
+
+        var publicArtworks = await _artworkRepository.GetPublicArtworksByUserAsync(userId);
+        response.PublicArtworks = _mapper.Map<IEnumerable<ArtworkPreviewDTO>>(publicArtworks);
+
+        return response;
     }
 
     public async Task<(byte[] Image, string ContentType)> GetArtworkImageAsync(int id)

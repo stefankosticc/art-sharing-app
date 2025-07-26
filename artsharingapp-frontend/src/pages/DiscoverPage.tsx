@@ -9,6 +9,7 @@ import ArtworkFeedCard from "../components/discover-page/ArtworkFeedCard";
 import { DiscoverData, getDiscoverData } from "../services/discover";
 import HighStakesAuctionsSection from "../components/discover-page/HighStakesAuctionSection";
 import TrendingArtworksSection from "../components/discover-page/TrendingArtworksSection";
+import Loading from "./Loading";
 
 const DiscoverPage = () => {
   const [discoverData, setDiscoverData] = useState<DiscoverData | null>(null);
