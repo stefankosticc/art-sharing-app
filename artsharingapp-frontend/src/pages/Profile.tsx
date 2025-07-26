@@ -121,7 +121,7 @@ const Profile = () => {
             <div className="biography-container">
               <TextEditor
                 content={biography}
-                editable={isEditingBiography}
+                editable={isEditingBiography && isMyProfile}
                 className={`profile-content-biography ${
                   isEditingBiography ? "text-editor-editing" : ""
                 }`}
@@ -129,13 +129,15 @@ const Profile = () => {
                   if (isEditingBiography) setBiography(editor.getHTML());
                 }}
               />
-              <MdEdit
-                className="biography-edit-icon"
-                onClick={() => setIsEditingBiography(!isEditingBiography)}
-                title="Edit"
-              />
+              {isMyProfile && (
+                <MdEdit
+                  className="biography-edit-icon"
+                  onClick={() => setIsEditingBiography(!isEditingBiography)}
+                  title="Edit"
+                />
+              )}
             </div>
-          ) : (
+          ) : isMyProfile ? (
             <p className="profile-content-text not-found">
               You haven't added a biography yet. <br />
               To add one, click the "Edit" button below. <br />
@@ -146,8 +148,12 @@ const Profile = () => {
                 Edit
               </button>
             </p>
+          ) : (
+            <p className="profile-content-text not-found">
+              Biography has not been added yet.
+            </p>
           )}
-          {isEditingBiography && (
+          {isEditingBiography && isMyProfile && (
             <div className="biography-buttons-container">
               <button
                 className="biography-editing-button"
