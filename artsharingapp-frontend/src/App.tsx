@@ -21,14 +21,6 @@ function App() {
           <Route path="/login" element={<Login />} />
           <Route path="/sign-up" element={<SignUp />} />
           <Route
-            path="/profile"
-            element={
-              <PrivateRoute>
-                <Profile />
-              </PrivateRoute>
-            }
-          />
-          <Route
             path="/artwork/new"
             element={
               <PrivateRoute>
@@ -73,6 +65,14 @@ function App() {
             element={
               <PrivateRoute>
                 <FollowingPage />
+              </PrivateRoute>
+            }
+          />
+          <Route
+            path="/:username"
+            element={
+              <PrivateRoute>
+                <Profile />
               </PrivateRoute>
             }
           />

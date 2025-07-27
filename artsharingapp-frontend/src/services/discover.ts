@@ -6,6 +6,7 @@ export interface TopArtistResponse {
   id: number;
   name: string;
   userName: string;
+  profilePhoto: string;
 }
 
 export interface HighStakesAuctionResponse {

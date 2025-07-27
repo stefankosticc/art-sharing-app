@@ -25,6 +25,14 @@ public class UserController : AuthenticatedUserBaseController
         return Ok(user);
     }
 
+    [HttpGet("user/username/{username}")]
+    public async Task<IActionResult> GetUserByUserName(string username)
+    {
+        var loggedInUserId = GetLoggedInUserId();
+        var user = await _userService.GetUserByUserNameAsync(username, loggedInUserId);
+        return Ok(user);
+    }
+
     [HttpGet("users")]
     public async Task<IActionResult> GetAllUsers()
     {
@@ -37,6 +45,16 @@ public class UserController : AuthenticatedUserBaseController
     {
         await _userService.AddUserAsync(user);
         return Ok(new { message = "User added successfully" });
+    }
+
+    [RequestSizeLimit(5 * 1024 * 1024)]
+    [HttpPut("user")]
+    public async Task<IActionResult> Update([FromForm] UpdateUserProfileRequestDTO userDto,
+        [FromForm] IFormFile? profilePhoto)
+    {
+        var loggedInUserId = GetLoggedInUserId();
+        await _userService.UpdateAsync(loggedInUserId, userDto, profilePhoto);
+        return Ok(new { message = "User updated successfully." });
     }
 
     [HttpDelete("user/{id}")]
@@ -60,5 +78,13 @@ public class UserController : AuthenticatedUserBaseController
         string biography = request.Biography;
         await _userService.UpdateUserBiographyAsync(loggedInUserId, biography);
         return Ok(new { message = "User biography updated successfully" });
+    }
+
+    [AllowAnonymous]
+    [HttpGet("user/{id}/profile-photo")]
+    public async Task<IActionResult> GetProfilePhoto(int id)
+    {
+        var response = await _userService.GetProfilePhotoAsync(id);
+        return File(response.ProfilePhoto, response.ContentType);
     }
 }

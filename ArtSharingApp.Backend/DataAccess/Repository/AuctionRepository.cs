@@ -14,8 +14,8 @@ public class AuctionRepository : GenericRepository<Auction>, IAuctionRepository
     public async Task<bool> IsAuctionScheduledAsync(int artworkId, DateTime requestStartTime, DateTime requestEndTime)
     {
         return await _dbSet.AnyAsync(a => a.ArtworkId == artworkId &&
-                                 a.StartTime < requestEndTime &&
-                                 a.EndTime > requestStartTime);
+                                          a.StartTime < requestEndTime &&
+                                          a.EndTime > requestStartTime);
     }
 
     public async Task<bool> HasFutureAuctionScheduledAsync(int artworkId, DateTime fromTime)
@@ -39,7 +39,7 @@ public class AuctionRepository : GenericRepository<Auction>, IAuctionRepository
     public async Task<IEnumerable<HighStakesAuctionDTO>?> GetHighStakesAuctionsAsync(int count, DateTime now)
     {
         return await _dbSet
-            .Where(a => a.StartTime <= now && a.EndTime >= now)
+            .Where(a => a.StartTime <= now && a.EndTime >= now && !a.Artwork.IsPrivate)
             .Select(a => new
             {
                 a.Id,

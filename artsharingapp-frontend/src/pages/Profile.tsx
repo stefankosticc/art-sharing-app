@@ -1,14 +1,17 @@
 import { useEffect, useState } from "react";
 import "../styles/Profile.css";
 import { useLoggedInUser } from "../hooks/useLoggedInUser";
-import { formatFollowCount } from "../utils/formatting";
-import ArtworkCard from "../components/ArtworkCard";
-import { ArtworkCardData, getMyArtworks } from "../services/artwork";
-import { useFavoriteArtworks } from "../hooks/useFavoriteArtworks";
 import Dock from "../components/Dock";
 import TextEditor from "../components/TextEditor";
 import { MdEdit } from "react-icons/md";
-import { updateUserBiography } from "../services/user";
+import { getUserByUsername, updateUserBiography } from "../services/user";
+import UserInfo from "../components/profile/UserInfo";
+import MyArtworksGrid from "../components/profile/MyArtworksGrid";
+import FavoriteArtworksGrid from "../components/profile/FavoriteArtworksGrid";
+import { useParams } from "react-router-dom";
+import NotFound from "./NotFound";
+import { User } from "../services/auth";
+import Loading from "./Loading";
 
 const TABS: {
   key: string;
@@ -20,96 +23,69 @@ const TABS: {
 ];
 
 const Profile = () => {
+  const { username } = useParams();
   const [activeTab, setActiveTab] = useState<string>("artworks");
-  const [artworks, setArtworks] = useState<ArtworkCardData[] | null>(null);
-  const [loadingArtwork, setLoadingArtwork] = useState<boolean>(true);
   const [isEditingBiography, setIsEditingBiography] = useState<boolean>(false);
   const [biography, setBiography] = useState<string>("");
+  const [profileUser, setProfileUser] = useState<User | null>(null);
+  const [loadingProfileUser, setLoadingProfileUser] = useState<boolean>(true);
+  const [error, setError] = useState<unknown>(null);
+  const [refetchUser, setRefetchUser] = useState(0);
 
-  const { loggedInUser, loading, error } = useLoggedInUser();
+  const { loggedInUser, loading: loadingLoggedInUser } = useLoggedInUser();
 
   useEffect(() => {
-    const fetchArtworks = async () => {
+    const fetchProfileUser = async () => {
+      if (!username) {
+        setError("No username provided");
+        setLoadingProfileUser(false);
+        return;
+      }
       try {
-        const response = await getMyArtworks();
-        setArtworks(response);
+        setLoadingProfileUser(true);
+        const user = await getUserByUsername(username);
+        if (!user) {
+          setError("User not found");
+          setProfileUser(null);
+        } else {
+          setProfileUser(user);
+          setBiography(user?.biography || "");
+        }
       } catch (err) {
-        setLoadingArtwork(true);
+        setError(err);
+        setProfileUser(null);
       } finally {
-        setLoadingArtwork(false);
+        setLoadingProfileUser(false);
       }
     };
 
-    fetchArtworks();
-  }, []);
+    fetchProfileUser();
+  }, [username, refetchUser]);
 
-  useEffect(() => {
-    setBiography(loggedInUser?.biography || "");
-  }, [loggedInUser]);
+  const triggerRefetchUser = () => setRefetchUser((prev) => prev + 1);
 
-  const { favorites, loadingFavorites } = useFavoriteArtworks({
-    likedByUser: loggedInUser,
-    activeTab,
-  });
+  // Determine if the profile belongs to the logged-in user
+  const isMyProfile = loggedInUser?.userName === username;
+
+  if (!loadingProfileUser && (!profileUser || error)) {
+    return <NotFound />;
+  }
+
+  if (loadingProfileUser || loadingProfileUser) {
+    return <Loading />;
+  }
 
   return (
     <div className="profile-page page">
-      <div className="profile-info">
-        <img
-          src="https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_1280.png"
-          alt="Default profile picture"
-          className="profile-picture"
-        />
-        <h1 className="profile-name">
-          {loading ? (
-            <span
-              className="skeleton skeleton-text"
-              style={{ width: "7rem", height: "1.2rem" }}
-            />
-          ) : (
-            loggedInUser?.name
-          )}
-        </h1>
-        <p className="profile-username">
-          {loading ? (
-            <span
-              className="skeleton skeleton-text"
-              style={{ width: "7rem", height: "1.2rem" }}
-            />
-          ) : (
-            `@${loggedInUser?.userName}`
-          )}
-        </p>
-
-        <div className="profile-following">
-          <p className="profile-follow-count">
-            <span>
-              {loading ? (
-                <span
-                  className="skeleton skeleton-text"
-                  style={{ width: "3rem", height: "1.2rem" }}
-                />
-              ) : (
-                formatFollowCount(loggedInUser?.followersCount)
-              )}
-            </span>{" "}
-            Followers
-          </p>
-          <p className="profile-follow-count">
-            <span>
-              {loading ? (
-                <span
-                  className="skeleton skeleton-text"
-                  style={{ width: "3rem", height: "1.2rem" }}
-                />
-              ) : (
-                formatFollowCount(loggedInUser?.followingCount)
-              )}
-            </span>{" "}
-            Following
-          </p>
-        </div>
-      </div>
+      {/* USER INFO */}
+      <UserInfo
+        user={profileUser}
+        setUser={setProfileUser}
+        triggerRefetchUser={triggerRefetchUser}
+        loading={loadingProfileUser}
+        loggedInUser={loggedInUser}
+        isMyProfile={isMyProfile}
+      />
 
       <div className="profile-divider"></div>
 
@@ -130,50 +106,14 @@ const Profile = () => {
         </div>
 
         {/* MY ARTWORKS */}
-        <div
-          className={`profile-content${
-            activeTab === "artworks" ? " active" : ""
-          }`}
-        >
-          {artworks && artworks.length !== 0 ? (
-            <div className="profile-artwork-grid">
-              {artworks.map((artwork) => (
-                <ArtworkCard
-                  key={artwork.id}
-                  artwork={artwork}
-                  loading={loadingArtwork}
-                />
-              ))}
-            </div>
-          ) : (
-            <p className="profile-content-text not-found">
-              You have no artworks yet.
-            </p>
-          )}
-        </div>
+        <MyArtworksGrid
+          activeTab={activeTab}
+          user={profileUser}
+          isMyProfile={isMyProfile}
+        />
 
         {/* FAVORITES */}
-        <div
-          className={`profile-content${
-            activeTab === "favorites" ? " active" : ""
-          }`}
-        >
-          {favorites && favorites.length !== 0 ? (
-            <div className="profile-artwork-grid">
-              {favorites.map((favorite) => (
-                <ArtworkCard
-                  key={favorite.artworkId}
-                  artwork={favorite}
-                  loading={loadingFavorites}
-                />
-              ))}
-            </div>
-          ) : (
-            <p className="profile-content-text not-found">
-              You have no favorites yet.
-            </p>
-          )}
-        </div>
+        <FavoriteArtworksGrid activeTab={activeTab} user={profileUser} />
 
         {/* BIOPGRAPHY */}
         <div
@@ -186,7 +126,7 @@ const Profile = () => {
             <div className="biography-container">
               <TextEditor
                 content={biography}
-                editable={isEditingBiography}
+                editable={isEditingBiography && isMyProfile}
                 className={`profile-content-biography ${
                   isEditingBiography ? "text-editor-editing" : ""
                 }`}
@@ -194,13 +134,15 @@ const Profile = () => {
                   if (isEditingBiography) setBiography(editor.getHTML());
                 }}
               />
-              <MdEdit
-                className="biography-edit-icon"
-                onClick={() => setIsEditingBiography(!isEditingBiography)}
-                title="Edit"
-              />
+              {isMyProfile && (
+                <MdEdit
+                  className="biography-edit-icon"
+                  onClick={() => setIsEditingBiography(!isEditingBiography)}
+                  title="Edit"
+                />
+              )}
             </div>
-          ) : (
+          ) : isMyProfile ? (
             <p className="profile-content-text not-found">
               You haven't added a biography yet. <br />
               To add one, click the "Edit" button below. <br />
@@ -211,14 +153,18 @@ const Profile = () => {
                 Edit
               </button>
             </p>
+          ) : (
+            <p className="profile-content-text not-found">
+              Biography has not been added yet.
+            </p>
           )}
-          {isEditingBiography && (
+          {isEditingBiography && isMyProfile && (
             <div className="biography-buttons-container">
               <button
                 className="biography-editing-button"
                 id="biography-cancel-button"
                 onClick={() => {
-                  setBiography(loggedInUser?.biography || "");
+                  setBiography(profileUser?.biography || "");
                   setIsEditingBiography(false);
                 }}
                 title="Cancel"

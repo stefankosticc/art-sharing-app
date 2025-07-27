@@ -66,11 +66,21 @@ public class ArtworkRepository : GenericRepository<Artwork>, IArtworkRepository
         _context.Entry(artwork).Property(a => a.PostedByUserId).IsModified = true;
     }
 
-    public async Task<IEnumerable<Artwork>?> GetMyArtworksAsync(int postedByUserId)
+    public async Task<IEnumerable<Artwork>?> GetPublicArtworksByUserAsync(int postedByUserId)
     {
         return await _dbSet
-            .Where(a => a.PostedByUserId == postedByUserId)
+            .Where(a => a.PostedByUserId == postedByUserId && !a.IsPrivate)
             .Include(a => a.PostedByUser)
+            .OrderByDescending(a => a.Date)
+            .ToListAsync();
+    }
+
+    public async Task<IEnumerable<Artwork>?> GetPrivateArtworksByUserAsync(int postedByUserId)
+    {
+        return await _dbSet
+            .Where(a => a.PostedByUserId == postedByUserId && a.IsPrivate)
+            .Include(a => a.PostedByUser)
+            .OrderByDescending(a => a.Date)
             .ToListAsync();
     }
 

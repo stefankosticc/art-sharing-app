@@ -94,3 +94,9 @@ public class DiscoverArtworkDTO
     public string Image { get; set; }
     public string PostedByUserName { get; set; }
 }
+
+public class UserArtworksDTO
+{
+    public IEnumerable<ArtworkPreviewDTO> PrivateArtworks { get; set; } = Array.Empty<ArtworkPreviewDTO>();
+    public IEnumerable<ArtworkPreviewDTO> PublicArtworks { get; set; } = Array.Empty<ArtworkPreviewDTO>();
+}

@@ -7,10 +7,12 @@ import { MdEdit } from "react-icons/md";
 import { IoMdHeartEmpty, IoMdHeart } from "react-icons/io";
 import { FiUpload } from "react-icons/fi";
 import { HiArrowPathRoundedSquare } from "react-icons/hi2";
+import { CiLock, CiUnlock } from "react-icons/ci";
 import { useEffect, useState } from "react";
 import {
   addNewArtwork,
   ArtworkRequest,
+  changeArtworkVisibility,
   dislikeArtwork,
   extractArtworkColor,
   likeArtwork,
@@ -18,11 +20,16 @@ import {
 } from "../services/artwork";
 import { useNavigate, useParams } from "react-router-dom";
 import TextEditor from "../components/TextEditor";
-import { ARTWORK_FALLBACK_IMAGE, BACKEND_BASE_URL } from "../config/constants";
+import {
+  ARTIST_FALLBACK_IMAGE,
+  ARTWORK_FALLBACK_IMAGE,
+  BACKEND_BASE_URL,
+} from "../config/constants";
 import AuctionSection from "../components/auctions-and-sales/AuctionSection";
 import ThreeDotsMenu from "../components/ThreeDotsMenu";
 import FixedSaleSection from "../components/auctions-and-sales/FixedSaleSection";
 import { AuctionProvider } from "../context/AuctionContext";
+import NotFound from "./NotFound";
 
 type ArtworkPageProps = {
   isNew?: boolean;
@@ -52,6 +59,8 @@ const ArtworkPage = ({ isNew = false }: ArtworkPageProps) => {
 
   const [isEditing, setIsEditing] = useState<boolean>(isNew);
   const [isLiked, setIsLiked] = useState<boolean>(false);
+  const [isPrivate, setIsPrivate] = useState<boolean>(false);
+
   const [refetchArtwork, setRefetchArtwork] = useState<boolean>(false);
   const [imgSrc, setImgSrc] = useState<string>("");
   const [artworkImageFile, setArtworkImageFile] = useState<File | null>(null);
@@ -69,12 +78,13 @@ const ArtworkPage = ({ isNew = false }: ArtworkPageProps) => {
   );
 
   useEffect(() => {
-    if (artwork?.image) {
-      setImgSrc(`${BACKEND_BASE_URL}${artwork.image}?t=${Date.now()}`);
-      setExtractedColor(artwork.color);
-    }
-    if (artwork?.isLikedByLoggedInUser)
-      setIsLiked(artwork.isLikedByLoggedInUser);
+    if (!artwork) return;
+
+    setImgSrc(`${BACKEND_BASE_URL}${artwork.image}?t=${Date.now()}`);
+    setExtractedColor(artwork.color);
+
+    setIsLiked(!!artwork.isLikedByLoggedInUser);
+    setIsPrivate(!!artwork.isPrivate);
   }, [artwork]);
 
   // Populate editing data when entering edit mode or when artwork changes
@@ -214,6 +224,19 @@ const ArtworkPage = ({ isNew = false }: ArtworkPageProps) => {
     }
   };
 
+  const handleChangeVisibility = async (visibility: "private" | "public") => {
+    if (artwork) {
+      await changeArtworkVisibility(artwork.id, {
+        isPrivate: visibility === "private" ? true : false,
+      });
+      setIsPrivate((prev) => !prev);
+    }
+  };
+
+  if (!loadingArtwork && !artwork && !isNew) {
+    return <NotFound />;
+  }
+
   return (
     <AuctionProvider>
       <div className="artwork-page fixed-page">
@@ -337,6 +360,19 @@ const ArtworkPage = ({ isNew = false }: ArtworkPageProps) => {
 
               {!isNew && artwork?.postedByUserId === loggedInUser?.id && (
                 <div className="ap-info-header-right-group">
+                  {isPrivate ? (
+                    <CiLock
+                      className="ap-info-header-icon"
+                      title="Private"
+                      onClick={() => handleChangeVisibility("public")}
+                    />
+                  ) : (
+                    <CiUnlock
+                      className="ap-info-header-icon"
+                      title="Public"
+                      onClick={() => handleChangeVisibility("private")}
+                    />
+                  )}
                   <MdEdit
                     className="ap-info-header-icon"
                     title="Edit"
@@ -381,9 +417,14 @@ const ArtworkPage = ({ isNew = false }: ArtworkPageProps) => {
               (isEditing && loggedInUser?.userName) ? (
                 <div className="ap-user-info">
                   <img
-                    src="https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_1280.png"
-                    alt="Default profile picture"
+                    src={`${BACKEND_BASE_URL}/api/user/${
+                      artwork?.createdByArtistId || loggedInUser?.id
+                    }/profile-photo`}
+                    alt=""
                     className="ap-user-profile-picture"
+                    onError={(e) => {
+                      e.currentTarget.src = ARTIST_FALLBACK_IMAGE;
+                    }}
                   />
                   <span className="ap-details-text">
                     {"@" +
@@ -401,9 +442,14 @@ const ArtworkPage = ({ isNew = false }: ArtworkPageProps) => {
               (isEditing && loggedInUser?.userName) ? (
                 <div className="ap-user-info">
                   <img
-                    src="https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_1280.png"
-                    alt="Default profile picture"
+                    src={`${BACKEND_BASE_URL}/api/user/${
+                      artwork?.postedByUserId || loggedInUser?.id
+                    }/profile-photo`}
+                    alt=""
                     className="ap-user-profile-picture"
+                    onError={(e) => {
+                      e.currentTarget.src = ARTIST_FALLBACK_IMAGE;
+                    }}
                   />
                   <span className="ap-details-text">
                     {"@" +

@@ -29,6 +29,8 @@ export interface User {
   roleName?: string;
   followersCount: number;
   followingCount: number;
+  profilePhoto: string;
+  isFollowedByLoggedInUser: boolean | null;
 }
 
 export async function login(request: LoginRequest): Promise<LoginResponse> {
@@ -42,5 +44,10 @@ export async function signUp(request: SignUpRequest): Promise<void> {
 
 export async function getLoggedInUser(): Promise<User> {
   const response = await authAxios.get(`/auth/loggedin-user`);
+  return response.data;
+}
+
+export async function logout(): Promise<void> {
+  const response = await authAxios.post(`${API_BASE_URL}/auth/logout`);
   return response.data;
 }
