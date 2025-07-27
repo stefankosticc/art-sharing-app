@@ -24,20 +24,23 @@ public class FollowersRepository : GenericRepository<Followers>, IFollowersRepos
         }
     }
 
-    public async Task<IEnumerable<Followers>> GetFollowersAsync(int loggedInUserId)
+    public async Task<IEnumerable<Followers>> GetFollowersAsync(int userId, int skip, int take)
     {
         return await _dbSet
-            .Where(f => f.FollowerId == loggedInUserId)
+            .Where(f => f.FollowerId == userId)
             .Include(f => f.User)
+            .Skip(skip)
+            .Take(take)
             .ToListAsync();
-
     }
 
-    public async Task<IEnumerable<Followers>> GetFollowingAsync(int loggedInUserId)
+    public async Task<IEnumerable<Followers>> GetFollowingAsync(int userId, int skip, int take)
     {
         return await _dbSet
-            .Where(f => f.UserId == loggedInUserId)
+            .Where(f => f.UserId == userId)
             .Include(f => f.Follower)
+            .Skip(skip)
+            .Take(take)
             .ToListAsync();
     }
 

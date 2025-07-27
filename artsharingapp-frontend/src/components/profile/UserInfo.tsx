@@ -10,6 +10,7 @@ import { User } from "../../services/auth";
 import { followUser, unfollowUser } from "../../services/followers";
 import { IoSettingsOutline } from "react-icons/io5";
 import SettingsModal from "./SettingsModal";
+import FollowersModal from "./FollowersModal";
 
 interface UserInfoProps {
   user: User | null;
@@ -31,6 +32,10 @@ const UserInfo = ({
   const [imgSrc, setImgSrc] = useState<string>();
   const [isFollowing, setIsFollowing] = useState<boolean>(false);
   const [isSettingsOpen, setIsSettingsOpen] = useState<boolean>(false);
+  const [isFollowersModalOpen, setIsFollowersModalOpen] = useState<{
+    isOpen: boolean;
+    tab?: "followers" | "following";
+  }>({ isOpen: false, tab: "followers" });
 
   useEffect(() => {
     if (user?.profilePhoto) {
@@ -100,7 +105,12 @@ const UserInfo = ({
       </p>
 
       <div className="profile-following">
-        <p className="profile-follow-count">
+        <p
+          className="profile-follow-count"
+          onClick={() =>
+            setIsFollowersModalOpen({ isOpen: true, tab: "followers" })
+          }
+        >
           <span>
             {loading ? (
               <span
@@ -113,7 +123,13 @@ const UserInfo = ({
           </span>{" "}
           Followers
         </p>
-        <p className="profile-follow-count">
+
+        <p
+          className="profile-follow-count"
+          onClick={() =>
+            setIsFollowersModalOpen({ isOpen: true, tab: "following" })
+          }
+        >
           <span>
             {loading ? (
               <span
@@ -163,6 +179,14 @@ const UserInfo = ({
           user={user}
           triggerRefetchUser={triggerRefetchUser}
           onClose={() => setIsSettingsOpen(false)}
+        />
+      )}
+
+      {isFollowersModalOpen.isOpen && user && (
+        <FollowersModal
+          userId={user.id}
+          tab={isFollowersModalOpen.tab}
+          onClose={() => setIsFollowersModalOpen({ isOpen: false })}
         />
       )}
     </div>
