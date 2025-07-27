@@ -74,9 +74,13 @@ public class FollowersService : IFollowersService
     }
 
     // Get followers of the logged-in user
-    public async Task<IEnumerable<FollowersDTO>?> GetFollowersAsync(int loggedInUserId)
+    public async Task<IEnumerable<FollowersDTO>?> GetFollowersAsync(int userId, int skip, int take)
     {
-        var followers = await _followersRepository.GetFollowersAsync(loggedInUserId);
+        var user = await _userRepository.GetByIdAsync(userId);
+        if (user == null)
+            throw new NotFoundException("User not found.");
+
+        var followers = await _followersRepository.GetFollowersAsync(userId, skip, take);
         if (followers == null || !followers.Any())
             throw new NotFoundException("No followers found.");
 
@@ -85,9 +89,13 @@ public class FollowersService : IFollowersService
     }
 
     // Get users that the logged-in user is following
-    public async Task<IEnumerable<FollowingDTO>?> GetFollowingAsync(int loggedInUserId)
+    public async Task<IEnumerable<FollowingDTO>?> GetFollowingAsync(int userId, int skip, int take)
     {
-        var following = await _followersRepository.GetFollowingAsync(loggedInUserId);
+        var user = await _userRepository.GetByIdAsync(userId);
+        if (user == null)
+            throw new NotFoundException("User not found.");
+
+        var following = await _followersRepository.GetFollowingAsync(userId, skip, take);
         if (following == null || !following.Any())
             throw new NotFoundException("You are not following anyone.");
 
@@ -107,7 +115,8 @@ public class FollowersService : IFollowersService
         return followingCount;
     }
 
-    public async Task<IEnumerable<FollowedUserArtworkDTO>?> GetFollowedUsersArtworksAsync(int loggedInUserId, int skip, int take)
+    public async Task<IEnumerable<FollowedUserArtworkDTO>?> GetFollowedUsersArtworksAsync(int loggedInUserId, int skip,
+        int take)
     {
         var artworks = await _followersRepository.GetFollowedUsersArtworksAsync(loggedInUserId, skip, take);
         return _mapper.Map<IEnumerable<FollowedUserArtworkDTO>>(artworks);

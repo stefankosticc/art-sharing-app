@@ -11,12 +11,12 @@ namespace ArtSharingApp.Backend.Controllers;
 public class FollowersController : AuthenticatedUserBaseController
 {
     private readonly IFollowersService _followersService;
-    
+
     public FollowersController(IFollowersService followersService)
     {
         _followersService = followersService;
     }
-    
+
     [HttpPost("follow/{userId}")]
     public async Task<IActionResult> FollowUser(int userId)
     {
@@ -26,7 +26,7 @@ public class FollowersController : AuthenticatedUserBaseController
             return Ok(new { message = "User followed successfully." });
         return BadRequest(new { message = "Failed to follow user." });
     }
-    
+
     [HttpDelete("unfollow/{userId}")]
     public async Task<IActionResult> UnfollowUser(int userId)
     {
@@ -36,23 +36,21 @@ public class FollowersController : AuthenticatedUserBaseController
             return Ok(new { message = "User unfollowed successfully." });
         return BadRequest(new { message = "Failed to unfollow user." });
     }
-    
-    [HttpGet("followers")]
-    public async Task<IActionResult> GetFollowers()
+
+    [HttpGet("user/{userId}/followers")]
+    public async Task<IActionResult> GetFollowers(int userId, [FromQuery] int skip, [FromQuery] int take)
     {
-        var loggedInUserId = GetLoggedInUserId();
-        var followers = await _followersService.GetFollowersAsync(loggedInUserId);
+        var followers = await _followersService.GetFollowersAsync(userId, skip, take);
         return Ok(followers);
     }
-    
-    [HttpGet("following")]
-    public async Task<IActionResult> GetFollowing()
+
+    [HttpGet("user/{userId}/following")]
+    public async Task<IActionResult> GetFollowing(int userId, [FromQuery] int skip, [FromQuery] int take)
     {
-        var loggedInUserId = GetLoggedInUserId();
-        var following = await _followersService.GetFollowingAsync(loggedInUserId);
+        var following = await _followersService.GetFollowingAsync(userId, skip, take);
         return Ok(following);
     }
-    
+
     [HttpGet("followed-users/artworks")]
     public async Task<IActionResult> GetFollowedUsersArtworks([FromQuery] int skip, [FromQuery] int take)
     {

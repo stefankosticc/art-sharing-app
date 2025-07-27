@@ -2,10 +2,16 @@ namespace ArtSharingApp.Backend.DTO;
 
 public class FollowersDTO
 {
-    public string FollowerUserName { get; set; }
+    public int Id { get; set; }
+    public string Name { get; set; }
+    public string UserName { get; set; }
+    public string? ProfilePhoto { get; set; }
 }
 
 public class FollowingDTO
 {
-    public string FollowingUserName { get; set; }
+    public int Id { get; set; }
+    public string Name { get; set; }
+    public string UserName { get; set; }
+    public string? ProfilePhoto { get; set; }
 }

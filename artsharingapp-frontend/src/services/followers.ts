@@ -1,4 +1,5 @@
 import authAxios from "./authAxios";
+import { UserSearchResponse } from "./user";
 
 export async function followUser(userId: number): Promise<boolean> {
   try {
@@ -24,4 +25,26 @@ export async function unfollowUser(userId: number): Promise<void> {
       "An unknown error occurred.";
     console.error("Error:", message);
   }
+}
+
+export async function getFollowers(
+  userId: number,
+  skip = 0,
+  take = 30
+): Promise<UserSearchResponse[]> {
+  const response = await authAxios.get(`/user/${userId}/followers`, {
+    params: { skip, take },
+  });
+  return response.data;
+}
+
+export async function getFollowing(
+  userId: number,
+  skip = 0,
+  take = 30
+): Promise<UserSearchResponse[]> {
+  const response = await authAxios.get(`/user/${userId}/following`, {
+    params: { skip, take },
+  });
+  return response.data;
 }

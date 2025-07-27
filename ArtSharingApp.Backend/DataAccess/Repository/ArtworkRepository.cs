@@ -71,6 +71,7 @@ public class ArtworkRepository : GenericRepository<Artwork>, IArtworkRepository
         return await _dbSet
             .Where(a => a.PostedByUserId == postedByUserId && !a.IsPrivate)
             .Include(a => a.PostedByUser)
+            .OrderByDescending(a => a.Date)
             .ToListAsync();
     }
 
@@ -79,6 +80,7 @@ public class ArtworkRepository : GenericRepository<Artwork>, IArtworkRepository
         return await _dbSet
             .Where(a => a.PostedByUserId == postedByUserId && a.IsPrivate)
             .Include(a => a.PostedByUser)
+            .OrderByDescending(a => a.Date)
             .ToListAsync();
     }
 
