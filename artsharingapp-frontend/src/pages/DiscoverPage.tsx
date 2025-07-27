@@ -9,7 +9,6 @@ import ArtworkFeedCard from "../components/discover-page/ArtworkFeedCard";
 import { DiscoverData, getDiscoverData } from "../services/discover";
 import HighStakesAuctionsSection from "../components/discover-page/HighStakesAuctionSection";
 import TrendingArtworksSection from "../components/discover-page/TrendingArtworksSection";
-import Loading from "./Loading";
 
 const DiscoverPage = () => {
   const [discoverData, setDiscoverData] = useState<DiscoverData | null>(null);
@@ -66,41 +65,51 @@ const DiscoverPage = () => {
           <NavLink to={"/following"}>Following</NavLink>
         </div>
 
-        {discoverData?.topArtistsByLikes && (
+        {loadingDiscoverData ? (
+          <div className="loading-discover-data">
+            <div className="discover-loader" />
+          </div>
+        ) : (
           <>
-            <h1>🧑‍🎨 Top Artists</h1>
-            <TopArtistsSection artists={discoverData.topArtistsByLikes} />
+            {discoverData?.topArtistsByLikes && (
+              <>
+                <h1>🧑‍🎨 Top Artists</h1>
+                <TopArtistsSection artists={discoverData.topArtistsByLikes} />
+              </>
+            )}
+
+            {discoverData?.highStakeAuctions && (
+              <>
+                <h2>🔥 High Stakes Auctions</h2>
+                <HighStakesAuctionsSection
+                  auctions={discoverData.highStakeAuctions}
+                />
+              </>
+            )}
+
+            {discoverData?.trendingArtworks && (
+              <>
+                <h2>✨ On The Rise</h2>
+                <TrendingArtworksSection
+                  artworks={discoverData.trendingArtworks}
+                />
+              </>
+            )}
+
+            <h2>Fresh Finds</h2>
+            <div className="discover-feed">
+              {artworks.map((artwork) => (
+                <ArtworkFeedCard artwork={artwork} key={artwork.id} />
+              ))}
+
+              {!loadingArtworks && artworks.length === 0 && (
+                <p className="discover-no-results">No artworks found.</p>
+              )}
+
+              {loadingArtworks && <div className="discover-loader" />}
+            </div>
           </>
         )}
-
-        {discoverData?.highStakeAuctions && (
-          <>
-            <h2>🔥 High Stakes Auctions</h2>
-            <HighStakesAuctionsSection
-              auctions={discoverData.highStakeAuctions}
-            />
-          </>
-        )}
-
-        {discoverData?.trendingArtworks && (
-          <>
-            <h2>✨ On The Rise</h2>
-            <TrendingArtworksSection artworks={discoverData.trendingArtworks} />
-          </>
-        )}
-
-        <h2>Fresh Finds</h2>
-        <div className="discover-feed">
-          {artworks.map((artwork) => (
-            <ArtworkFeedCard artwork={artwork} key={artwork.id} />
-          ))}
-
-          {!loadingArtworks && artworks.length === 0 && (
-            <p className="discover-no-results">No artworks found.</p>
-          )}
-
-          {loadingArtworks && <div className="discover-loader" />}
-        </div>
       </div>
 
       <Dock />

@@ -11,6 +11,7 @@ import FavoriteArtworksGrid from "../components/profile/FavoriteArtworksGrid";
 import { useParams } from "react-router-dom";
 import NotFound from "./NotFound";
 import { User } from "../services/auth";
+import Loading from "./Loading";
 
 const TABS: {
   key: string;
@@ -68,6 +69,10 @@ const Profile = () => {
 
   if (!loadingProfileUser && (!profileUser || error)) {
     return <NotFound />;
+  }
+
+  if (loadingProfileUser || loadingProfileUser) {
+    return <Loading />;
   }
 
   return (

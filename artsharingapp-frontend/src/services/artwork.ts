@@ -89,8 +89,19 @@ export interface DiscoverArtworkResponse {
   postedByUserName: string;
 }
 
-export async function getMyArtworks(): Promise<ArtworkCardData[]> {
-  const response = await authAxios.get(`/artworks/mine`);
+export interface UserArtworksResponse {
+  privateArtworks: ArtworkCardData[];
+  publicArtworks: ArtworkCardData[];
+}
+
+export interface ChangeArtworkVisibilityRequest {
+  isPrivate: boolean;
+}
+
+export async function getUserArtworks(
+  userId: number
+): Promise<UserArtworksResponse> {
+  const response = await authAxios.get(`user/${userId}/artworks`);
   return response.data;
 }
 
@@ -309,4 +320,21 @@ export async function getDiscoverArtworks(
     params: { skip, take },
   });
   return response.data;
+}
+
+export async function changeArtworkVisibility(
+  artworkId: number,
+  request: ChangeArtworkVisibilityRequest
+): Promise<boolean> {
+  try {
+    await authAxios.put(`artwork/${artworkId}/change-visibility`, request);
+    return true;
+  } catch (error: any) {
+    const message =
+      error?.response?.data?.error ||
+      error?.message ||
+      "An unknown error occurred.";
+    console.error("Error:", message);
+    return false;
+  }
 }
