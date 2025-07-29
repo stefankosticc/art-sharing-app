@@ -1,3 +1,4 @@
+import { useNavigate } from "react-router-dom";
 import { Artwork } from "../../services/artwork";
 import { Currency } from "../../services/enums";
 import "./styles/AuctionSection.css";
@@ -9,6 +10,8 @@ type FixedSaleSectionProps = {
 };
 
 const FixedSaleSection = ({ artwork }: FixedSaleSectionProps) => {
+  const navigation = useNavigate();
+
   return (
     <div className="auction-section-container fixed-sale-section-container">
       <h4>On Sale</h4>
@@ -24,7 +27,21 @@ const FixedSaleSection = ({ artwork }: FixedSaleSectionProps) => {
         <div className="auction-section-column">
           <p>Send a message</p>
           <div className="auction-section-offer fixed-sale-section-message">
-            <button title="Send a message">
+            <button
+              title="Send a message"
+              onClick={() =>
+                navigation("/chat", {
+                  state: {
+                    selectedUser: {
+                      userId: artwork.postedByUserId,
+                      userName: artwork.postedByUserName,
+                      profilePhoto: `/api/user/${artwork.postedByUserId}/profile-photo`,
+                    },
+                    input: `Hello, I am interested in purchasing your artwork "${artwork.title}". Could you please provide more details?`,
+                  },
+                })
+              }
+            >
               <AiOutlineSend />
             </button>
           </div>

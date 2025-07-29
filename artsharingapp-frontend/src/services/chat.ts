@@ -61,7 +61,12 @@ class ChatService {
   }
 
   async sendMessage(receiverId: number, message: string) {
-    await this.connection?.invoke("SendMessage", { receiverId, message });
+    try {
+      await this.connection?.invoke("SendMessage", { receiverId, message });
+    } catch (error) {
+      console.error("Error sending message:", error);
+      throw error;
+    }
   }
 
   async getChatHistory(
@@ -69,16 +74,26 @@ class ChatService {
     skip: number = 0,
     take: number = 50
   ) {
-    return await this.connection?.invoke(
-      "GetChatHistory",
-      otherUserId,
-      skip,
-      take
-    );
+    try {
+      return await this.connection?.invoke(
+        "GetChatHistory",
+        otherUserId,
+        skip,
+        take
+      );
+    } catch (error) {
+      console.error("Error fetching chat history:", error);
+      throw error;
+    }
   }
 
   async markAsRead(messageId: number) {
-    await this.connection?.invoke("MarkAsRead", messageId);
+    try {
+      await this.connection?.invoke("MarkAsRead", messageId);
+    } catch (error) {
+      console.error("Error marking message as read:", error);
+      throw error;
+    }
   }
 
   async getConversations(skip: number = 0, take: number = 20) {

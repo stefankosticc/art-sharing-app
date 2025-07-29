@@ -7,12 +7,20 @@ import { ARTIST_FALLBACK_IMAGE, BACKEND_BASE_URL } from "../config/constants";
 import { AiOutlineSend } from "react-icons/ai";
 import { useScroll } from "../hooks/useScroll";
 import { useChatUsers } from "../hooks/useChatUserConversations";
+import { useLocation } from "react-router-dom";
 
 const ChatPage = () => {
   const { loggedInUser } = useLoggedInUser();
+  const location = useLocation();
+
   const [messages, setMessages] = useState<ChatMessage[]>([]);
-  const [input, setInput] = useState("");
-  const [selectedUser, setSelectedUser] = useState<ChatUser | null>(null);
+  const [input, setInput] = useState(location.state?.input || "");
+  const [isConnected, setIsConnected] = useState(false);
+
+  const initialSelectedUser = location.state?.selectedUser as ChatUser | null;
+  const [selectedUser, setSelectedUser] = useState<ChatUser | null>(
+    initialSelectedUser || null
+  );
   const [loading, setLoading] = useState(false);
   const [refetchChatUsers, setRefetchChatUsers] = useState(false);
   const [hasMoreMessages, setHasMoreMessages] = useState(true);
@@ -44,6 +52,7 @@ const ChatPage = () => {
     if (!accessToken) return;
 
     chatService.start(accessToken).then(() => {
+      setIsConnected(true);
       chatService.onReceiveMessage(async (msg: ChatMessage) => {
         try {
           const currentSelectedUser = selectedUserRef.current;
@@ -76,13 +85,14 @@ const ChatPage = () => {
 
     return () => {
       chatService.stop();
+      setIsConnected(false);
     };
   }, []);
 
   // Load chat history when user is selected
   useEffect(() => {
     const loadHistory = async () => {
-      if (!selectedUser) return;
+      if (!selectedUser || !isConnected) return;
 
       setHasMoreMessages(true);
       setSkipMessages(0);
@@ -110,17 +120,21 @@ const ChatPage = () => {
       }
     };
     loadHistory();
-  }, [selectedUser]);
+  }, [selectedUser, isConnected]);
 
   const handleSend = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!selectedUser || !input.trim()) return;
-    await chatService.sendMessage(selectedUser.userId, input);
-    setInput("");
+    if (!selectedUser || !input.trim() || !isConnected) return;
+    try {
+      await chatService.sendMessage(selectedUser.userId, input);
+      setInput("");
+    } catch (error) {
+      console.error("Error sending message:", error);
+    }
   };
 
   const loadMoreMessages = async () => {
-    if (!selectedUser || loading || !hasMoreMessages) return;
+    if (!selectedUser || loading || !hasMoreMessages || !isConnected) return;
 
     setLoading(true);
     try {
@@ -129,6 +143,7 @@ const ChatPage = () => {
         skipMessages,
         takeMessages
       );
+      console.log(newMessages);
       setMessages((prev) => [...prev, ...(newMessages || []).reverse()]);
       setSkipMessages((prev) => prev + newMessages.length);
       if (newMessages.length < takeMessages) setHasMoreMessages(false);
@@ -232,7 +247,8 @@ const ChatPage = () => {
               </div>
               <form className="chat-input-form" onSubmit={handleSend}>
                 <input
-                  type="text"
+                  type="textarea"
+                  name="message"
                   value={input}
                   onChange={(e) => setInput(e.target.value)}
                   placeholder="Type a message..."
