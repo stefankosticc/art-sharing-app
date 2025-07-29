@@ -22,6 +22,7 @@ public class ApplicationDbContext : IdentityDbContext<User, Role, int>
     public DbSet<Notification> Notifications { get; set; }
     public DbSet<Auction> Auctions { get; set; }
     public DbSet<Offer> Offers { get; set; }
+    public DbSet<ChatMessage> ChatMessages { get; set; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -163,5 +164,30 @@ public class ApplicationDbContext : IdentityDbContext<User, Role, int>
         modelBuilder.Entity<Followers>()
             .HasIndex(f => f.FollowerId)
             .HasDatabaseName("IX_Followers_FollowerId");
+
+        // ChatMessage configuration
+        modelBuilder.Entity<ChatMessage>(entity =>
+        {
+            entity.HasKey(m => m.Id);
+
+            entity.Property(m => m.Message)
+                .IsRequired()
+                .HasMaxLength(2000);
+
+            entity.HasOne(m => m.Sender)
+                .WithMany(u => u.SentMessages)
+                .HasForeignKey(m => m.SenderId)
+                .IsRequired()
+                .OnDelete(DeleteBehavior.Restrict);
+
+            entity.HasOne(m => m.Receiver)
+                .WithMany(u => u.ReceivedMessages)
+                .HasForeignKey(m => m.ReceiverId)
+                .IsRequired()
+                .OnDelete(DeleteBehavior.Restrict);
+
+            entity.HasIndex(m => new { m.SenderId, m.ReceiverId, m.SentAt })
+                .HasDatabaseName("IX_ChatMessage_Sender_Receiver_SentAt");
+        });
     }
 }

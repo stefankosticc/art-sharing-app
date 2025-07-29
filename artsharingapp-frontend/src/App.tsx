@@ -11,6 +11,7 @@ import GalleryPage from "./pages/GalleryPage";
 import CityPage from "./pages/CityPage";
 import DiscoverPage from "./pages/DiscoverPage";
 import FollowingPage from "./pages/FollowingPage";
+import ChatPage from "./pages/ChatPage";
 
 function App() {
   return (
@@ -65,6 +66,14 @@ function App() {
             element={
               <PrivateRoute>
                 <FollowingPage />
+              </PrivateRoute>
+            }
+          />
+          <Route
+            path="/chat"
+            element={
+              <PrivateRoute>
+                <ChatPage />
               </PrivateRoute>
             }
           />

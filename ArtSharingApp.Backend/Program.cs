@@ -3,6 +3,7 @@ using ArtSharingApp.Backend.Service;
 using ArtSharingApp.Backend.DataAccess;
 using ArtSharingApp.Backend.DataAccess.Repository.RepositoryInterface;
 using ArtSharingApp.Backend.Exceptions.ErrorHandler;
+using ArtSharingApp.Backend.Hubs;
 using ArtSharingApp.Backend.Models;
 using ArtSharingApp.Backend.Profile;
 using ArtSharingApp.Backend.Seeders;
@@ -27,9 +28,9 @@ builder.Services.AddCors(options =>
         policy =>
         {
             policy.WithOrigins("http://localhost:3000")
-                  .AllowAnyHeader()
-                  .AllowAnyMethod()
-                  .AllowCredentials();
+                .AllowAnyHeader()
+                .AllowAnyMethod()
+                .AllowCredentials();
         });
 });
 
@@ -60,6 +61,22 @@ builder.Services.AddAuthentication(options =>
                     System.Text.Encoding.UTF8.GetBytes(builder.Configuration["Jwt:Token"]!)),
             ValidateIssuerSigningKey = true
         };
+
+        options.Events = new JwtBearerEvents
+        {
+            OnMessageReceived = context =>
+            {
+                var accessToken = context.Request.Query["access_token"];
+
+                var path = context.HttpContext.Request.Path;
+                if (!string.IsNullOrEmpty(accessToken) && path.StartsWithSegments("/hubs/chat"))
+                {
+                    context.Token = accessToken;
+                }
+
+                return Task.CompletedTask;
+            }
+        };
     });
 
 builder.Services.AddAutoMapper(typeof(UserProfile).Assembly);
@@ -74,6 +91,7 @@ builder.Services.AddScoped<IFollowersRepository, FollowersRepository>();
 builder.Services.AddScoped<INotificationRepository, NotificationRepository>();
 builder.Services.AddScoped<IAuctionRepository, AuctionRepository>();
 builder.Services.AddScoped<IOfferRepository, OfferRepository>();
+builder.Services.AddScoped<IChatRepository, ChatRepository>();
 
 builder.Services.AddScoped<IUserService, UserService>();
 builder.Services.AddScoped<IRoleService, RoleService>();
@@ -85,6 +103,9 @@ builder.Services.AddScoped<IAuthService, AuthService>();
 builder.Services.AddScoped<IFollowersService, FollowersService>();
 builder.Services.AddScoped<INotificationService, NotificationService>();
 builder.Services.AddScoped<IAuctionService, AuctionService>();
+builder.Services.AddScoped<IChatService, ChatService>();
+
+builder.Services.AddSignalR();
 
 var app = builder.Build();
 
@@ -100,10 +121,7 @@ app.UseMiddleware<ErrorHandler>();
 if (app.Environment.IsDevelopment())
 {
     app.MapOpenApi();
-    app.UseSwaggerUI(options =>
-    {
-        options.SwaggerEndpoint("/openapi/v1.json", "Open API");
-    });
+    app.UseSwaggerUI(options => { options.SwaggerEndpoint("/openapi/v1.json", "Open API"); });
 }
 
 // Enable CORS before authentication and authorization
@@ -116,5 +134,7 @@ app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapControllers();
+
+app.MapHub<ChatHub>("/hubs/chat");
 
 app.Run();

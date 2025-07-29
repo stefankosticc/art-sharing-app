@@ -3,7 +3,7 @@ using Microsoft.AspNetCore.Identity;
 namespace ArtSharingApp.Backend.Models;
 
 public class User : IdentityUser<int>
-{ 
+{
     public string Name { get; set; }
     public string? Biography { get; set; }
     public int RoleId { get; set; }
@@ -19,4 +19,6 @@ public class User : IdentityUser<int>
     public ICollection<Followers> Following { get; set; } = new List<Followers>();
     public ICollection<Notification> Notifications { get; set; } = new List<Notification>();
     public ICollection<Offer> Offers { get; set; } = new List<Offer>();
+    public ICollection<ChatMessage> SentMessages { get; set; } = new List<ChatMessage>();
+    public ICollection<ChatMessage> ReceivedMessages { get; set; } = new List<ChatMessage>();
 }

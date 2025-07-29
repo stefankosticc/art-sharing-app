@@ -202,7 +202,7 @@ const ArtworkPage = ({ isNew = false }: ArtworkPageProps) => {
         },
         artworkImageFile
       );
-      navigate("/profile");
+      navigate(`/${loggedInUser?.userName}`);
     } else if (artwork) {
       await updateArtwork(artwork.id, editingArtworkData, artworkImageFile);
       setRefetchArtwork((prev) => !prev);
