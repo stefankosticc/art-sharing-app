@@ -27,7 +27,7 @@
     border-radius: 1rem;
     object-fit: cover;
     outline: 2px solid rgba(172, 163, 255, 0.4);
-    outline-offset: 0.4rem;
+    outline-offset: 0.2rem;
     width: 100%;
     aspect-ratio: 1.4/1;
 }

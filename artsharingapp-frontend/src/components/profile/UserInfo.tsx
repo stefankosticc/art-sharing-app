@@ -11,6 +11,7 @@ import { followUser, unfollowUser } from "../../services/followers";
 import { IoSettingsOutline } from "react-icons/io5";
 import SettingsModal from "./SettingsModal";
 import FollowersModal from "./FollowersModal";
+import { useNavigate } from "react-router-dom";
 
 interface UserInfoProps {
   user: User | null;
@@ -36,6 +37,8 @@ const UserInfo = ({
     isOpen: boolean;
     tab?: "followers" | "following";
   }>({ isOpen: false, tab: "followers" });
+
+  const navigate = useNavigate();
 
   useEffect(() => {
     if (user?.profilePhoto) {
@@ -161,7 +164,23 @@ const UserInfo = ({
             Follow
           </button>
         )}
-        {!isMyProfile && <MdOutlineChatBubble title="Send a message" />}
+        {!isMyProfile && (
+          <MdOutlineChatBubble
+            title="Send a message"
+            onClick={() =>
+              navigate("/chat", {
+                state: {
+                  selectedUser: {
+                    userId: user?.id,
+                    name: user?.name,
+                    userName: user?.userName,
+                    profilePhoto: user?.profilePhoto,
+                  },
+                },
+              })
+            }
+          />
+        )}
       </div>
 
       {isMyProfile && (

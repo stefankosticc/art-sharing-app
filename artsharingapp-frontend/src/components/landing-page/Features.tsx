@@ -7,26 +7,22 @@ const featuresData: {
 }[] = [
   {
     title: "Share your work",
-    image:
-      "https://upload.wikimedia.org/wikipedia/commons/a/a3/Image-not-found.png?20210521171500",
+    image: "/pictures/ArtwokPage.png",
     description: "Showcase your projects and connect with a global community.",
   },
   {
-    title: "Go on an adventure",
-    image:
-      "https://upload.wikimedia.org/wikipedia/commons/a/a3/Image-not-found.png?20210521171500",
-    description: "Explore new opportunities and discover creative challenges.",
+    title: "Get inspired",
+    image: "/pictures/Discover.png",
+    description: "Inspire and be inspired by the creativity of others.",
   },
   {
     title: "Chat with others",
-    image:
-      "https://upload.wikimedia.org/wikipedia/commons/a/a3/Image-not-found.png?20210521171500",
+    image: "/pictures/Chat.png",
     description: "Engage in real-time discussions with like-minded creators.",
   },
   {
     title: "Participate in auctions",
-    image:
-      "https://upload.wikimedia.org/wikipedia/commons/a/a3/Image-not-found.png?20210521171500",
+    image: "/pictures/Auction.png",
     description: "Bid on unique items or list your own in exciting auctions.",
   },
 ];

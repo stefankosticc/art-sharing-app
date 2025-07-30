@@ -1,10 +1,12 @@
 .navbar {
+    --navbar-bg-color: var(--gray-lighter);
+    --navbar-text-color: var(--black);
     display: flex;
     justify-content: space-between;
     align-items: center;
     width: 90vw;
-    background-color: var(--black);
-    color: var(--white);
+    background-color: var(--navbar-bg-color);
+    color: var(--navbar-text-color);
     position: fixed;
     top: 0;
     left: 50%;
@@ -16,7 +18,7 @@
 }
 
 .navbar-links a {
-    color: var(--white);
+    color: var(--navbar-text-color);
     text-decoration: none;
 }
 
@@ -44,8 +46,8 @@
 }
 
 .navbar-btn {
-    background-color: var(--black);
-    color: var(--white);
+    background-color: var(--navbar-bg-color);
+    color: var(--navbar-text-color);
     padding: 0.4rem 0.6rem;
     border: none;
     border-radius: 0.6rem;
@@ -56,4 +58,16 @@
 .navbar-btn:hover {
     background-color: var(--purple);
     color: var(--black);
+}
+
+.navbar-logo {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.4rem;
+}
+
+.navbar-logo img {
+    width: 1.4rem;
+    height: 1.4rem;
 }

@@ -17,24 +17,24 @@ public class AuthService : IAuthService
     private readonly UserManager<User> _userManager;
     private readonly RoleManager<Role> _roleManager;
     private readonly IConfiguration _configuration;
-    
+
     public AuthService(UserManager<User> userManager, RoleManager<Role> roleManager, IConfiguration configuration)
     {
         _userManager = userManager;
         _roleManager = roleManager;
         _configuration = configuration;
     }
-    
+
     public async Task Register(UserRegisterDTO request)
     {
         var existingUser = await _userManager.FindByEmailAsync(request.Email);
         if (existingUser != null)
             throw new BadRequestException("User already exists");
 
-        var role = await _roleManager.FindByNameAsync("User");
+        var role = await _roleManager.FindByNameAsync("Artist");
         if (role == null)
             throw new NotFoundException("Role not found");
-        
+
         var user = new User()
         {
             UserName = request.UserName,
@@ -42,7 +42,7 @@ public class AuthService : IAuthService
             Name = request.Name,
             RoleId = role.Id
         };
-        
+
         // Create user
         var result = await _userManager.CreateAsync(user, request.Password);
         if (!result.Succeeded)
@@ -50,7 +50,7 @@ public class AuthService : IAuthService
             var errorMessages = string.Join("; ", result.Errors.Select(e => e.Description));
             throw new BadRequestException($"User registration failed: {errorMessages}");
         }
-        
+
         // Assign role to user
         var roleResult = await _userManager.AddToRoleAsync(user, role.Name);
         if (!roleResult.Succeeded)
@@ -66,7 +66,7 @@ public class AuthService : IAuthService
         var isValidPassword = await _userManager.CheckPasswordAsync(user, request.Password);
         if (!isValidPassword)
             throw new BadRequestException("Invalid email or password");
-        
+
         var response = new TokenResponseDTO()
         {
             AccessToken = await GenerateJwtToken(user),
@@ -80,10 +80,10 @@ public class AuthService : IAuthService
         var user = await _userManager.Users.FirstOrDefaultAsync(u => u.RefreshToken == request.RefreshToken);
         if (user == null || string.IsNullOrEmpty(user.RefreshToken) || user.RefreshTokenExpiresAt <= DateTime.UtcNow)
             throw new BadRequestException("Invalid refresh token");
-        
+
         var newRefreshToken = await GenerateAndSaveRefreshTokenAsync(user);
         var newAccessToken = await GenerateJwtToken(user);
-        
+
         return new TokenResponseDTO()
         {
             AccessToken = newAccessToken,
@@ -100,13 +100,13 @@ public class AuthService : IAuthService
         var user = await _userManager.FindByIdAsync(userId);
         if (user == null)
             throw new NotFoundException("User not found");
-        
+
         if (user.RefreshToken == null)
             throw new BadRequestException("User is not logged in");
-        
+
         // Invalidate the refresh token by setting it to null
-        user.RefreshToken = null; 
-        user.RefreshTokenExpiresAt = null; 
+        user.RefreshToken = null;
+        user.RefreshTokenExpiresAt = null;
         await _userManager.UpdateAsync(user);
     }
 
@@ -120,7 +120,7 @@ public class AuthService : IAuthService
             new Claim(ClaimTypes.Email, user.Email),
             new Claim(ClaimTypes.Role, role.FirstOrDefault() ?? string.Empty)
         };
-        
+
         var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_configuration["Jwt:Token"]!));
 
         var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
@@ -143,7 +143,7 @@ public class AuthService : IAuthService
         rng.GetBytes(randomNumber);
         return Convert.ToBase64String(randomNumber);
     }
-    
+
     private async Task<string> GenerateAndSaveRefreshTokenAsync(User user)
     {
         var refreshToken = GenerateRefreshToken();
@@ -152,5 +152,5 @@ public class AuthService : IAuthService
         await _userManager.UpdateAsync(user);
         return refreshToken;
     }
-    
+
 }
