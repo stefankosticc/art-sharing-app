@@ -71,6 +71,7 @@ export async function makeAnOffer(
       error?.response?.data?.error ||
       error?.message ||
       "An unknown error occurred.";
+    toast.error(message);
     console.error("Error:", message);
     return false;
   }

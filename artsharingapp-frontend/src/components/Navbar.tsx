@@ -33,7 +33,10 @@ const Navbar = () => {
           Contact
         </a>
       </div>
-      <b className="navbar-logo navbar-center">ASA</b>
+      <b className="navbar-logo navbar-center">
+        <img src="/pictures/logo.svg" alt="" />
+        ASA
+      </b>
       <div className="navbar-login">
         <NavLink className="navbar-btn" to="/login">
           Log in
