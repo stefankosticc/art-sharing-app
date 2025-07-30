@@ -4,6 +4,7 @@ import "../styles/Auth.css";
 import { IoChevronBackOutline } from "react-icons/io5";
 import { useState } from "react";
 import { signUp, SignUpRequest } from "../services/auth";
+import { toast } from "react-toastify";
 
 const SignUp = () => {
   const [name, setName] = useState("");
@@ -37,6 +38,9 @@ const SignUp = () => {
     try {
       await signUp(requestData);
       navigate("/login");
+      toast.success("Registration successful! Please log in.", {
+        position: "top-center",
+      });
     } catch (error: any) {
       const errorMessage =
         error?.response?.data?.error ||

@@ -6,6 +6,7 @@ import Countdown from "../Countdown";
 import { useState } from "react";
 import { makeAnOffer, OfferRequest } from "../../services/auction";
 import { useAuctionContext } from "../../context/AuctionContext";
+import { toast } from "react-toastify";
 
 type AuctionSectionProps = {
   artworkId: number;
@@ -28,7 +29,14 @@ const AuctionSection = ({ artworkId }: AuctionSectionProps) => {
       )
     ) {
       const success = await makeAnOffer(auction.id, offerRequest);
-      if (success) triggerRefetchAuction();
+      if (success) {
+        triggerRefetchAuction();
+        toast.success(
+          `Your offer of ${offerRequest.amount.toLocaleString("en-US")} ${
+            Currency[auction.currency]
+          } has been sent!`
+        );
+      }
     }
   };
 

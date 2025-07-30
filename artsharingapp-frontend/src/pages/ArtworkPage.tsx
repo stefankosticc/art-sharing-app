@@ -30,6 +30,7 @@ import ThreeDotsMenu from "../components/ThreeDotsMenu";
 import FixedSaleSection from "../components/auctions-and-sales/FixedSaleSection";
 import { AuctionProvider } from "../context/AuctionContext";
 import NotFound from "./NotFound";
+import { toast } from "react-toastify";
 
 type ArtworkPageProps = {
   isNew?: boolean;
@@ -181,17 +182,17 @@ const ArtworkPage = ({ isNew = false }: ArtworkPageProps) => {
 
   const handleSave = async () => {
     if (!editingArtworkData.title.trim()) {
-      alert("Title is required.");
+      toast.error("Title is required.");
       return;
     }
     if (editingArtworkData.title.length > 100) {
-      alert("Title must be under 100 characters.");
+      toast.error("Title must be under 100 characters.");
       return;
     }
 
     if (isNew) {
       if (!artworkImageFile) {
-        alert("Please upload an image.");
+        toast.error("Please upload an image.");
         return;
       }
       await addNewArtwork(
@@ -202,11 +203,13 @@ const ArtworkPage = ({ isNew = false }: ArtworkPageProps) => {
         },
         artworkImageFile
       );
+      toast.success("Artwork added successfully!");
       navigate(`/${loggedInUser?.userName}`);
     } else if (artwork) {
       await updateArtwork(artwork.id, editingArtworkData, artworkImageFile);
       setRefetchArtwork((prev) => !prev);
       setIsEditing(false);
+      toast.success("Artwork updated successfully!");
     }
   };
 

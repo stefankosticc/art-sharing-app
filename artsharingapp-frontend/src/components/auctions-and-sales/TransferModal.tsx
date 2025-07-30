@@ -5,6 +5,7 @@ import { useSearch } from "../../hooks/useSearch";
 import ArtistSearchCard from "../search/ArtistSearchCard";
 import { UserSearchResponse } from "../../services/user";
 import { transferArtwork } from "../../services/artwork";
+import { toast } from "react-toastify";
 
 type TransferModalProps = {
   artworkId: number;
@@ -37,6 +38,7 @@ const TransferModal = ({
       if (success) {
         onClose();
         refetchArtwork();
+        toast.success(`Artwork successfully transferred to @${user.userName}!`);
       }
     }
   };

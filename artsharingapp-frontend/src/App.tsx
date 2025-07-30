@@ -12,11 +12,27 @@ import CityPage from "./pages/CityPage";
 import DiscoverPage from "./pages/DiscoverPage";
 import FollowingPage from "./pages/FollowingPage";
 import ChatPage from "./pages/ChatPage";
+import MapPage from "./pages/MapPage";
+import { Bounce, ToastContainer } from "react-toastify";
 
 function App() {
   return (
     <BrowserRouter>
       <div className="App">
+        <ToastContainer
+          position="bottom-right"
+          autoClose={5000}
+          hideProgressBar
+          newestOnTop={false}
+          closeOnClick
+          rtl={false}
+          pauseOnFocusLoss
+          draggable
+          pauseOnHover
+          theme="light"
+          transition={Bounce}
+        />
+
         <Routes>
           <Route path="/" element={<LandingPage />} />
           <Route path="/login" element={<Login />} />
@@ -74,6 +90,14 @@ function App() {
             element={
               <PrivateRoute>
                 <ChatPage />
+              </PrivateRoute>
+            }
+          />
+          <Route
+            path="/map"
+            element={
+              <PrivateRoute>
+                <MapPage />
               </PrivateRoute>
             }
           />

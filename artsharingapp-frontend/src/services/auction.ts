@@ -1,3 +1,4 @@
+import { toast } from "react-toastify";
 import authAxios from "./authAxios";
 import { Currency, OfferStatus } from "./enums";
 
@@ -46,6 +47,7 @@ export async function startAnAuction(
       error?.message ||
       "An unknown error occurred.";
     console.error("Error:", message);
+    toast.error(message);
     return false;
   }
 }
@@ -87,6 +89,7 @@ export async function updateAuction(
       error?.message ||
       "An unknown error occurred.";
     console.error("Error:", message);
+    toast.error(message);
     return false;
   }
 }

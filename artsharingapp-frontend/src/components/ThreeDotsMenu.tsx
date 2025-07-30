@@ -6,6 +6,7 @@ import { useNavigate } from "react-router-dom";
 import PutOnSaleModal from "./auctions-and-sales/PutOnSaleModal";
 import AuctionAnalyticsModal from "./auctions-and-sales/AuctionAnalyticsModal";
 import TransferModal from "./auctions-and-sales/TransferModal";
+import { toast } from "react-toastify";
 
 type ThreeDotsMenuProps = {
   onClose: () => void;
@@ -37,6 +38,7 @@ const ThreeDotsMenu = ({
     if (success) {
       onClose();
       refetchArtwork();
+      toast.success("Artwork removed from sale successfully.");
     }
   };
 
@@ -45,6 +47,7 @@ const ThreeDotsMenu = ({
     if (success) {
       onClose();
       navigate(-1);
+      toast.success("Artwork deleted.");
     }
   };
 

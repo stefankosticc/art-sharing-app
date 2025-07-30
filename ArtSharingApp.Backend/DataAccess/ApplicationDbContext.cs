@@ -178,13 +178,13 @@ public class ApplicationDbContext : IdentityDbContext<User, Role, int>
                 .WithMany(u => u.SentMessages)
                 .HasForeignKey(m => m.SenderId)
                 .IsRequired()
-                .OnDelete(DeleteBehavior.Restrict);
+                .OnDelete(DeleteBehavior.Cascade);
 
             entity.HasOne(m => m.Receiver)
                 .WithMany(u => u.ReceivedMessages)
                 .HasForeignKey(m => m.ReceiverId)
                 .IsRequired()
-                .OnDelete(DeleteBehavior.Restrict);
+                .OnDelete(DeleteBehavior.Cascade);
 
             entity.HasIndex(m => new { m.SenderId, m.ReceiverId, m.SentAt })
                 .HasDatabaseName("IX_ChatMessage_Sender_Receiver_SentAt");

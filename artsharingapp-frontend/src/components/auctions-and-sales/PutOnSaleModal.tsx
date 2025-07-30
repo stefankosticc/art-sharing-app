@@ -15,6 +15,7 @@ import { useActiveAuction } from "../../hooks/useActiveAuction";
 import NewAuctionForm from "./NewAuctionForm";
 import { useAuctionContext } from "../../context/AuctionContext";
 import EditAuctionForm from "./EditAuctionForm";
+import { toast } from "react-toastify";
 
 type PutOnSaleModalProps = {
   onClose: () => void;
@@ -68,8 +69,15 @@ const PutOnSaleModal = ({
     } else {
       if (activeTab === "auction" && auction) {
         success = await updateAuction(auction.id, editActiveAuctionData);
+        if (success) toast.success("Auction updated successfully!");
       } else {
         success = await startAnAuction(artworkId, auctionData);
+        if (success)
+          toast.success(
+            `Auction ${
+              auctionData.startTime <= new Date() ? "started" : "scheduled"
+            } successfully!`
+          );
       }
       if (success) {
         onClose();
@@ -85,6 +93,9 @@ const PutOnSaleModal = ({
     if (success) {
       onClose();
       triggerRefetchAuction();
+      toast.success("Auction ended!");
+    } else {
+      toast.error("Failed to end auction.");
     }
   };
 

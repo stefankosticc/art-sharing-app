@@ -23,25 +23,31 @@ const OfferCard = ({
   const navigate = useNavigate();
 
   const handleAccept = async () => {
-    const success = await acceptOffer(offer.id);
-    if (success) {
-      onClose();
-      navigate("/chat", {
-        state: {
-          selectedUser: {
-            userId: offer.userId,
-            userName: offer.userName,
-            profilePhoto: `/api/user/${offer.userId}/profile-photo`,
+    if (
+      window.confirm(
+        "Are you sure you want to accept this offer? This action cannot be undone."
+      )
+    ) {
+      const success = await acceptOffer(offer.id);
+      if (success) {
+        onClose();
+        navigate("/chat", {
+          state: {
+            selectedUser: {
+              userId: offer.userId,
+              userName: offer.userName,
+              profilePhoto: `/api/user/${offer.userId}/profile-photo`,
+            },
+            input: `Hello, I am accepting your offer of ${offer.amount.toLocaleString(
+              "en-US"
+            )} ${
+              currency !== undefined && Currency[currency]
+            } for the artwork. Please provide your payment details so we can proceed with the transaction.
+             If you have already made the payment, please share the evidence of payment to confirm the transaction. 
+             Thank you!`,
           },
-          input: `Hello, I am accepting your offer of ${offer.amount.toLocaleString(
-            "en-US"
-          )} ${
-            currency !== undefined && Currency[currency]
-          } for the artwork. Please provide your payment details so we can proceed with the transaction.
-           If you have already made the payment, please share the evidence of payment to confirm the transaction. 
-           Thank you!`,
-        },
-      });
+        });
+      }
     }
   };
 
