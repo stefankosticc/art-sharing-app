@@ -7,7 +7,7 @@ using ArtSharingApp.Backend.Service;
 using AutoMapper;
 using Moq;
 
-namespace ArtSharingApp.Tests.UnitTests;
+namespace ArtSharingApp.Tests.UnitTests.Services;
 
 public class GalleryServiceTests
 {

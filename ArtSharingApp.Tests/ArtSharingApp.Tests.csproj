@@ -23,4 +23,8 @@
       <ProjectReference Include="..\ArtSharingApp.Backend\ArtSharingApp.Backend.csproj" />
     </ItemGroup>
 
+    <ItemGroup>
+      <Folder Include="UnitTests\Models\" />
+    </ItemGroup>
+
 </Project>

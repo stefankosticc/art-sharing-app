@@ -9,7 +9,7 @@ using AutoMapper;
 using Moq;
 using UnauthorizedAccessException = ArtSharingApp.Backend.Exceptions.UnauthorizedAccessException;
 
-namespace ArtSharingApp.Tests.UnitTests;
+namespace ArtSharingApp.Tests.UnitTests.Services;
 
 public class AuctionServiceTests
 {

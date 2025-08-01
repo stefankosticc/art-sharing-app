@@ -1,11 +1,15 @@
-using System.Text.Json.Serialization;
 using Microsoft.AspNetCore.Identity;
 
 namespace ArtSharingApp.Backend.Models;
 
+/// <summary>
+/// Represents a user role in the application (e.g., Admin, Artist, User).
+/// Inherits from <see cref="IdentityRole{TKey}"/> with integer key.
+/// </summary>
 public class Role : IdentityRole<int>
 {
-    // public int Id { get; set; }
-    // public string Name { get; set; }
+    /// <summary>
+    /// Collection of users assigned to this role.
+    /// </summary>
     public ICollection<User> Users { get; set; } = new List<User>();
 }

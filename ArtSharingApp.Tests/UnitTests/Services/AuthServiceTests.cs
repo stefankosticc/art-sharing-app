@@ -8,7 +8,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Configuration;
 using Moq;
 
-namespace ArtSharingApp.Tests.UnitTests;
+namespace ArtSharingApp.Tests.UnitTests.Services;
 
 public class AuthServiceTests
 {
