@@ -113,7 +113,7 @@ public class ArtworkService : IArtworkService
         var artwork = await _artworkRepository.GetByIdAsync(id);
         if (artwork == null)
             throw new NotFoundException($"Artwork with id {id} not found.");
-        artwork.IsPrivate = isPrivate;
+        artwork.ChangeVisibility(isPrivate);
         _artworkRepository.UpdateIsPrivate(artwork);
         await _artworkRepository.SaveAsync();
     }
@@ -127,9 +127,15 @@ public class ArtworkService : IArtworkService
         if (artwork.PostedByUserId != loggedInUserId)
             throw new UnauthorizedAccessException("You are not authorized to put this artwork on sale.");
 
-        artwork.IsOnSale = request.IsOnSale;
-        artwork.Price = request.Price;
-        artwork.Currency = request.Currency;
+        try
+        {
+            artwork.PutOnSale(request.Price, request.Currency);
+        }
+        catch (Exception e)
+        {
+            throw new BadRequestException($"Failed to put artwork on sale: {e.Message}");
+        }
+
         _artworkRepository.UpdateSaleProperties(artwork);
         await _artworkRepository.SaveAsync();
     }
@@ -143,7 +149,7 @@ public class ArtworkService : IArtworkService
         if (artwork.PostedByUserId != loggedInUserId)
             throw new UnauthorizedAccessException("You are not authorized to remove this artwork from sale.");
 
-        artwork.IsOnSale = false;
+        artwork.RemoveFromSale();
         _artworkRepository.UpdateSaleProperties(artwork);
         await _artworkRepository.SaveAsync();
     }
@@ -164,7 +170,7 @@ public class ArtworkService : IArtworkService
         if (fromUserId == toUserId)
             throw new BadRequestException("You already own this artwork, no transfer needed.");
 
-        artwork.PostedByUserId = toUserId;
+        artwork.TransferOwnership(toUserId);
         _artworkRepository.UpdateOwner(artwork);
         await _artworkRepository.SaveAsync();
     }

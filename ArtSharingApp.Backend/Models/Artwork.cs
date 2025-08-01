@@ -1,3 +1,4 @@
+using System.ComponentModel.DataAnnotations;
 using ArtSharingApp.Backend.Models.Enums;
 
 namespace ArtSharingApp.Backend.Models;
@@ -15,6 +16,8 @@ public class Artwork
     /// <summary>
     /// Title of the artwork
     /// </summary>
+    [Required]
+    [MaxLength(200)]
     public string Title { get; set; }
 
     /// <summary>
@@ -25,6 +28,7 @@ public class Artwork
     /// <summary>
     /// Image of the artwork in byte array format
     /// </summary>
+    [Required]
     public byte[] Image { get; set; }
 
     /// <summary>
@@ -72,6 +76,7 @@ public class Artwork
     /// Relevant only when <see cref="IsOnSale"/> is true.
     /// </remarks>
     /// </summary>
+    [Range(0, double.MaxValue)]
     public decimal? Price { get; set; }
 
     /// <summary>
@@ -84,8 +89,12 @@ public class Artwork
     /// Color associated with the artwork
     /// <remarks>
     /// This is used with the color extractor to determine the dominant color of the artwork.
+    /// It should be a valid hex color code in the format #AABBCC or #ABC.
     /// </remarks>
     /// </summary>
+    [MaxLength(20)]
+    [RegularExpression(@"^#([0-9a-fA-F]{3}|[0-9a-fA-F]{6})$",
+        ErrorMessage = "Color must be a valid hex color code (e.g., #FFFFFF or #FFF).")]
     public string? Color { get; set; }
 
     /// <summary>
@@ -141,4 +150,58 @@ public class Artwork
     /// Collection of auctions associated with the artwork
     /// </summary>
     public ICollection<Auction> Auctions { get; set; } = new List<Auction>();
+
+    /// <summary>
+    /// Changes the visibility of the artwork.
+    /// </summary>
+    /// <param name="isPrivate">
+    /// If true, the artwork is set to private and not visible to other users.
+    /// If false, the artwork is set to public and can be viewed by other users.
+    /// </param>
+    public void ChangeVisibility(bool isPrivate)
+    {
+        IsPrivate = isPrivate;
+    }
+
+    /// <summary>
+    /// Puts the artwork on sale with a specified price and currency.
+    /// </summary>
+    /// <param name="price">
+    /// New price of the artwork
+    /// </param>
+    /// <param name="currency">
+    /// Currency in which the price is represented.
+    /// See <see cref="Currency"/>
+    /// </param>
+    /// <exception cref="ArgumentOutOfRangeException">
+    /// Thrown if the price is negative.
+    /// </exception>
+    public void PutOnSale(decimal price, Currency currency)
+    {
+        if (price < 0)
+            throw new ArgumentOutOfRangeException(nameof(price), "Price cannot be negative.");
+        IsOnSale = true;
+        Price = price;
+        Currency = currency;
+    }
+
+    /// <summary>
+    /// Removes the artwork from sale.
+    /// </summary>
+    public void RemoveFromSale()
+    {
+        IsOnSale = false;
+        Price = null;
+    }
+
+    /// <summary>
+    /// Transfers ownership of the artwork to another user by updating the PostedByUserId.
+    /// </summary>
+    /// <param name="newOwnerId">
+    /// The unique identifier of the new owner (user) to whom the artwork is being transferred.
+    /// </param>
+    public void TransferOwnership(int newOwnerId)
+    {
+        PostedByUserId = newOwnerId;
+    }
 }
