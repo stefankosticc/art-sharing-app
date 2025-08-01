@@ -1,3 +1,4 @@
+using System.ComponentModel.DataAnnotations;
 using ArtSharingApp.Backend.Models.Enums;
 
 namespace ArtSharingApp.Backend.Models;
@@ -28,6 +29,7 @@ public class Auction
     /// This is the minimum price at which the auction starts.
     /// </remarks>
     /// </summary>
+    [Range(0, double.MaxValue)]
     public decimal StartingPrice { get; set; }
 
     /// <summary>
@@ -49,4 +51,27 @@ public class Auction
     /// Collection of offers made on the auction
     /// </summary>
     public ICollection<Offer> Offers { get; set; } = new List<Offer>();
+
+    /// <summary>
+    /// Checks if the auction is currently active based on the current time.
+    /// <returns>
+    /// True if the current time is between StartTime and EndTime, otherwise false.
+    /// </returns>
+    /// </summary>
+    public bool IsActive()
+    {
+        return StartTime <= DateTime.UtcNow && EndTime >= DateTime.UtcNow;
+    }
+
+    /// <summary>
+    /// Updates the end time of the auction.
+    /// </summary>
+    /// <param name="newEndTime">The new end time for the auction.</param>
+    /// <exception cref="ArgumentException">Thrown if newEndTime is before or equal to StartTime.</exception>
+    public void UpdateEndTime(DateTime newEndTime)
+    {
+        if (newEndTime <= StartTime)
+            throw new ArgumentException("Auction end time must be after the start time.");
+        EndTime = newEndTime;
+    }
 }

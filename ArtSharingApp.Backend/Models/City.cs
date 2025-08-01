@@ -1,3 +1,5 @@
+using System.ComponentModel.DataAnnotations;
+
 namespace ArtSharingApp.Backend.Models;
 
 /// <summary>
@@ -13,11 +15,13 @@ public class City
     /// <summary>
     /// Name of the city
     /// </summary>
+    [Required]
     public string Name { get; set; }
 
     /// <summary>
     /// Country where the city is located
     /// </summary>
+    [Required]
     public string Country { get; set; }
 
     /// <summary>

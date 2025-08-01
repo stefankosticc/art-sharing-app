@@ -1,3 +1,4 @@
+using System.ComponentModel.DataAnnotations;
 using ArtSharingApp.Backend.Models.Enums;
 
 namespace ArtSharingApp.Backend.Models;
@@ -18,6 +19,7 @@ public class Offer
     /// This is the monetary value that the user is offering for the auction item.
     /// </remarks>
     /// </summary>
+    [Range(0.01, double.MaxValue)]
     public decimal Amount { get; set; }
 
     /// <summary>
@@ -49,4 +51,36 @@ public class Offer
     /// Navigation property to the user who made the offer
     /// </summary>
     public User User { get; set; }
+
+    /// <summary>
+    /// Marks the offer as accepted.
+    /// </summary>
+    public void Accept()
+    {
+        Status = OfferStatus.ACCEPTED;
+    }
+
+    /// <summary>
+    /// Marks the offer as rejected.
+    /// </summary>
+    public void Reject()
+    {
+        Status = OfferStatus.REJECTED;
+    }
+
+    /// <summary>
+    /// Marks the offer as withdrawn.
+    /// </summary>
+    public void Withdraw()
+    {
+        Status = OfferStatus.WITHDRAWN;
+    }
+
+    /// <summary>
+    /// Returns true if the offer can be modified (i.e., it is in the SUBMITTED state).
+    /// </summary>
+    public bool CanBeModified()
+    {
+        return Status == OfferStatus.SUBMITTED;
+    }
 }

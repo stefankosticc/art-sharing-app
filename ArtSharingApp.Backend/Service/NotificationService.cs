@@ -14,7 +14,7 @@ public class NotificationService : INotificationService
     private readonly INotificationRepository _notificationRepository;
     private readonly IUserRepository _userRepository;
     private readonly IMapper _mapper;
-    
+
     public NotificationService(
         INotificationRepository notificationRepository,
         IUserRepository userRepository,
@@ -24,10 +24,12 @@ public class NotificationService : INotificationService
         _userRepository = userRepository;
         _mapper = mapper;
     }
-    
-    public async Task<IEnumerable<NotificationResponseDTO>?> GetNotificationsAsync(int loggedInUserId, int skip, int take)
+
+    public async Task<IEnumerable<NotificationResponseDTO>?> GetNotificationsAsync(int loggedInUserId, int skip,
+        int take)
     {
-        var notifications = await _notificationRepository.GetAllReadAndUnreadNotificationsAsync(loggedInUserId, skip, take);
+        var notifications =
+            await _notificationRepository.GetAllReadAndUnreadNotificationsAsync(loggedInUserId, skip, take);
         return _mapper.Map<IEnumerable<NotificationResponseDTO>>(notifications);
     }
 
@@ -35,10 +37,10 @@ public class NotificationService : INotificationService
     {
         if (string.IsNullOrEmpty(request.Text) || request.RecipientId <= 0)
             throw new BadRequestException("Invalid notification request.");
-        
+
         if (await _userRepository.GetByIdAsync(request.RecipientId) == null)
             throw new NotFoundException("Recipient not found.");
-        
+
         var notification = _mapper.Map<Notification>(request);
         notification.CreatedAt = DateTime.UtcNow;
         notification.Status = NotificationStatus.UNREAD;
@@ -61,25 +63,27 @@ public class NotificationService : INotificationService
     {
         await ChangeNotificationStatus(notificationId, loggedInUserId, NotificationStatus.DELETED);
     }
-    
+
     private async Task ChangeNotificationStatus(int notificationId, int loggedInUserId, NotificationStatus status)
     {
         var notification = await _notificationRepository.GetByIdAsync(notificationId);
         if (notification == null)
             throw new NotFoundException("Notification not found.");
-        
+
         if (notification.RecipientId != loggedInUserId)
             switch (status)
             {
                 case NotificationStatus.READ:
-                    throw new UnauthorizedAccessException("You do not have permission to mark this notification as read.");
+                    throw new UnauthorizedAccessException(
+                        "You do not have permission to mark this notification as read.");
                 case NotificationStatus.UNREAD:
-                    throw new UnauthorizedAccessException("You do not have permission to mark this notification as unread.");
+                    throw new UnauthorizedAccessException(
+                        "You do not have permission to mark this notification as unread.");
                 case NotificationStatus.DELETED:
                     throw new UnauthorizedAccessException("You do not have permission to delete this notification.");
             }
-        
-        notification.Status = status;
+
+        notification.ChangeStatus(status);
         _notificationRepository.UpdateNotificationStatus(notification);
         await _notificationRepository.SaveAsync();
     }

@@ -1,3 +1,5 @@
+using System.ComponentModel.DataAnnotations;
+
 namespace ArtSharingApp.Backend.Models;
 
 /// <summary>
@@ -13,11 +15,15 @@ public class Gallery
     /// <summary>
     /// Name of the gallery
     /// </summary>
+    [Required]
+    [MaxLength(200)]
     public string Name { get; set; }
 
     /// <summary>
     /// Address of the gallery
     /// </summary>
+    [Required]
+    [MaxLength(500)]
     public string Address { get; set; }
 
     /// <summary>

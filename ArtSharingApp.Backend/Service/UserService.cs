@@ -46,15 +46,12 @@ public class UserService : IUserService
             using (var ms = new MemoryStream())
             {
                 await profilePhoto.CopyToAsync(ms);
-                user.ProfilePhoto = ms.ToArray();
+                user.UpdateProfilePhoto(ms.ToArray(), profilePhoto.ContentType);
             }
-
-            user.ContentType = profilePhoto.ContentType;
         }
         else if (userDto.RemovePhoto)
         {
-            user.ProfilePhoto = null;
-            user.ContentType = null;
+            user.RemoveProfilePhoto();
         }
 
         _userRepository.UpdateUserProfile(user);
@@ -108,7 +105,16 @@ public class UserService : IUserService
         var user = await _userRepository.GetByIdAsync(userId);
         if (user == null)
             throw new NotFoundException($"User with id {userId} not found.");
-        user.Biography = biography;
+
+        try
+        {
+            user.UpdateBiography(biography);
+        }
+        catch (Exception e)
+        {
+            throw new BadRequestException(e.Message);
+        }
+
         _userRepository.UpdateBiography(user);
         await _userRepository.SaveAsync();
     }

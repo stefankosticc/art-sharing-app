@@ -1,3 +1,4 @@
+using System.ComponentModel.DataAnnotations;
 using Microsoft.AspNetCore.Identity;
 
 namespace ArtSharingApp.Backend.Models;
@@ -14,6 +15,8 @@ public class User : IdentityUser<int>
     /// This property is used to store the full name of the user.
     /// </remarks>
     /// </summary>
+    [Required]
+    [MaxLength(200)]
     public string Name { get; set; }
 
     /// <summary>
@@ -107,4 +110,71 @@ public class User : IdentityUser<int>
     /// Collection of chat messages that the user has received.
     /// </summary>
     public ICollection<ChatMessage> ReceivedMessages { get; set; } = new List<ChatMessage>();
+
+    /// <summary>
+    /// Updates the user's biography.
+    /// </summary>
+    /// <param name="biography">The new biography text.</param>
+    /// <exception cref="ArgumentException">
+    /// Thrown when the biography is null or empty.
+    /// </exception>
+    public void UpdateBiography(string biography)
+    {
+        if (string.IsNullOrWhiteSpace(biography))
+            throw new ArgumentException("Biography cannot be null or empty.", nameof(biography));
+        Biography = biography;
+    }
+
+    /// <summary>
+    /// Updates the user's profile photo and content type.
+    /// </summary>
+    /// <param name="photo">The profile photo as a byte array.</param>
+    /// <param name="contentType">The content type of the photo (e.g., "image/jpeg").</param>
+    public void UpdateProfilePhoto(byte[] photo, string contentType)
+    {
+        ProfilePhoto = photo;
+        ContentType = contentType;
+    }
+
+    /// <summary>
+    /// Removes the user's profile photo and content type.
+    /// </summary>
+    public void RemoveProfilePhoto()
+    {
+        ProfilePhoto = null;
+        ContentType = null;
+    }
+
+    /// <summary>
+    /// Sets the user's refresh token and its expiration.
+    /// </summary>
+    /// <param name="token">The refresh token string.</param>
+    /// <param name="expiresAt">The date and time when the refresh token expires.</param>
+    public void SetRefreshToken(string token, DateTime expiresAt)
+    {
+        RefreshToken = token;
+        RefreshTokenExpiresAt = expiresAt;
+    }
+
+    /// <summary>
+    /// Clears the user's refresh token and its expiration.
+    /// </summary>
+    public void ClearRefreshToken()
+    {
+        RefreshToken = null;
+        RefreshTokenExpiresAt = null;
+    }
+
+    /// <summary>
+    /// Checks if the refresh token is valid.
+    /// A refresh token is considered valid if it is not null or empty and has not expired.
+    /// </summary>
+    /// <returns>
+    /// True if the refresh token is valid; otherwise, false.
+    /// </returns>
+    public bool IsRefreshTokenValid()
+    {
+        return !string.IsNullOrEmpty(RefreshToken) && RefreshTokenExpiresAt.HasValue &&
+               RefreshTokenExpiresAt > DateTime.UtcNow;
+    }
 }

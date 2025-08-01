@@ -78,7 +78,7 @@ public class AuthService : IAuthService
     public async Task<TokenResponseDTO?> RefreshTokenAsync(RefreshTokenRequestDTO request)
     {
         var user = await _userManager.Users.FirstOrDefaultAsync(u => u.RefreshToken == request.RefreshToken);
-        if (user == null || string.IsNullOrEmpty(user.RefreshToken) || user.RefreshTokenExpiresAt <= DateTime.UtcNow)
+        if (user == null || !user.IsRefreshTokenValid())
             throw new BadRequestException("Invalid refresh token");
 
         var newRefreshToken = await GenerateAndSaveRefreshTokenAsync(user);
@@ -104,9 +104,7 @@ public class AuthService : IAuthService
         if (user.RefreshToken == null)
             throw new BadRequestException("User is not logged in");
 
-        // Invalidate the refresh token by setting it to null
-        user.RefreshToken = null;
-        user.RefreshTokenExpiresAt = null;
+        user.ClearRefreshToken();
         await _userManager.UpdateAsync(user);
     }
 
@@ -147,10 +145,8 @@ public class AuthService : IAuthService
     private async Task<string> GenerateAndSaveRefreshTokenAsync(User user)
     {
         var refreshToken = GenerateRefreshToken();
-        user.RefreshToken = refreshToken;
-        user.RefreshTokenExpiresAt = DateTime.UtcNow.AddDays(7);
+        user.SetRefreshToken(refreshToken, DateTime.UtcNow.AddDays(7));
         await _userManager.UpdateAsync(user);
         return refreshToken;
     }
-
 }

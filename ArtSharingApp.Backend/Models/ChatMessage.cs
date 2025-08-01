@@ -1,3 +1,5 @@
+using System.ComponentModel.DataAnnotations;
+
 namespace ArtSharingApp.Backend.Models;
 
 /// <summary>
@@ -33,6 +35,7 @@ public class ChatMessage
     /// <summary>
     /// Text content of the chat message
     /// </summary>
+    [Required]
     public string Message { get; set; }
 
     /// <summary>
@@ -50,4 +53,33 @@ public class ChatMessage
     /// </remarks>
     /// </summary>
     public bool IsRead { get; set; }
+
+    /// <summary>
+    /// Factory method to create a new chat message
+    /// </summary>
+    /// <param name="senderId">Unique identifier for the sender of the message</param>
+    /// <param name="receiverId">Unique identifier for the receiver of the message</param>
+    /// <param name="message">Text content of the chat message</param>
+    /// <returns>
+    /// A new instance of <see cref="ChatMessage"/> with the specified sender, receiver, and message.
+    /// </returns>
+    public static ChatMessage Create(int senderId, int receiverId, string message)
+    {
+        return new ChatMessage
+        {
+            SenderId = senderId,
+            ReceiverId = receiverId,
+            Message = message,
+            SentAt = DateTime.UtcNow,
+            IsRead = false
+        };
+    }
+
+    /// <summary>
+    /// Marks the message as read.
+    /// </summary>
+    public void MarkAsRead()
+    {
+        IsRead = true;
+    }
 }

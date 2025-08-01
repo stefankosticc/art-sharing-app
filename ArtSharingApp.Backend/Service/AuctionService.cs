@@ -15,9 +15,9 @@ public class AuctionService : IAuctionService
     private readonly IArtworkRepository _artworkRepository;
     private readonly IOfferRepository _offerRepository;
     private readonly IMapper _mapper;
-    
+
     public AuctionService(
-        IAuctionRepository auctionRepository, 
+        IAuctionRepository auctionRepository,
         IArtworkRepository artworkRepository,
         IOfferRepository offerRepository,
         IMapper mapper)
@@ -27,29 +27,30 @@ public class AuctionService : IAuctionService
         _offerRepository = offerRepository;
         _mapper = mapper;
     }
-    
+
     public async Task StartAuctionAsync(int artworkId, int userId, AuctionStartDTO request)
     {
         var artwork = await _artworkRepository.GetByIdAsync(artworkId);
         if (artwork == null)
             throw new NotFoundException("Artwork not found.");
-        
+
         if (artwork.PostedByUserId != userId)
             throw new UnauthorizedAccessException("You are not authorized to start an auction for this artwork.");
-        
+
         if (request.StartTime < DateTime.UtcNow.AddMinutes(-1))
             throw new BadRequestException("Auction start time cannot be in the past.");
-        
+
         if (request.EndTime <= request.StartTime)
             throw new BadRequestException("Auction end time must be after the start time.");
-        
+
         if (await _auctionRepository.IsAuctionScheduledAsync(artworkId, request.StartTime, request.EndTime))
-            throw new BadRequestException("An auction is already scheduled for this artwork during the specified time.");
-        
+            throw new BadRequestException(
+                "An auction is already scheduled for this artwork during the specified time.");
+
         if (await _auctionRepository.HasFutureAuctionScheduledAsync(artworkId, DateTime.UtcNow))
             throw new BadRequestException("An auction is already scheduled for this artwork in the future.");
-        
-        
+
+
         var auction = _mapper.Map<Auction>(request);
         auction.ArtworkId = artworkId;
         await _auctionRepository.AddAsync(auction);
@@ -61,22 +62,23 @@ public class AuctionService : IAuctionService
         var auction = await _auctionRepository.GetByIdAsync(auctionId, includes: ac => ac.Artwork);
         if (auction == null)
             throw new NotFoundException("Auction not found.");
-        
-        if (auction.StartTime > DateTime.UtcNow || auction.EndTime < DateTime.UtcNow)
+
+        if (!auction.IsActive())
             throw new BadRequestException("Auction is not active.");
-        
-        if (request.Amount <= auction.StartingPrice || request.Amount <= await _offerRepository.GetMaxOfferAmountAsync(auctionId))
+
+        if (request.Amount <= auction.StartingPrice ||
+            request.Amount <= await _offerRepository.GetMaxOfferAmountAsync(auctionId))
             throw new BadRequestException("Offer amount must be greater than the maximum offer or starting price.");
-        
+
         if (auction.Artwork.PostedByUserId == userId)
             throw new UnauthorizedAccessException("You cannot make an offer on your own auction.");
-        
+
         var offer = _mapper.Map<Offer>(request);
         offer.UserId = userId;
         offer.AuctionId = auctionId;
         offer.Timestamp = DateTime.UtcNow;
         offer.Status = OfferStatus.SUBMITTED;
-        
+
         await _offerRepository.AddAsync(offer);
         await _offerRepository.SaveAsync();
     }
@@ -86,10 +88,10 @@ public class AuctionService : IAuctionService
         var auction = await _auctionRepository.GetByIdAsync(auctionId, includes: ac => ac.Artwork);
         if (auction == null)
             throw new NotFoundException("Auction not found.");
-        
+
         if (auction.Artwork.PostedByUserId != userId)
             throw new UnauthorizedAccessException("You are not authorized to view offers for this auction.");
-        
+
         var offers = await _offerRepository.GetOffersByAuctionIdAsync(auctionId);
         return _mapper.Map<IEnumerable<OfferResponseDTO>>(offers);
     }
@@ -99,7 +101,7 @@ public class AuctionService : IAuctionService
         var auction = await _auctionRepository.GetByIdAsync(auctionId, includes: ac => ac.Artwork);
         if (auction == null)
             throw new NotFoundException("Auction not found.");
-        
+
         return await _offerRepository.GetMaxOfferAmountAsync(auctionId);
     }
 
@@ -108,33 +110,33 @@ public class AuctionService : IAuctionService
         var offer = await _offerRepository.GetByIdAsync(offerId, includes: o => o.Auction);
         if (offer == null)
             throw new NotFoundException("Offer not found.");
-        
+
         var auction = await _auctionRepository.GetByIdAsync(offer.AuctionId, includes: ac => ac.Artwork);
         if (auction.Artwork.PostedByUserId != userId)
             throw new UnauthorizedAccessException("You are not authorized to accept this offer.");
-        
+
         if (await _offerRepository.AuctionHasAcceptedOffer(auction.Id))
             throw new BadRequestException("Offer is already accepted.");
-        
-        if (offer.Status != OfferStatus.SUBMITTED)
+
+        if (!offer.CanBeModified())
             throw new BadRequestException("Offer cannot be or is already accepted.");
-        
-        offer.Status = OfferStatus.ACCEPTED;
+
+        offer.Accept();
         _offerRepository.UpdateOfferStatus(offer);
         await _offerRepository.SaveAsync();
     }
-    
+
     public async Task RejectOfferAsync(int offerId, int userId)
     {
         var offer = await _offerRepository.GetByIdAsync(offerId, includes: o => o.Auction);
         if (offer == null)
             throw new NotFoundException("Offer not found.");
-        
+
         var auction = await _auctionRepository.GetByIdAsync(offer.AuctionId, includes: ac => ac.Artwork);
         if (auction.Artwork.PostedByUserId != userId || offer.UserId == userId)
             throw new UnauthorizedAccessException("You are not authorized to reject this offer.");
-        
-        offer.Status = OfferStatus.REJECTED;
+
+        offer.Reject();
         _offerRepository.UpdateOfferStatus(offer);
         await _offerRepository.SaveAsync();
     }
@@ -144,12 +146,12 @@ public class AuctionService : IAuctionService
         var offer = await _offerRepository.GetByIdAsync(offerId, includes: o => o.Auction);
         if (offer == null)
             throw new NotFoundException("Offer not found.");
-        
+
         var auction = await _auctionRepository.GetByIdAsync(offer.AuctionId, includes: ac => ac.Artwork);
         if (auction.Artwork.PostedByUserId == userId || offer.UserId != userId)
             throw new UnauthorizedAccessException("You are not authorized to withdraw this offer.");
-        
-        offer.Status = OfferStatus.WITHDRAWN;
+
+        offer.Withdraw();
         _offerRepository.UpdateOfferStatus(offer);
         await _offerRepository.SaveAsync();
     }
@@ -179,14 +181,19 @@ public class AuctionService : IAuctionService
         var auction = await _auctionRepository.GetByIdAsync(auctionId, includes: ac => ac.Artwork);
         if (auction == null)
             throw new NotFoundException("Auction not found.");
-        
+
         if (auction.Artwork.PostedByUserId != userId)
             throw new UnauthorizedAccessException("You are not authorized to update this auction.");
-        
-        if (request.EndTime <= auction.StartTime)
-            throw new BadRequestException("Auction end time must be after the start time.");
-        
-        auction.EndTime = request.EndTime;
+
+        try
+        {
+            auction.UpdateEndTime(request.EndTime);
+        }
+        catch (Exception e)
+        {
+            throw new BadRequestException(e.Message);
+        }
+
         _auctionRepository.UpdateEndTime(auction);
         await _auctionRepository.SaveAsync();
     }

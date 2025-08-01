@@ -25,12 +25,13 @@ public class AuthServiceTests
         _mockRoleManager = new Mock<RoleManager<Role>>(
             new Mock<IRoleStore<Role>>().Object,
             null, null, null, null);
-        
+
         _mockConfiguration = new Mock<IConfiguration>();
-        _mockConfiguration.Setup(c => c["Jwt:Token"]).Returns("2840e2b449c5f7b0de74694d1ddd1ae85b45f96e1110bc95d51b398a91e24895140cd5608ed2745179350c9963ce29f054aca1b0a6842c3bc6b4af45b8c80aea0ceb447d2e64bbfe7b0114fbc076dbe57ba61b0199c72c00bee7de3aaf1bab257b7cb5e9905fe14da46cc7b9b84e6eb75cbf593e45766ffc007e774164e59548476cb51e9dfadc53b42866283785d1975bb76eb4ef575dcca57357276f6ebb2deca41160d11e45a96a956961664c9bf28868f85bab426187599772d647082e81a61b0e39064cc451fd8fdc89c61979af2666bbaa8fb4b67ab2568a8ff31d29107f43ae259e2a779c567d0e74b69b1e68d662183794e6ce3bdb5ea02a1fc6d9f0");
+        _mockConfiguration.Setup(c => c["Jwt:Token"]).Returns(
+            "2840e2b449c5f7b0de74694d1ddd1ae85b45f96e1110bc95d51b398a91e24895140cd5608ed2745179350c9963ce29f054aca1b0a6842c3bc6b4af45b8c80aea0ceb447d2e64bbfe7b0114fbc076dbe57ba61b0199c72c00bee7de3aaf1bab257b7cb5e9905fe14da46cc7b9b84e6eb75cbf593e45766ffc007e774164e59548476cb51e9dfadc53b42866283785d1975bb76eb4ef575dcca57357276f6ebb2deca41160d11e45a96a956961664c9bf28868f85bab426187599772d647082e81a61b0e39064cc451fd8fdc89c61979af2666bbaa8fb4b67ab2568a8ff31d29107f43ae259e2a779c567d0e74b69b1e68d662183794e6ce3bdb5ea02a1fc6d9f0");
         _mockConfiguration.Setup(c => c["Jwt:Issuer"]).Returns("test_issuer");
         _mockConfiguration.Setup(c => c["Jwt:Audience"]).Returns("test_audience");
-        
+
         _authService = new AuthService(
             _mockUserManager.Object,
             _mockRoleManager.Object,
@@ -49,11 +50,11 @@ public class AuthServiceTests
             Password = "Test.1234"
         };
 
-        var role = new Role() { Id = 1, Name = "User" };
+        var role = new Role() { Id = 1, Name = "Artist" };
 
         _mockUserManager.Setup(um => um.FindByEmailAsync(request.Email))
             .ReturnsAsync((User)null);
-        _mockRoleManager.Setup(rm => rm.FindByNameAsync("User"))
+        _mockRoleManager.Setup(rm => rm.FindByNameAsync("Artist"))
             .ReturnsAsync(role);
         _mockUserManager.Setup(um => um.CreateAsync(It.IsAny<User>(), request.Password))
             .ReturnsAsync(IdentityResult.Success);
@@ -92,7 +93,7 @@ public class AuthServiceTests
         var existingUser = new User() { Email = request.Email };
         _mockUserManager.Setup(um => um.FindByEmailAsync(request.Email))
             .ReturnsAsync(existingUser);
-        
+
         // Act & Assert
         var ex = await Assert.ThrowsAsync<BadRequestException>(() => _authService.Register(request));
         Assert.Equal("User already exists", ex.Message);
@@ -113,13 +114,13 @@ public class AuthServiceTests
 
         _mockUserManager.Setup(um => um.FindByEmailAsync(request.Email))
             .ReturnsAsync((User)null);
-        _mockRoleManager.Setup(rm => rm.FindByNameAsync("User"))
+        _mockRoleManager.Setup(rm => rm.FindByNameAsync("Artist"))
             .ReturnsAsync((Role)null);
 
         // Act & Assert
         var ex = await Assert.ThrowsAsync<NotFoundException>(() => _authService.Register(request));
         Assert.Equal("Role not found", ex.Message);
-        _mockRoleManager.Verify(rm => rm.FindByNameAsync("User"), Times.Once);
+        _mockRoleManager.Verify(rm => rm.FindByNameAsync("Artist"), Times.Once);
     }
 
     [Fact]
@@ -134,12 +135,12 @@ public class AuthServiceTests
             Password = "Test.1234"
         };
 
-        var role = new Role() { Id = 3, Name = "User" };
+        var role = new Role() { Id = 3, Name = "Artist" };
         var identityResult = IdentityResult.Failed(new IdentityError { Description = "User registration failed" });
 
         _mockUserManager.Setup(um => um.FindByEmailAsync(request.Email))
             .ReturnsAsync((User)null);
-        _mockRoleManager.Setup(rm => rm.FindByNameAsync("User"))
+        _mockRoleManager.Setup(rm => rm.FindByNameAsync("Artist"))
             .ReturnsAsync(role);
         _mockUserManager.Setup(um => um.CreateAsync(It.IsAny<User>(), request.Password))
             .ReturnsAsync(identityResult);
@@ -161,11 +162,11 @@ public class AuthServiceTests
             Password = "Test.1234"
         };
 
-        var role = new Role() { Id = 4, Name = "User" };
+        var role = new Role() { Id = 4, Name = "Artist" };
 
         _mockUserManager.Setup(um => um.FindByEmailAsync(request.Email))
             .ReturnsAsync((User)null);
-        _mockRoleManager.Setup(rm => rm.FindByNameAsync("User"))
+        _mockRoleManager.Setup(rm => rm.FindByNameAsync("Artist"))
             .ReturnsAsync(role);
         _mockUserManager.Setup(um => um.CreateAsync(It.IsAny<User>(), request.Password))
             .ReturnsAsync(IdentityResult.Success);
@@ -303,7 +304,7 @@ public class AuthServiceTests
         _mockUserManager.Verify(um => um.FindByIdAsync(userId), Times.Once);
         _mockUserManager.Verify(um => um.UpdateAsync(user), Times.Never);
     }
-    
+
     private static ClaimsPrincipal GetClaimsPrincipal(string userId)
     {
         var claims = new List<Claim>

@@ -1,3 +1,4 @@
+using System.ComponentModel.DataAnnotations;
 using ArtSharingApp.Backend.Models.Enums;
 
 namespace ArtSharingApp.Backend.Models;
@@ -15,6 +16,7 @@ public class Notification
     /// <summary>
     /// Text content of the notification
     /// </summary>
+    [Required]
     public string Text { get; set; }
 
     /// <summary>
@@ -36,4 +38,15 @@ public class Notification
     /// Navigation property for the user who receives the notification
     /// </summary>
     public User Recipient { get; set; }
+
+    /// <summary>
+    /// Changes the status of the notification
+    /// </summary>
+    /// <param name="newStatus">
+    /// The new status to set for the notification. See <see cref="NotificationStatus"/>.
+    /// </param>
+    public void ChangeStatus(NotificationStatus newStatus)
+    {
+        Status = newStatus;
+    }
 }

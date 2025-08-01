@@ -35,14 +35,8 @@ public class ChatService : IChatService
         if (receiver == null)
             throw new NotFoundException("Receiver not found.");
 
-        var chatMessage = new ChatMessage
-        {
-            SenderId = senderId,
-            ReceiverId = receiverId,
-            Message = message,
-            SentAt = DateTime.UtcNow,
-            IsRead = false
-        };
+        var chatMessage = ChatMessage.Create(senderId, receiverId, message);
+
         await _chatRepository.AddAsync(chatMessage);
         await _chatRepository.SaveAsync();
         return _mapper.Map<ChatMessageResponseDTO>(chatMessage);
@@ -53,7 +47,7 @@ public class ChatService : IChatService
         var message = await _chatRepository.GetByIdAsync(messageId);
         if (message != null && message.ReceiverId == userId && !message.IsRead)
         {
-            message.IsRead = true;
+            message.MarkAsRead();
             _chatRepository.Update(message);
             await _chatRepository.SaveAsync();
         }
