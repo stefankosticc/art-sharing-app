@@ -130,8 +130,13 @@ public class User : IdentityUser<int>
     /// </summary>
     /// <param name="photo">The profile photo as a byte array.</param>
     /// <param name="contentType">The content type of the photo (e.g., "image/jpeg").</param>
+    /// <exception cref="ArgumentException">
+    /// Thrown when the photo is null or empty.
+    /// </exception>
     public void UpdateProfilePhoto(byte[] photo, string contentType)
     {
+        if (photo == null || photo.Length == 0)
+            throw new ArgumentException("Profile photo cannot be null or empty.", nameof(photo));
         ProfilePhoto = photo;
         ContentType = contentType;
     }
@@ -150,8 +155,17 @@ public class User : IdentityUser<int>
     /// </summary>
     /// <param name="token">The refresh token string.</param>
     /// <param name="expiresAt">The date and time when the refresh token expires.</param>
+    /// <exception cref="ArgumentException">
+    /// Thrown when the token is null or empty, or when the expiration date is in the past.
+    /// </exception>
     public void SetRefreshToken(string token, DateTime expiresAt)
     {
+        if (string.IsNullOrWhiteSpace(token))
+            throw new ArgumentException("Refresh token cannot be null or empty.", nameof(token));
+
+        if (expiresAt < DateTime.UtcNow)
+            throw new ArgumentException("Refresh token expiration must be in the future.", nameof(expiresAt));
+
         RefreshToken = token;
         RefreshTokenExpiresAt = expiresAt;
     }
@@ -174,7 +188,7 @@ public class User : IdentityUser<int>
     /// </returns>
     public bool IsRefreshTokenValid()
     {
-        return !string.IsNullOrEmpty(RefreshToken) && RefreshTokenExpiresAt.HasValue &&
+        return !string.IsNullOrWhiteSpace(RefreshToken) && RefreshTokenExpiresAt.HasValue &&
                RefreshTokenExpiresAt > DateTime.UtcNow;
     }
 }

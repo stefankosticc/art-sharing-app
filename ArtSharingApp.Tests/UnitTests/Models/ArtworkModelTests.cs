@@ -80,6 +80,7 @@ public class ArtworkModelTests
 
     [Theory]
     [InlineData("")]
+    [InlineData(" ")]
     [InlineData(null)]
     public void Title_Required_FailsValidationIfNullOrEmpty(string? title)
     {

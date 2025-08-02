@@ -40,6 +40,29 @@ public class Notification
     public User Recipient { get; set; }
 
     /// <summary>
+    /// Creates a new notification instance with the specified text and recipient ID.
+    /// </summary>
+    /// <param name="text">
+    /// The text content of the notification.
+    /// </param>
+    /// <param name="recipientId">
+    /// The unique identifier of the user who will receive the notification.
+    /// </param>
+    /// <returns>
+    /// A new instance of <see cref="Notification"/> with the specified text and recipient ID,
+    /// </returns>
+    public static Notification Create(string text, int recipientId)
+    {
+        return new Notification
+        {
+            Text = text,
+            RecipientId = recipientId,
+            CreatedAt = DateTime.UtcNow,
+            Status = NotificationStatus.UNREAD
+        };
+    }
+
+    /// <summary>
     /// Changes the status of the notification
     /// </summary>
     /// <param name="newStatus">

@@ -145,7 +145,15 @@ public class AuthService : IAuthService
     private async Task<string> GenerateAndSaveRefreshTokenAsync(User user)
     {
         var refreshToken = GenerateRefreshToken();
-        user.SetRefreshToken(refreshToken, DateTime.UtcNow.AddDays(7));
+        try
+        {
+            user.SetRefreshToken(refreshToken, DateTime.UtcNow.AddDays(7));
+        }
+        catch (Exception e)
+        {
+            throw new BadRequestException(e.Message);
+        }
+
         await _userManager.UpdateAsync(user);
         return refreshToken;
     }
