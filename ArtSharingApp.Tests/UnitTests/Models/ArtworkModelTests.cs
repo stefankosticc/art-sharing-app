@@ -112,4 +112,59 @@ public class ArtworkModelTests
         var ctx = new ValidationContext(artwork);
         Assert.Throws<ValidationException>(() => Validator.ValidateObject(artwork, ctx, true));
     }
+
+    [Fact]
+    public void Image_Required_PassesValidationIfNotNull()
+    {
+        var artwork = new Artwork { Title = "Test", Image = new byte[1] };
+        var ctx = new ValidationContext(artwork);
+        Validator.ValidateObject(artwork, ctx, validateAllProperties: true);
+    }
+
+    [Fact]
+    public void Price_FailsValidationIfNegative()
+    {
+        var artwork = new Artwork
+        {
+            Title = "Test",
+            Image = new byte[1],
+            IsOnSale = true,
+            Price = -1,
+            Currency = Currency.EUR
+        };
+        var ctx = new ValidationContext(artwork);
+        Assert.Throws<ValidationException>(() => Validator.ValidateObject(artwork, ctx, true));
+    }
+
+    [Theory]
+    [InlineData(0)] // Zero price
+    [InlineData(100)] // Positive price
+    public void Price_PassesValidationIfZeroOrPositive(decimal price)
+    {
+        var artwork = new Artwork
+        {
+            Title = "Test",
+            Image = new byte[1],
+            IsOnSale = true,
+            Price = price,
+            Currency = Currency.EUR
+        };
+        var ctx = new ValidationContext(artwork);
+        Validator.ValidateObject(artwork, ctx, validateAllProperties: true);
+    }
+
+    [Fact]
+    public void Price_PassesValidationIfMaxValue()
+    {
+        var artwork = new Artwork
+        {
+            Title = "Test",
+            Image = new byte[1],
+            IsOnSale = true,
+            Price = decimal.MaxValue,
+            Currency = Currency.EUR
+        };
+        var ctx = new ValidationContext(artwork);
+        Validator.ValidateObject(artwork, ctx, validateAllProperties: true);
+    }
 }
