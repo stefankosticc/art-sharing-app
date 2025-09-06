@@ -12,12 +12,21 @@ using Microsoft.IdentityModel.Tokens;
 
 namespace ArtSharingApp.Backend.Service;
 
+/// <summary>
+/// Provides authentication and authorization services, including user registration, login, token management, and logout.
+/// </summary>
 public class AuthService : IAuthService
 {
     private readonly UserManager<User> _userManager;
     private readonly RoleManager<Role> _roleManager;
     private readonly IConfiguration _configuration;
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="AuthService"/> class.
+    /// </summary>
+    /// <param name="userManager">User manager for user operations.</param>
+    /// <param name="roleManager">Role manager for role operations.</param>
+    /// <param name="configuration">Application configuration for JWT settings.</param>
     public AuthService(UserManager<User> userManager, RoleManager<Role> roleManager, IConfiguration configuration)
     {
         _userManager = userManager;
@@ -25,6 +34,12 @@ public class AuthService : IAuthService
         _configuration = configuration;
     }
 
+    /// <summary>
+    /// Registers a new user with the provided registration data.
+    /// </summary>
+    /// <param name="request">User registration data.</param>
+    /// <exception cref="BadRequestException">Thrown if the user already exists or registration fails.</exception>
+    /// <exception cref="NotFoundException">Thrown if the default role is not found.</exception>
     public async Task Register(UserRegisterDTO request)
     {
         var existingUser = await _userManager.FindByEmailAsync(request.Email);
@@ -57,6 +72,12 @@ public class AuthService : IAuthService
             throw new BadRequestException("Role assignment failed");
     }
 
+    /// <summary>
+    /// Logs in a user with the provided credentials and returns JWT tokens.
+    /// </summary>
+    /// <param name="request">User login data.</param>
+    /// <returns>A <see cref="TokenResponseDTO"/> containing access and refresh tokens.</returns>
+    /// <exception cref="BadRequestException">Thrown if email or password is invalid.</exception>
     public async Task<TokenResponseDTO?> Login(UserLoginDTO request)
     {
         var user = await _userManager.FindByEmailAsync(request.Email);
@@ -75,6 +96,12 @@ public class AuthService : IAuthService
         return response;
     }
 
+    /// <summary>
+    /// Refreshes the access token using a valid refresh token.
+    /// </summary>
+    /// <param name="request">Refresh token request data.</param>
+    /// <returns>A <see cref="TokenResponseDTO"/> containing new access and refresh tokens.</returns>
+    /// <exception cref="BadRequestException">Thrown if the refresh token is invalid.</exception>
     public async Task<TokenResponseDTO?> RefreshTokenAsync(RefreshTokenRequestDTO request)
     {
         var user = await _userManager.Users.FirstOrDefaultAsync(u => u.RefreshToken == request.RefreshToken);
@@ -91,6 +118,12 @@ public class AuthService : IAuthService
         };
     }
 
+    /// <summary>
+    /// Logs out the user.
+    /// </summary>
+    /// <param name="userPrincipal">Claims principal representing the logged-in user.</param>
+    /// <exception cref="BadRequestException">Thrown if the user is not found or not logged in.</exception>
+    /// <exception cref="NotFoundException">Thrown if the user is not found.</exception>
     public async Task LogoutAsync(ClaimsPrincipal userPrincipal)
     {
         var userId = userPrincipal.FindFirstValue(ClaimTypes.NameIdentifier);
@@ -108,6 +141,11 @@ public class AuthService : IAuthService
         await _userManager.UpdateAsync(user);
     }
 
+    /// <summary>
+    /// Generates a JWT access token for the specified user.
+    /// </summary>
+    /// <param name="user">The user for whom to generate the token.</param>
+    /// <returns>The generated JWT token as a string.</returns>
     private async Task<string> GenerateJwtToken(User user)
     {
         var role = await _userManager.GetRolesAsync(user);
@@ -134,6 +172,10 @@ public class AuthService : IAuthService
         return new JwtSecurityTokenHandler().WriteToken(tokenDescriptor);
     }
 
+    /// <summary>
+    /// Generates a secure random refresh token.
+    /// </summary>
+    /// <returns>The generated refresh token as a string.</returns>
     private string GenerateRefreshToken()
     {
         var randomNumber = new byte[32];
@@ -142,6 +184,12 @@ public class AuthService : IAuthService
         return Convert.ToBase64String(randomNumber);
     }
 
+    /// <summary>
+    /// Generates and saves a new refresh token for the specified user.
+    /// </summary>
+    /// <param name="user">The user for whom to generate and save the refresh token.</param>
+    /// <returns>The generated refresh token as a string.</returns>
+    /// <exception cref="BadRequestException">Thrown if refresh token assignment fails.</exception>
     private async Task<string> GenerateAndSaveRefreshTokenAsync(User user)
     {
         var refreshToken = GenerateRefreshToken();
