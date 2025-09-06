@@ -13,13 +13,13 @@ public class GalleryServiceTests
 {
     private readonly GalleryService _galleryService;
     private readonly Mock<IGalleryRepository> _mockGalleryRepository;
-    private readonly Mock<IGenericRepository<City>> _mockCityRepository;
+    private readonly Mock<ICityRepository> _mockCityRepository;
     private readonly Mock<IMapper> _mockMapper;
 
     public GalleryServiceTests()
     {
         _mockGalleryRepository = new Mock<IGalleryRepository>();
-        _mockCityRepository = new Mock<IGenericRepository<City>>();
+        _mockCityRepository = new Mock<ICityRepository>();
         _mockMapper = new Mock<IMapper>();
         _galleryService = new GalleryService(
             _mockGalleryRepository.Object,
@@ -65,7 +65,7 @@ public class GalleryServiceTests
         Assert.Contains(resultList, a => a.Id == 10);
         Assert.Contains(resultList, a => a.Id == 20);
     }
-    
+
     [Fact]
     public async Task GetArtworksByGalleryId_ThrowNotFoundException_WhenGalleryNotFound()
     {
