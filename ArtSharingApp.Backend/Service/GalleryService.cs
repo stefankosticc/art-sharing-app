@@ -29,22 +29,14 @@ public class GalleryService : IGalleryService
         _mapper = mapper;
     }
 
-    /// <summary>
-    /// Retrieves all galleries.
-    /// </summary>
-    /// <returns>A collection of <see cref="GalleryResponseDTO"/> representing all galleries.</returns>
+    /// <inheritdoc/>
     public async Task<IEnumerable<GalleryResponseDTO>> GetAllAsync()
     {
         var galleries = await _galleryRepository.GetAllAsync();
         return _mapper.Map<IEnumerable<GalleryResponseDTO>>(galleries);
     }
 
-    /// <summary>
-    /// Retrieves a gallery by its ID.
-    /// </summary>
-    /// <param name="id">The gallery ID.</param>
-    /// <returns>The <see cref="GalleryResponseDTO"/> for the specified gallery.</returns>
-    /// <exception cref="NotFoundException">Thrown if the gallery is not found.</exception>
+    /// <inheritdoc/>
     public async Task<GalleryResponseDTO?> GetByIdAsync(int id)
     {
         var gallery = await _galleryRepository.GetByIdAsync(id, g => g.City);
@@ -53,12 +45,7 @@ public class GalleryService : IGalleryService
         return _mapper.Map<GalleryResponseDTO>(gallery);
     }
 
-    /// <summary>
-    /// Adds a new gallery.
-    /// </summary>
-    /// <param name="galleryDto">The gallery data.</param>
-    /// <exception cref="BadRequestException">Thrown if parameters are invalid.</exception>
-    /// <exception cref="NotFoundException">Thrown if the city is not found.</exception>
+    /// <inheritdoc/>
     public async Task AddAsync(GalleryRequestDTO galleryDto)
     {
         if (galleryDto == null || string.IsNullOrWhiteSpace(galleryDto.Name))
@@ -72,13 +59,7 @@ public class GalleryService : IGalleryService
         await _galleryRepository.SaveAsync();
     }
 
-    /// <summary>
-    /// Updates an existing gallery.
-    /// </summary>
-    /// <param name="id">The gallery ID.</param>
-    /// <param name="galleryDto">The updated gallery data.</param>
-    /// <exception cref="BadRequestException">Thrown if parameters are invalid.</exception>
-    /// <exception cref="NotFoundException">Thrown if the gallery or city is not found.</exception>
+    /// <inheritdoc/>
     public async Task UpdateAsync(int id, GalleryRequestDTO galleryDto)
     {
         if (galleryDto == null || string.IsNullOrWhiteSpace(galleryDto.Name))
@@ -97,11 +78,7 @@ public class GalleryService : IGalleryService
         await _galleryRepository.SaveAsync();
     }
 
-    /// <summary>
-    /// Deletes a gallery by its ID.
-    /// </summary>
-    /// <param name="id">The gallery ID.</param>
-    /// <exception cref="NotFoundException">Thrown if the gallery is not found.</exception>
+    /// <inheritdoc/>
     public async Task DeleteAsync(int id)
     {
         var gallery = await _galleryRepository.GetByIdAsync(id);
@@ -111,12 +88,7 @@ public class GalleryService : IGalleryService
         await _galleryRepository.SaveAsync();
     }
 
-    /// <summary>
-    /// Retrieves artworks associated with a gallery by gallery ID.
-    /// </summary>
-    /// <param name="id">The gallery ID.</param>
-    /// <returns>A collection of <see cref="ArtworkResponseDTO"/> representing artworks in the gallery.</returns>
-    /// <exception cref="NotFoundException">Thrown if the gallery is not found.</exception>
+    /// <inheritdoc/>
     public async Task<IEnumerable<ArtworkResponseDTO>?> GetArtworksByGalleryId(int id)
     {
         var gallery = await _galleryRepository.GetByIdAsync(id, g => g.Artworks, g => g.City);
@@ -126,12 +98,7 @@ public class GalleryService : IGalleryService
         return _mapper.Map<IEnumerable<ArtworkResponseDTO>>(artworks);
     }
 
-    /// <summary>
-    /// Searches galleries by name.
-    /// </summary>
-    /// <param name="name">The name to search for.</param>
-    /// <returns>A collection of <see cref="GalleryResponseDTO"/> matching the name, or null if none found.</returns>
-    /// <exception cref="BadRequestException">Thrown if the name is not provided.</exception>
+    /// <inheritdoc/>
     public async Task<IEnumerable<GalleryResponseDTO>?> GetGalleriesByName(string name)
     {
         if (string.IsNullOrWhiteSpace(name))

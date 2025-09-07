@@ -41,14 +41,7 @@ public class FavoritesService : IFavoritesService
         _notificationService = notificationService;
     }
 
-    /// <summary>
-    /// Likes an artwork for a user.
-    /// </summary>
-    /// <param name="userId">The ID of the user liking the artwork.</param>
-    /// <param name="artworkId">The ID of the artwork to like.</param>
-    /// <returns>True if the operation succeeds.</returns>
-    /// <exception cref="BadRequestException">Thrown if the artwork is already liked by the user.</exception>
-    /// <exception cref="NotFoundException">Thrown if the user or artwork is not found.</exception>
+    /// <inheritdoc/>
     public async Task<bool> LikeArtwork(int userId, int artworkId)
     {
         var alreadyLiked = (await _favoritesRepository.GetAllAsync())
@@ -78,14 +71,7 @@ public class FavoritesService : IFavoritesService
         return true;
     }
 
-    /// <summary>
-    /// Removes a like from an artwork for a user.
-    /// </summary>
-    /// <param name="userId">The ID of the user disliking the artwork.</param>
-    /// <param name="artworkId">The ID of the artwork to dislike.</param>
-    /// <returns>True if the operation succeeds.</returns>
-    /// <exception cref="BadRequestException">Thrown if the artwork is not liked by the user.</exception>
-    /// <exception cref="NotFoundException">Thrown if the user or artwork is not found.</exception>
+    /// <inheritdoc/>
     public async Task<bool> DislikeArtwork(int userId, int artworkId)
     {
         var user = await _userRepository.GetByIdAsync(userId);
@@ -103,12 +89,7 @@ public class FavoritesService : IFavoritesService
         return true;
     }
 
-    /// <summary>
-    /// Retrieves all artworks liked by a user.
-    /// </summary>
-    /// <param name="userId">The ID of the user.</param>
-    /// <returns>A collection of <see cref="FavoritesDTO"/> representing liked artworks.</returns>
-    /// <exception cref="NotFoundException">Thrown if the user is not found or has no liked artworks.</exception>
+    /// <inheritdoc/>
     public async Task<IEnumerable<FavoritesDTO>?> GetLikedArtworks(int userId)
     {
         if (await _userRepository.GetByIdAsync(userId) == null)
@@ -121,27 +102,14 @@ public class FavoritesService : IFavoritesService
         return likedArtworksDto;
     }
 
-    /// <summary>
-    /// Retrieves the top 10 artists by number of likes.
-    /// </summary>
-    /// <remarks>
-    /// Top artists are determined based on the total number of likes their artworks have received.
-    /// </remarks>
-    /// <returns>A collection of <see cref="TopArtistResponseDTO"/> representing the top artists.</returns>
+    /// <inheritdoc/>
     public async Task<IEnumerable<TopArtistResponseDTO>?> GetTop10ArtistsByLikesAsync()
     {
         var artists = await _favoritesRepository.GetTopArtistsByLikesAsync(10);
         return _mapper.Map<IEnumerable<TopArtistResponseDTO>>(artists);
     }
 
-    /// <summary>
-    /// Retrieves trending artworks based on likes in the last 30 days.
-    /// </summary>
-    /// <remarks>
-    /// Trending artworks are determined based on the number of likes received in the last 30 days.
-    /// </remarks>
-    /// <param name="count">The number of trending artworks to retrieve.</param>
-    /// <returns>A collection of <see cref="DiscoverArtworkDTO"/> representing trending artworks.</returns>
+    /// <inheritdoc/>
     public async Task<IEnumerable<DiscoverArtworkDTO>?> GetTrendingArtworksAsync(int count)
     {
         var fromDate = DateTime.UtcNow.AddDays(-30);

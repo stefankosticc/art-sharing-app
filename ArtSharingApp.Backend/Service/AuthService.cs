@@ -34,12 +34,7 @@ public class AuthService : IAuthService
         _configuration = configuration;
     }
 
-    /// <summary>
-    /// Registers a new user with the provided registration data.
-    /// </summary>
-    /// <param name="request">User registration data.</param>
-    /// <exception cref="BadRequestException">Thrown if the user already exists or registration fails.</exception>
-    /// <exception cref="NotFoundException">Thrown if the default role is not found.</exception>
+    /// <inheritdoc />
     public async Task Register(UserRegisterDTO request)
     {
         var existingUser = await _userManager.FindByEmailAsync(request.Email);
@@ -72,12 +67,7 @@ public class AuthService : IAuthService
             throw new BadRequestException("Role assignment failed");
     }
 
-    /// <summary>
-    /// Logs in a user with the provided credentials and returns JWT tokens.
-    /// </summary>
-    /// <param name="request">User login data.</param>
-    /// <returns>A <see cref="TokenResponseDTO"/> containing access and refresh tokens.</returns>
-    /// <exception cref="BadRequestException">Thrown if email or password is invalid.</exception>
+    /// <inheritdoc />
     public async Task<TokenResponseDTO?> Login(UserLoginDTO request)
     {
         var user = await _userManager.FindByEmailAsync(request.Email);
@@ -96,12 +86,7 @@ public class AuthService : IAuthService
         return response;
     }
 
-    /// <summary>
-    /// Refreshes the access token using a valid refresh token.
-    /// </summary>
-    /// <param name="request">Refresh token request data.</param>
-    /// <returns>A <see cref="TokenResponseDTO"/> containing new access and refresh tokens.</returns>
-    /// <exception cref="BadRequestException">Thrown if the refresh token is invalid.</exception>
+    /// <inheritdoc />
     public async Task<TokenResponseDTO?> RefreshTokenAsync(RefreshTokenRequestDTO request)
     {
         var user = await _userManager.Users.FirstOrDefaultAsync(u => u.RefreshToken == request.RefreshToken);
@@ -118,12 +103,7 @@ public class AuthService : IAuthService
         };
     }
 
-    /// <summary>
-    /// Logs out the user.
-    /// </summary>
-    /// <param name="userPrincipal">Claims principal representing the logged-in user.</param>
-    /// <exception cref="BadRequestException">Thrown if the user is not found or not logged in.</exception>
-    /// <exception cref="NotFoundException">Thrown if the user is not found.</exception>
+    /// <inheritdoc />
     public async Task LogoutAsync(ClaimsPrincipal userPrincipal)
     {
         var userId = userPrincipal.FindFirstValue(ClaimTypes.NameIdentifier);

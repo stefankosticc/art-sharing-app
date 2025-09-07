@@ -28,11 +28,7 @@ public class RoleService : IRoleService
         _mapper = mapper;
     }
 
-    /// <summary>
-    /// Adds a new role.
-    /// </summary>
-    /// <param name="roleDto">The role data.</param>
-    /// <exception cref="BadRequestException">Thrown if parameters are invalid.</exception>
+    /// <inheritdoc />
     public async Task AddRoleAsync(RoleRequestDTO roleDto)
     {
         if (roleDto == null || string.IsNullOrWhiteSpace(roleDto.Name))
@@ -42,22 +38,14 @@ public class RoleService : IRoleService
         await _roleRepository.SaveAsync();
     }
 
-    /// <summary>
-    /// Retrieves all roles.
-    /// </summary>
-    /// <returns>A collection of <see cref="RoleResponseDTO"/> representing all roles.</returns>
+    /// <inheritdoc />
     public async Task<IEnumerable<RoleResponseDTO>> GetAllAsync()
     {
         IEnumerable<Role> roles = await _roleRepository.GetAllAsync();
         return _mapper.Map<IEnumerable<RoleResponseDTO>>(roles);
     }
 
-    /// <summary>
-    /// Retrieves a role by its ID.
-    /// </summary>
-    /// <param name="id">The role ID.</param>
-    /// <returns>The <see cref="RoleResponseDTO"/> for the specified role.</returns>
-    /// <exception cref="NotFoundException">Thrown if the role is not found.</exception>
+    /// <inheritdoc />
     public async Task<RoleResponseDTO?> GetByIdAsync(int id)
     {
         var role = await _roleRepository.GetByIdAsync(id);
@@ -66,13 +54,7 @@ public class RoleService : IRoleService
         return _mapper.Map<RoleResponseDTO>(role);
     }
 
-    /// <summary>
-    /// Updates an existing role.
-    /// </summary>
-    /// <param name="id">The role ID.</param>
-    /// <param name="roleDto">The updated role data.</param>
-    /// <exception cref="BadRequestException">Thrown if parameters are invalid.</exception>
-    /// <exception cref="NotFoundException">Thrown if the role is not found.</exception>
+    /// <inheritdoc />
     public async Task UpdateAsync(int id, RoleRequestDTO roleDto)
     {
         if (roleDto == null || string.IsNullOrWhiteSpace(roleDto.Name))
@@ -86,11 +68,7 @@ public class RoleService : IRoleService
         await _roleRepository.SaveAsync();
     }
 
-    /// <summary>
-    /// Deletes a role by its ID.
-    /// </summary>
-    /// <param name="id">The role ID.</param>
-    /// <exception cref="NotFoundException">Thrown if the role is not found.</exception>
+    /// <inheritdoc />
     public async Task DeleteAsync(int id)
     {
         var role = await _roleRepository.GetByIdAsync(id);

@@ -37,14 +37,7 @@ public class FollowersService : IFollowersService
         _notificationService = notificationService;
     }
 
-    /// <summary>
-    /// Follows a user.
-    /// </summary>
-    /// <param name="loggedInUserId">The ID of the user who wants to follow another user.</param>
-    /// <param name="userId">The ID of the user to be followed.</param>
-    /// <returns>True if the operation succeeds.</returns>
-    /// <exception cref="BadRequestException">Thrown if already following or trying to follow self.</exception>
-    /// <exception cref="NotFoundException">Thrown if the user to be followed is not found.</exception>
+    /// <inheritdoc/>
     public async Task<bool> FollowUserAsync(int loggedInUserId, int userId)
     {
         var isFollowing = await _followersRepository.IsFollowing(loggedInUserId, userId);
@@ -73,14 +66,7 @@ public class FollowersService : IFollowersService
         return true;
     }
 
-    /// <summary>
-    /// Unfollows a user.
-    /// </summary>
-    /// <param name="loggedInUserId">The ID of the user who wants to unfollow another user.</param>
-    /// <param name="userId">The ID of the user to be unfollowed.</param>
-    /// <returns>True if the operation succeeds.</returns>
-    /// <exception cref="BadRequestException">Thrown if not following or trying to unfollow self.</exception>
-    /// <exception cref="NotFoundException">Thrown if the user to be unfollowed is not found.</exception>
+    /// <inheritdoc/>
     public async Task<bool> UnfollowUserAsync(int loggedInUserId, int userId)
     {
         if (loggedInUserId == userId)
@@ -99,14 +85,7 @@ public class FollowersService : IFollowersService
         return true;
     }
 
-    /// <summary>
-    /// Retrieves the followers of a user.
-    /// </summary>
-    /// <param name="userId">The ID of the user whose followers to retrieve.</param>
-    /// <param name="skip">The number of followers to skip for pagination.</param>
-    /// <param name="take">The number of followers to take for pagination.</param>
-    /// <returns>A collection of <see cref="FollowersDTO"/> representing the user's followers.</returns>
-    /// <exception cref="NotFoundException">Thrown if the user is not found or has no followers.</exception>
+    /// <inheritdoc/>
     public async Task<IEnumerable<FollowersDTO>?> GetFollowersAsync(int userId, int skip, int take)
     {
         var user = await _userRepository.GetByIdAsync(userId);
@@ -121,14 +100,7 @@ public class FollowersService : IFollowersService
         return followersDto;
     }
 
-    /// <summary>
-    /// Retrieves the users that a user is following.
-    /// </summary>
-    /// <param name="userId">The ID of the user whose following list to retrieve.</param>
-    /// <param name="skip">The number of users to skip for pagination.</param>
-    /// <param name="take">The number of users to take for pagination.</param>
-    /// <returns>A collection of <see cref="FollowingDTO"/> representing the users being followed.</returns>
-    /// <exception cref="NotFoundException">Thrown if the user is not found or not following anyone.</exception>
+    /// <inheritdoc/>
     public async Task<IEnumerable<FollowingDTO>?> GetFollowingAsync(int userId, int skip, int take)
     {
         var user = await _userRepository.GetByIdAsync(userId);
@@ -143,36 +115,23 @@ public class FollowersService : IFollowersService
         return followingDto;
     }
 
-    /// <summary>
-    /// Retrieves the count of followers for a user.
-    /// </summary>
-    /// <param name="loggedInUserId">The ID of the user whose followers count to retrieve.</param>
-    /// <returns>The number of followers.</returns>
+    /// <inheritdoc/>
     public async Task<int> GetFollowersCountAsync(int loggedInUserId)
     {
         var followersCount = await _followersRepository.GetFollowersCountAsync(loggedInUserId);
         return followersCount;
     }
 
-    /// <summary>
-    /// Retrieves the count of users that a user is following.
-    /// </summary>
-    /// <param name="loggedInUserId">The ID of the user whose following count to retrieve.</param>
-    /// <returns>The number of users being followed.</returns>
+    /// <inheritdoc/>
     public async Task<int> GetFollowingCountAsync(int loggedInUserId)
     {
         var followingCount = await _followersRepository.GetFollowingCountAsync(loggedInUserId);
         return followingCount;
     }
 
-    /// <summary>
-    /// Retrieves artworks posted by users that the logged-in user is following.
-    /// </summary>
-    /// <param name="loggedInUserId">The ID of the logged-in user.</param>
-    /// <param name="skip">The number of artworks to skip for pagination.</param>
-    /// <param name="take">The number of artworks to take for pagination.</param>
-    /// <returns>A collection of <see cref="FollowedUserArtworkDTO"/> representing artworks from followed users.</returns>
-    public async Task<IEnumerable<FollowedUserArtworkDTO>?> GetFollowedUsersArtworksAsync(int loggedInUserId, int skip, int take)
+    /// <inheritdoc/>
+    public async Task<IEnumerable<FollowedUserArtworkDTO>?> GetFollowedUsersArtworksAsync(int loggedInUserId, int skip,
+        int take)
     {
         var artworks = await _followersRepository.GetFollowedUsersArtworksAsync(loggedInUserId, skip, take);
         return _mapper.Map<IEnumerable<FollowedUserArtworkDTO>>(artworks);
