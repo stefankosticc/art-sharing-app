@@ -9,17 +9,26 @@ using ArtSharingApp.Backend.Exceptions;
 
 namespace ArtSharingApp.Backend.Service;
 
+/// <summary>
+/// Provides business logic for managing roles.
+/// </summary>
 public class RoleService : IRoleService
 {
     private readonly IGenericRepository<Role> _roleRepository;
     private readonly IMapper _mapper;
-    
+
+    /// <summary>
+    /// Initializes a new instance of the <see cref="RoleService"/> class.
+    /// </summary>
+    /// <param name="roleRepository">Repository for role data access.</param>
+    /// <param name="mapper">AutoMapper instance for DTO mapping.</param>
     public RoleService(IGenericRepository<Role> roleRepository, IMapper mapper)
     {
         _roleRepository = roleRepository;
         _mapper = mapper;
     }
 
+    /// <inheritdoc />
     public async Task AddRoleAsync(RoleRequestDTO roleDto)
     {
         if (roleDto == null || string.IsNullOrWhiteSpace(roleDto.Name))
@@ -29,12 +38,14 @@ public class RoleService : IRoleService
         await _roleRepository.SaveAsync();
     }
 
+    /// <inheritdoc />
     public async Task<IEnumerable<RoleResponseDTO>> GetAllAsync()
     {
         IEnumerable<Role> roles = await _roleRepository.GetAllAsync();
         return _mapper.Map<IEnumerable<RoleResponseDTO>>(roles);
     }
 
+    /// <inheritdoc />
     public async Task<RoleResponseDTO?> GetByIdAsync(int id)
     {
         var role = await _roleRepository.GetByIdAsync(id);
@@ -43,11 +54,12 @@ public class RoleService : IRoleService
         return _mapper.Map<RoleResponseDTO>(role);
     }
 
+    /// <inheritdoc />
     public async Task UpdateAsync(int id, RoleRequestDTO roleDto)
     {
         if (roleDto == null || string.IsNullOrWhiteSpace(roleDto.Name))
             throw new BadRequestException("Role parameters not provided correctly.");
-        
+
         var role = await _roleRepository.GetByIdAsync(id);
         if (role == null)
             throw new NotFoundException($"Role with id {id} not found.");
@@ -56,6 +68,7 @@ public class RoleService : IRoleService
         await _roleRepository.SaveAsync();
     }
 
+    /// <inheritdoc />
     public async Task DeleteAsync(int id)
     {
         var role = await _roleRepository.GetByIdAsync(id);

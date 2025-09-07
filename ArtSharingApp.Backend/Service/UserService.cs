@@ -8,12 +8,21 @@ using ArtSharingApp.Backend.Exceptions;
 
 namespace ArtSharingApp.Backend.Service;
 
+/// <summary>
+/// Provides business logic for managing users.
+/// </summary>
 public class UserService : IUserService
 {
     private readonly IUserRepository _userRepository;
     private readonly IMapper _mapper;
     private readonly IFollowersRepository _followersRepository;
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="UserService"/> class.
+    /// </summary>
+    /// <param name="userRepository">Repository for user data access.</param>
+    /// <param name="mapper">AutoMapper instance for DTO mapping.</param>
+    /// <param name="followersRepository">Repository for followers data access.</param>
     public UserService(IUserRepository userRepository, IMapper mapper, IFollowersRepository followersRepository)
     {
         _userRepository = userRepository;
@@ -21,6 +30,7 @@ public class UserService : IUserService
         _followersRepository = followersRepository;
     }
 
+    /// <inheritdoc />
     public async Task AddUserAsync(UserRequestDTO userDto)
     {
         if (userDto == null)
@@ -30,6 +40,7 @@ public class UserService : IUserService
         await _userRepository.SaveAsync();
     }
 
+    /// <inheritdoc />
     public async Task UpdateAsync(int userId, UpdateUserProfileRequestDTO userDto, IFormFile? profilePhoto)
     {
         if (userDto == null)
@@ -58,6 +69,7 @@ public class UserService : IUserService
         await _userRepository.SaveAsync();
     }
 
+    /// <inheritdoc />
     public async Task<UserResponseDTO?> GetUserByIdAsync(int id)
     {
         var user = await _userRepository.GetByIdAsync(id);
@@ -66,6 +78,7 @@ public class UserService : IUserService
         return _mapper.Map<UserResponseDTO>(user);
     }
 
+    /// <inheritdoc />
     public async Task<UserByUserNameResponseDTO?> GetUserByUserNameAsync(string username, int loggedInUserId)
     {
         var user = await _userRepository.GetUserByUserNameAsync(username);
@@ -85,12 +98,14 @@ public class UserService : IUserService
         return response;
     }
 
+    /// <inheritdoc />
     public async Task<IEnumerable<UserResponseDTO>> GetAllUsersAsync()
     {
         IEnumerable<User> users = await _userRepository.GetAllAsync();
         return _mapper.Map<IEnumerable<UserResponseDTO>>(users);
     }
 
+    /// <inheritdoc />
     public async Task DeleteAsync(int id)
     {
         var user = await _userRepository.GetByIdAsync(id);
@@ -100,6 +115,7 @@ public class UserService : IUserService
         await _userRepository.SaveAsync();
     }
 
+    /// <inheritdoc />
     public async Task UpdateUserBiographyAsync(int userId, string biography)
     {
         var user = await _userRepository.GetByIdAsync(userId);
@@ -119,6 +135,7 @@ public class UserService : IUserService
         await _userRepository.SaveAsync();
     }
 
+    /// <inheritdoc />
     public async Task<IEnumerable<UserSearchResponseDTO?>> GetUsersByNameAndUserName(string searchString)
     {
         if (string.IsNullOrWhiteSpace(searchString))
@@ -127,6 +144,7 @@ public class UserService : IUserService
         return _mapper.Map<IEnumerable<UserSearchResponseDTO>>(users);
     }
 
+    /// <inheritdoc />
     public async Task<(byte[] ProfilePhoto, string ContentType)> GetProfilePhotoAsync(int id)
     {
         var result = await _userRepository.GetProfilePhotoAsync(id);

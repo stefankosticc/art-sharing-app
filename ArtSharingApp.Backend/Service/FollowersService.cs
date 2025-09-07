@@ -8,6 +8,9 @@ using AutoMapper.Configuration.Annotations;
 
 namespace ArtSharingApp.Backend.Service;
 
+/// <summary>
+/// Provides business logic for managing user followers and following relationships.
+/// </summary>
 public class FollowersService : IFollowersService
 {
     private readonly IFollowersRepository _followersRepository;
@@ -15,6 +18,13 @@ public class FollowersService : IFollowersService
     private readonly IMapper _mapper;
     private readonly INotificationService _notificationService;
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="FollowersService"/> class.
+    /// </summary>
+    /// <param name="followersRepository">Repository for followers data access.</param>
+    /// <param name="userRepository">Repository for user data access.</param>
+    /// <param name="mapper">AutoMapper instance for DTO mapping.</param>
+    /// <param name="notificationService">Service for sending notifications.</param>
     public FollowersService(
         IFollowersRepository followersRepository,
         IUserRepository userRepository,
@@ -27,6 +37,7 @@ public class FollowersService : IFollowersService
         _notificationService = notificationService;
     }
 
+    /// <inheritdoc/>
     public async Task<bool> FollowUserAsync(int loggedInUserId, int userId)
     {
         var isFollowing = await _followersRepository.IsFollowing(loggedInUserId, userId);
@@ -55,6 +66,7 @@ public class FollowersService : IFollowersService
         return true;
     }
 
+    /// <inheritdoc/>
     public async Task<bool> UnfollowUserAsync(int loggedInUserId, int userId)
     {
         if (loggedInUserId == userId)
@@ -73,7 +85,7 @@ public class FollowersService : IFollowersService
         return true;
     }
 
-    // Get followers of the logged-in user
+    /// <inheritdoc/>
     public async Task<IEnumerable<FollowersDTO>?> GetFollowersAsync(int userId, int skip, int take)
     {
         var user = await _userRepository.GetByIdAsync(userId);
@@ -88,7 +100,7 @@ public class FollowersService : IFollowersService
         return followersDto;
     }
 
-    // Get users that the logged-in user is following
+    /// <inheritdoc/>
     public async Task<IEnumerable<FollowingDTO>?> GetFollowingAsync(int userId, int skip, int take)
     {
         var user = await _userRepository.GetByIdAsync(userId);
@@ -103,18 +115,21 @@ public class FollowersService : IFollowersService
         return followingDto;
     }
 
+    /// <inheritdoc/>
     public async Task<int> GetFollowersCountAsync(int loggedInUserId)
     {
         var followersCount = await _followersRepository.GetFollowersCountAsync(loggedInUserId);
         return followersCount;
     }
 
+    /// <inheritdoc/>
     public async Task<int> GetFollowingCountAsync(int loggedInUserId)
     {
         var followingCount = await _followersRepository.GetFollowingCountAsync(loggedInUserId);
         return followingCount;
     }
 
+    /// <inheritdoc/>
     public async Task<IEnumerable<FollowedUserArtworkDTO>?> GetFollowedUsersArtworksAsync(int loggedInUserId, int skip,
         int take)
     {

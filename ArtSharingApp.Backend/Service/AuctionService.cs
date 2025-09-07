@@ -9,6 +9,9 @@ using UnauthorizedAccessException = ArtSharingApp.Backend.Exceptions.Unauthorize
 
 namespace ArtSharingApp.Backend.Service;
 
+/// <summary>
+/// Provides business logic for managing auctions.
+/// </summary>
 public class AuctionService : IAuctionService
 {
     private readonly IAuctionRepository _auctionRepository;
@@ -16,6 +19,13 @@ public class AuctionService : IAuctionService
     private readonly IOfferRepository _offerRepository;
     private readonly IMapper _mapper;
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="AuctionService"/> class.
+    /// </summary>
+    /// <param name="auctionRepository">Repository for auction data access.</param>
+    /// <param name="artworkRepository">Repository for artwork data access.</param>
+    /// <param name="offerRepository">Repository for offer data access.</param>
+    /// <param name="mapper">AutoMapper instance for DTO mapping.</param>
     public AuctionService(
         IAuctionRepository auctionRepository,
         IArtworkRepository artworkRepository,
@@ -28,6 +38,7 @@ public class AuctionService : IAuctionService
         _mapper = mapper;
     }
 
+    /// <inheritdoc />
     public async Task StartAuctionAsync(int artworkId, int userId, AuctionStartDTO request)
     {
         var artwork = await _artworkRepository.GetByIdAsync(artworkId);
@@ -57,6 +68,7 @@ public class AuctionService : IAuctionService
         await _auctionRepository.SaveAsync();
     }
 
+    /// <inheritdoc />
     public async Task MakeAnOfferAsync(int auctionId, int userId, OfferRequestDTO request)
     {
         var auction = await _auctionRepository.GetByIdAsync(auctionId, includes: ac => ac.Artwork);
@@ -83,6 +95,7 @@ public class AuctionService : IAuctionService
         await _offerRepository.SaveAsync();
     }
 
+    /// <inheritdoc />
     public async Task<IEnumerable<OfferResponseDTO>?> GetOffersAsync(int auctionId, int userId)
     {
         var auction = await _auctionRepository.GetByIdAsync(auctionId, includes: ac => ac.Artwork);
@@ -96,6 +109,7 @@ public class AuctionService : IAuctionService
         return _mapper.Map<IEnumerable<OfferResponseDTO>>(offers);
     }
 
+    /// <inheritdoc />
     public async Task<decimal?> GetMaxOfferAsync(int auctionId)
     {
         var auction = await _auctionRepository.GetByIdAsync(auctionId, includes: ac => ac.Artwork);
@@ -105,6 +119,7 @@ public class AuctionService : IAuctionService
         return await _offerRepository.GetMaxOfferAmountAsync(auctionId);
     }
 
+    /// <inheritdoc />
     public async Task AcceptOfferAsync(int offerId, int userId)
     {
         var offer = await _offerRepository.GetByIdAsync(offerId, includes: o => o.Auction);
@@ -126,6 +141,7 @@ public class AuctionService : IAuctionService
         await _offerRepository.SaveAsync();
     }
 
+    /// <inheritdoc />
     public async Task RejectOfferAsync(int offerId, int userId)
     {
         var offer = await _offerRepository.GetByIdAsync(offerId, includes: o => o.Auction);
@@ -141,6 +157,7 @@ public class AuctionService : IAuctionService
         await _offerRepository.SaveAsync();
     }
 
+    /// <inheritdoc />
     public async Task WithdrawOfferAsync(int offerId, int userId)
     {
         var offer = await _offerRepository.GetByIdAsync(offerId, includes: o => o.Auction);
@@ -156,6 +173,7 @@ public class AuctionService : IAuctionService
         await _offerRepository.SaveAsync();
     }
 
+    /// <inheritdoc />
     public async Task<AuctionResponseDTO?> GetActiveAuctionAsync(int artworkId)
     {
         var auction = await _auctionRepository.GetActiveAuctionByArtworkIdAsync(artworkId, DateTime.UtcNow);
@@ -176,6 +194,7 @@ public class AuctionService : IAuctionService
         };
     }
 
+    /// <inheritdoc />
     public async Task UpdateAuctionEndTimeAsync(int auctionId, int userId, AuctionUpdateEndDTO request)
     {
         var auction = await _auctionRepository.GetByIdAsync(auctionId, includes: ac => ac.Artwork);
@@ -198,6 +217,7 @@ public class AuctionService : IAuctionService
         await _auctionRepository.SaveAsync();
     }
 
+    /// <inheritdoc />
     public async Task<IEnumerable<HighStakesAuctionDTO>?> GetHighStakesAuctionsAsync(int count)
     {
         var now = DateTime.UtcNow;
