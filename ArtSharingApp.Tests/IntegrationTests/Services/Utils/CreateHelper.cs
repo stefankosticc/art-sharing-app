@@ -78,4 +78,14 @@ public static class CreateHelper
             GalleryId = galleryId
         };
     }
+
+    public static Gallery CreateGallery(string name, string address, int cityId)
+    {
+        return new Gallery
+        {
+            Name = name,
+            Address = address,
+            CityId = cityId
+        };
+    }
 }
