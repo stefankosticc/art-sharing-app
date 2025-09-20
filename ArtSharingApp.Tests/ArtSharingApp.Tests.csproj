@@ -23,4 +23,10 @@
         <ProjectReference Include="..\ArtSharingApp.Backend\ArtSharingApp.Backend.csproj"/>
     </ItemGroup>
 
+    <ItemGroup>
+        <None Update="appsettings.Test.json">
+            <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+        </None>
+    </ItemGroup>
+
 </Project>

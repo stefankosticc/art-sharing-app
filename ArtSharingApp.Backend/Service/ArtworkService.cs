@@ -9,6 +9,9 @@ using UnauthorizedAccessException = ArtSharingApp.Backend.Exceptions.Unauthorize
 
 namespace ArtSharingApp.Backend.Service;
 
+/// <summary>
+/// Provides business logic for managing artworks.
+/// </summary>
 public class ArtworkService : IArtworkService
 {
     private readonly IArtworkRepository _artworkRepository;
@@ -16,6 +19,13 @@ public class ArtworkService : IArtworkService
     private readonly IMapper _mapper;
     private readonly IFavoritesRepository _favoritesRepository;
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="ArtworkService"/> class.
+    /// </summary>
+    /// <param name="artworkRepository">Repository for artwork data access.</param>
+    /// <param name="userRepository">Repository for user data access.</param>
+    /// <param name="mapper">AutoMapper instance for DTO mapping.</param>
+    /// <param name="favoritesRepository">Repository for favorites data access.</param>
     public ArtworkService(IArtworkRepository artworkRepository, IUserRepository userRepository, IMapper mapper,
         IFavoritesRepository favoritesRepository)
     {
@@ -25,12 +35,14 @@ public class ArtworkService : IArtworkService
         _favoritesRepository = favoritesRepository;
     }
 
+    /// <inheritdoc />
     public async Task<IEnumerable<ArtworkResponseDTO>> GetAllAsync()
     {
         var artworks = await _artworkRepository.GetAllAsync();
         return _mapper.Map<IEnumerable<ArtworkResponseDTO>>(artworks);
     }
 
+    /// <inheritdoc />
     public async Task<ArtworkResponseDTO?> GetByIdAsync(int id, int loggedInUserId)
     {
         var artwork = await _artworkRepository.GetByIdAsync(id);
@@ -42,6 +54,7 @@ public class ArtworkService : IArtworkService
         return response;
     }
 
+    /// <inheritdoc />
     public async Task AddAsync(ArtworkRequestDTO artworkDto, IFormFile artworkImage)
     {
         if (artworkDto == null)
@@ -63,6 +76,7 @@ public class ArtworkService : IArtworkService
         await _artworkRepository.SaveAsync();
     }
 
+    /// <inheritdoc />
     public async Task UpdateAsync(int id, ArtworkRequestDTO artworkDto, IFormFile? artworkImage)
     {
         if (artworkDto == null)
@@ -89,6 +103,7 @@ public class ArtworkService : IArtworkService
         await _artworkRepository.SaveAsync();
     }
 
+    /// <inheritdoc />
     public async Task DeleteAsync(int id)
     {
         var artwork = await _artworkRepository.GetByIdAsync(id);
@@ -98,6 +113,7 @@ public class ArtworkService : IArtworkService
         await _artworkRepository.SaveAsync();
     }
 
+    /// <inheritdoc />
     public async Task<IEnumerable<ArtworkSearchResponseDTO>?> SearchByTitle(string title)
     {
         if (string.IsNullOrWhiteSpace(title))
@@ -108,6 +124,7 @@ public class ArtworkService : IArtworkService
         return _mapper.Map<IEnumerable<ArtworkSearchResponseDTO>>(artworks);
     }
 
+    /// <inheritdoc />
     public async Task ChangeVisibilityAsync(int id, bool isPrivate)
     {
         var artwork = await _artworkRepository.GetByIdAsync(id);
@@ -118,6 +135,7 @@ public class ArtworkService : IArtworkService
         await _artworkRepository.SaveAsync();
     }
 
+    /// <inheritdoc />
     public async Task PutOnSaleAsync(int id, int loggedInUserId, PutArtworkOnSaleDTO request)
     {
         var artwork = await _artworkRepository.GetByIdAsync(id);
@@ -140,6 +158,7 @@ public class ArtworkService : IArtworkService
         await _artworkRepository.SaveAsync();
     }
 
+    /// <inheritdoc />
     public async Task RemoveFromSaleAsync(int id, int loggedInUserId)
     {
         var artwork = await _artworkRepository.GetByIdAsync(id);
@@ -154,6 +173,7 @@ public class ArtworkService : IArtworkService
         await _artworkRepository.SaveAsync();
     }
 
+    /// <inheritdoc />
     public async Task TransferToUserAsync(int artworkId, int fromUserId, int toUserId)
     {
         var artwork = await _artworkRepository.GetByIdAsync(artworkId);
@@ -175,6 +195,7 @@ public class ArtworkService : IArtworkService
         await _artworkRepository.SaveAsync();
     }
 
+    /// <inheritdoc />
     public async Task<UserArtworksDTO> GetUserArtworksAsync(int userId, int loggedInUserId)
     {
         var user = await _userRepository.GetByIdAsync(userId);
@@ -195,6 +216,7 @@ public class ArtworkService : IArtworkService
         return response;
     }
 
+    /// <inheritdoc />
     public async Task<(byte[] Image, string ContentType)> GetArtworkImageAsync(int id)
     {
         var result = await _artworkRepository.GetArtworkImageAsync(id);
@@ -204,6 +226,7 @@ public class ArtworkService : IArtworkService
         return (result.Image, string.IsNullOrWhiteSpace(result.ContentType) ? "image/jpeg" : result.ContentType);
     }
 
+    /// <inheritdoc />
     public async Task<string?> ExtractColorAsync(IFormFile image)
     {
         if (image == null || image.Length == 0)
@@ -227,6 +250,7 @@ public class ArtworkService : IArtworkService
         }
     }
 
+    /// <inheritdoc />
     public async Task<IEnumerable<DiscoverArtworkDTO>?> GetDiscoverArtworksAsync(int loggedInUserId, int skip, int take)
     {
         var artworks = await _artworkRepository.GetDiscoverArtworksAsync(loggedInUserId, skip, take);
