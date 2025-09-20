@@ -10,12 +10,14 @@ using ArtSharingApp.Backend.Profile;
 using ArtSharingApp.Backend.Seeders;
 using ArtSharingApp.Backend.Models;
 using Microsoft.AspNetCore.Identity;
+using Npgsql;
 
 namespace ArtSharingApp.Tests.IntegrationTests;
 
 public abstract class IntegrationTestBase : IAsyncLifetime
 {
     protected string? ConnectionString { get; private set; }
+    protected string? DatabaseName { get; private set; }
     protected IConfigurationRoot Configuration { get; private set; }
     protected ApplicationDbContext? DbContext { get; private set; }
     protected ServiceProvider? ServiceProvider { get; private set; }
@@ -26,7 +28,15 @@ public abstract class IntegrationTestBase : IAsyncLifetime
             .SetBasePath(Directory.GetCurrentDirectory())
             .AddJsonFile("appsettings.Test.json")
             .Build();
-        ConnectionString = Configuration.GetConnectionString("ArtSharingAppContext");
+
+        // Generate a unique database name for each test run
+        DatabaseName = $"art-db-test-{Guid.NewGuid():N}";
+        var baseConnStr = Configuration.GetConnectionString("ArtSharingAppContext");
+        var builder = new NpgsqlConnectionStringBuilder(baseConnStr)
+        {
+            Database = DatabaseName
+        };
+        ConnectionString = builder.ToString();
     }
 
     public async Task InitializeAsync()
