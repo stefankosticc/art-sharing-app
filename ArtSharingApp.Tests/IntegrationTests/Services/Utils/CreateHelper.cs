@@ -3,6 +3,9 @@ using ArtSharingApp.Backend.Models.Enums;
 
 namespace ArtSharingApp.Tests.IntegrationTests.Services.Utils;
 
+/// <summary>
+/// Helper class for creating test entities.
+/// </summary>
 public static class CreateHelper
 {
     /// <summary>
@@ -11,16 +14,29 @@ public static class CreateHelper
     /// <param name="id"> User ID </param>
     /// <param name="roleId"> Role ID, default is 1 (Admin) </param>
     /// <param name="name"> User's full name, default is "Test User" </param>
+    /// <param name="userName"> Username, default is "user{id}" </param>
+    /// <param name="profilePhoto"> Profile photo in byte array format, default is null </param>
+    /// <param name="contentType"> Content type of the profile photo, default is null </param>
     /// <returns> A new User object </returns>
-    public static User CreateUser(int id, int roleId = 1, String name = "Test User")
+    public static User CreateUser(
+        int id,
+        int roleId = 1,
+        string name = "Test User",
+        string? userName = null,
+        byte[]? profilePhoto = null,
+        string? contentType = null,
+        string? biography = "This is a test user.")
     {
         return new User
         {
             Id = id,
-            UserName = $"user{id}",
+            UserName = userName ?? $"user{id}",
             Email = $"user{id}@gmail.com",
             Name = name,
-            RoleId = roleId
+            RoleId = roleId,
+            ProfilePhoto = profilePhoto,
+            ContentType = contentType,
+            Biography = biography
         };
     }
 
