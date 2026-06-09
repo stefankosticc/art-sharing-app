@@ -1,6 +1,6 @@
 using SkiaSharp;
 
-namespace ArtSharingApp.Backend.Utils;
+namespace ArtSharingApp.ImageService.Utils;
 
 public static class ImageColorHelper
 {

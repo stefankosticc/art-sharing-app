@@ -1,0 +1,6 @@
+@ArtSharingApp.ImageService_HostAddress = http://localhost:5009
+
+GET {{ArtSharingApp.ImageService_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###
