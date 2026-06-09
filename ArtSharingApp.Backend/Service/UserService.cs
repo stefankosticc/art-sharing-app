@@ -1,10 +1,12 @@
 using ArtSharingApp.Backend.DataAccess.Repository;
 using ArtSharingApp.Backend.DataAccess.Repository.RepositoryInterface;
 using ArtSharingApp.Backend.DTO;
+using ArtSharingApp.Backend.Infrastructure;
 using ArtSharingApp.Backend.Models;
 using ArtSharingApp.Backend.Service.ServiceInterface;
 using AutoMapper;
 using ArtSharingApp.Backend.Exceptions;
+using Refit;
 
 namespace ArtSharingApp.Backend.Service;
 
@@ -16,6 +18,7 @@ public class UserService : IUserService
     private readonly IUserRepository _userRepository;
     private readonly IMapper _mapper;
     private readonly IFollowersRepository _followersRepository;
+    private readonly IImageServiceClient _imageServiceClient;
 
     /// <summary>
     /// Initializes a new instance of the <see cref="UserService"/> class.
@@ -23,11 +26,13 @@ public class UserService : IUserService
     /// <param name="userRepository">Repository for user data access.</param>
     /// <param name="mapper">AutoMapper instance for DTO mapping.</param>
     /// <param name="followersRepository">Repository for followers data access.</param>
-    public UserService(IUserRepository userRepository, IMapper mapper, IFollowersRepository followersRepository)
+    /// <param name="imageServiceClient">Client for the image microservice.</param>
+    public UserService(IUserRepository userRepository, IMapper mapper, IFollowersRepository followersRepository, IImageServiceClient imageServiceClient)
     {
         _userRepository = userRepository;
         _mapper = mapper;
         _followersRepository = followersRepository;
+        _imageServiceClient = imageServiceClient;
     }
 
     /// <inheritdoc />
@@ -54,14 +59,19 @@ public class UserService : IUserService
 
         if (profilePhoto != null && profilePhoto.Length > 0)
         {
-            using (var ms = new MemoryStream())
-            {
-                await profilePhoto.CopyToAsync(ms);
-                user.UpdateProfilePhoto(ms.ToArray(), profilePhoto.ContentType);
-            }
+            var filePart = new StreamPart(profilePhoto.OpenReadStream(), profilePhoto.FileName, profilePhoto.ContentType ?? "image/jpeg");
+
+            var photoResult = string.IsNullOrEmpty(user.ProfilePhotoId)
+                ? await _imageServiceClient.UploadUserPhotoAsync(user.Id, filePart)
+                : await _imageServiceClient.ReplaceUserPhotoAsync(user.ProfilePhotoId, filePart);
+
+            user.ProfilePhotoId = photoResult.ImageId.ToString();
         }
         else if (userDto.RemovePhoto)
         {
+            if (!string.IsNullOrEmpty(user.ProfilePhotoId))
+                await _imageServiceClient.DeleteUserPhotoAsync(user.ProfilePhotoId);
+            user.ProfilePhotoId = null;
             user.RemoveProfilePhoto();
         }
 

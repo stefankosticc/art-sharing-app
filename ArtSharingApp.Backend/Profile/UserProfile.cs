@@ -11,7 +11,9 @@ public class UserProfile : AutoMapper.Profile
             .ForMember(dest => dest.RoleName, opt =>
                 opt.MapFrom(src => src.Role != null ? src.Role.Name : null))
             .ForMember(dest => dest.ProfilePhoto, opt =>
-                opt.MapFrom(src => $"/api/user/{src.Id}/profile-photo"));
+                opt.MapFrom(src => src.ProfilePhotoId != null
+                    ? $"/images/users/profile-photo/{src.ProfilePhotoId}"
+                    : $"/api/user/{src.Id}/profile-photo"));
 
         CreateMap<UserRequestDTO, User>()
             .ForMember(dest => dest.Role, opt => opt.Ignore());
@@ -21,15 +23,21 @@ public class UserProfile : AutoMapper.Profile
 
         CreateMap<User, UserSearchResponseDTO>()
             .ForMember(dest => dest.ProfilePhoto, opt =>
-                opt.MapFrom(src => $"/api/user/{src.Id}/profile-photo"));
+                opt.MapFrom(src => src.ProfilePhotoId != null
+                    ? $"/images/users/profile-photo/{src.ProfilePhotoId}"
+                    : $"/api/user/{src.Id}/profile-photo"));
 
         CreateMap<User, TopArtistResponseDTO>()
             .ForMember(dest => dest.ProfilePhoto, opt =>
-                opt.MapFrom(src => $"/api/user/{src.Id}/profile-photo"));
+                opt.MapFrom(src => src.ProfilePhotoId != null
+                    ? $"/images/users/profile-photo/{src.ProfilePhotoId}"
+                    : $"/api/user/{src.Id}/profile-photo"));
 
         CreateMap<User, UserByUserNameResponseDTO>()
-        .ForMember(dest => dest.ProfilePhoto, opt =>
-                opt.MapFrom(src => $"/api/user/{src.Id}/profile-photo")); ;
+            .ForMember(dest => dest.ProfilePhoto, opt =>
+                opt.MapFrom(src => src.ProfilePhotoId != null
+                    ? $"/images/users/profile-photo/{src.ProfilePhotoId}"
+                    : $"/api/user/{src.Id}/profile-photo"));
 
         CreateMap<UpdateUserProfileRequestDTO, User>();
     }

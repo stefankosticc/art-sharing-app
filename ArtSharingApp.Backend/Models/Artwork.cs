@@ -26,6 +26,11 @@ public class Artwork
     public string Story { get; set; }
 
     /// <summary>
+    /// Identifier of the image stored in the image service.
+    /// </summary>
+    public string? ImageId { get; set; }
+
+    /// <summary>
     /// Image of the artwork in byte array format
     /// </summary>
     [Required]

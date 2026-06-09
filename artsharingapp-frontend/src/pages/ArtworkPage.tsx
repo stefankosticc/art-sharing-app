@@ -24,6 +24,7 @@ import {
   ARTIST_FALLBACK_IMAGE,
   ARTWORK_FALLBACK_IMAGE,
   BACKEND_BASE_URL,
+  IMAGE_SERVICE_BASE_URL,
 } from "../config/constants";
 import AuctionSection from "../components/auctions-and-sales/AuctionSection";
 import ThreeDotsMenu from "../components/ThreeDotsMenu";
@@ -81,7 +82,7 @@ const ArtworkPage = ({ isNew = false }: ArtworkPageProps) => {
   useEffect(() => {
     if (!artwork) return;
 
-    setImgSrc(`${BACKEND_BASE_URL}${artwork.image}?t=${Date.now()}`);
+    setImgSrc(`${IMAGE_SERVICE_BASE_URL}${artwork.image}?t=${Date.now()}`);
     setExtractedColor(artwork.color);
 
     setIsLiked(!!artwork.isLikedByLoggedInUser);
@@ -158,7 +159,7 @@ const ArtworkPage = ({ isNew = false }: ArtworkPageProps) => {
         color: artwork.color || null,
       });
       setExtractedColor(artwork.color);
-      setImgSrc(`${BACKEND_BASE_URL}${artwork.image}?t=${Date.now()}`);
+      setImgSrc(`${IMAGE_SERVICE_BASE_URL}${artwork.image}?t=${Date.now()}`);
     } else if (isNew) {
       navigate(-1);
     }

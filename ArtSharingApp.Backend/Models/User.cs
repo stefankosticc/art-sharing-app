@@ -51,6 +51,11 @@ public class User : IdentityUser<int>
     public DateTime? RefreshTokenExpiresAt { get; set; }
 
     /// <summary>
+    /// Identifier of the profile photo stored in the image service.
+    /// </summary>
+    public string? ProfilePhotoId { get; set; }
+
+    /// <summary>
     /// User's profile photo in byte array format.
     /// </summary>
     public byte[]? ProfilePhoto { get; set; }

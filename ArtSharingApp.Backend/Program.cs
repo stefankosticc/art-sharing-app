@@ -4,6 +4,7 @@ using ArtSharingApp.Backend.DataAccess;
 using ArtSharingApp.Backend.DataAccess.Repository.RepositoryInterface;
 using ArtSharingApp.Backend.Exceptions.ErrorHandler;
 using ArtSharingApp.Backend.Hubs;
+using ArtSharingApp.Backend.Infrastructure;
 using ArtSharingApp.Backend.Models;
 using ArtSharingApp.Backend.Profile;
 using ArtSharingApp.Backend.Seeders;
@@ -12,6 +13,7 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
+using Refit;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -104,6 +106,13 @@ builder.Services.AddScoped<IFollowersService, FollowersService>();
 builder.Services.AddScoped<INotificationService, NotificationService>();
 builder.Services.AddScoped<IAuctionService, AuctionService>();
 builder.Services.AddScoped<IChatService, ChatService>();
+
+builder.Services.AddRefitClient<IImageServiceClient>()
+    .ConfigureHttpClient(c =>
+    {
+        c.BaseAddress = new Uri(builder.Configuration["ImageService:BaseUrl"]!);
+        c.DefaultRequestHeaders.Add("X-Api-Key", builder.Configuration["ImageService:ApiKey"]);
+    });
 
 builder.Services.AddSignalR();
 

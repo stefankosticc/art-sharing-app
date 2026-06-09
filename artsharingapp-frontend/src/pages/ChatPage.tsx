@@ -3,7 +3,7 @@ import chatService, { ChatMessage, ChatUser } from "../services/chat";
 import { useLoggedInUser } from "../hooks/useLoggedInUser";
 import "../styles/ChatPage.css";
 import Dock from "../components/Dock";
-import { ARTIST_FALLBACK_IMAGE, BACKEND_BASE_URL } from "../config/constants";
+import { ARTIST_FALLBACK_IMAGE, IMAGE_SERVICE_BASE_URL } from "../config/constants";
 import { AiOutlineSend } from "react-icons/ai";
 import { useScroll } from "../hooks/useScroll";
 import { useChatUsers } from "../hooks/useChatUserConversations";
@@ -181,7 +181,7 @@ const ChatPage = () => {
               >
                 <img
                   src={
-                    `${BACKEND_BASE_URL}${user.profilePhoto}` ||
+                    `${IMAGE_SERVICE_BASE_URL}${user.profilePhoto}` ||
                     ARTIST_FALLBACK_IMAGE
                   }
                   alt={user.userName}
@@ -207,7 +207,7 @@ const ChatPage = () => {
               <div className="chat-header">
                 <img
                   src={
-                    `${BACKEND_BASE_URL}${selectedUser.profilePhoto}` ||
+                    `${IMAGE_SERVICE_BASE_URL}${selectedUser.profilePhoto}` ||
                     ARTIST_FALLBACK_IMAGE
                   }
                   alt={selectedUser.userName}

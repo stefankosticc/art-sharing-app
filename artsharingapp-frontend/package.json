@@ -30,9 +30,10 @@
     "web-vitals": "^2.1.4"
   },
   "scripts": {
-    "start": "concurrently \"npm run start-frontend\" \"npm run start-backend\"",
+    "start": "concurrently \"npm run start-frontend\" \"npm run start-backend\" \"npm run start-image-service\"",
     "start-frontend": "react-scripts start",
     "start-backend": "dotnet run --project ../ArtSharingApp.Backend/ArtSharingApp.Backend.csproj",
+    "start-image-service": "dotnet run --project ../ArtSharingApp.ImageService/ArtSharingApp.ImageService.csproj",
     "build": "react-scripts build",
     "test": "react-scripts test",
     "eject": "react-scripts eject"
