@@ -46,7 +46,6 @@ public abstract class IntegrationTestBase : IAsyncLifetime
         services.AddDbContext<ApplicationDbContext>(options =>
             options.UseNpgsql(ConnectionString));
 
-        // services.AddAutoMapper(typeof(UserProfile).Assembly);
         services.AddAutoMapper(cfg => cfg.AddMaps(typeof(UserProfile).Assembly));
         services.AddScoped(typeof(IGenericRepository<>), typeof(GenericRepository<>));
         services.AddScoped<IUserRepository, UserRepository>();
