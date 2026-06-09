@@ -79,7 +79,8 @@ builder.Services.AddAuthentication(options =>
         };
     });
 
-builder.Services.AddAutoMapper(typeof(UserProfile).Assembly);
+// builder.Services.AddAutoMapper(typeof(UserProfile).Assembly);
+builder.Services.AddAutoMapper(cfg => cfg.AddMaps(typeof(UserProfile).Assembly));
 
 builder.Services.AddScoped(typeof(IGenericRepository<>), typeof(GenericRepository<>));
 builder.Services.AddScoped<IUserRepository, UserRepository>();
