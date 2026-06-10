@@ -68,6 +68,8 @@ public class ArtworkService : IArtworkService
             throw new BadRequestException("Image not provided correctly.");
 
         var artwork = _mapper.Map<Artwork>(artworkDto);
+        artwork.ImageId =
+            "pending"; // Temporary value to reserve the image slot until we get the real ID from the image service
 
         await _artworkRepository.AddAsync(artwork);
         await _artworkRepository.SaveAsync();

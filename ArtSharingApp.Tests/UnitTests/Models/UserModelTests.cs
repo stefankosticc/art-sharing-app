@@ -61,42 +61,34 @@ public class UserModelTests
     }
 
     [Fact]
-    public void UpdateProfilePhoto_SuccessfullyUpdatesProfilePhoto()
+    public void UpdateUserProfilePhoto_SetsProfilePhotoId()
     {
         var user = new User { Name = "John Doe" };
-        var photo = new byte[] { 1, 2, 3, 4 };
-        var contentType = "image/jpeg";
+        var photoId = Guid.NewGuid().ToString();
 
-        user.UpdateProfilePhoto(photo, contentType);
+        user.UpdateUserProfilePhoto(photoId);
 
-        Assert.Equal(photo, user.ProfilePhoto);
-        Assert.Equal(contentType, user.ContentType);
-    }
-
-    [Theory]
-    [InlineData(null)]
-    [InlineData(new byte[] { })]
-    public void UpdateProfilePhoto_ThrowsArgumentException_WhenPhotoIsNullOrEmpty(byte[] photo)
-    {
-        var user = new User { Name = "John Doe" };
-        var contentType = "image/jpeg";
-        Assert.Throws<ArgumentException>(() => user.UpdateProfilePhoto(photo, contentType));
+        Assert.Equal(photoId, user.ProfilePhotoId);
     }
 
     [Fact]
-    public void RemoveProfilePhoto_SuccessfullyRemovesProfilePhoto()
+    public void UpdateUserProfilePhoto_CanSetNull()
     {
-        var user = new User
-        {
-            Name = "John Doe",
-            ProfilePhoto = new byte[] { 1, 2, 3, 4 },
-            ContentType = "image/jpeg"
-        };
+        var user = new User { Name = "John Doe", ProfilePhotoId = "some-id" };
 
-        user.RemoveProfilePhoto();
+        user.UpdateUserProfilePhoto(null);
 
-        Assert.Null(user.ProfilePhoto);
-        Assert.Null(user.ContentType);
+        Assert.Null(user.ProfilePhotoId);
+    }
+
+    [Fact]
+    public void RemoveUserProfilePhoto_ClearsProfilePhotoId()
+    {
+        var user = new User { Name = "John Doe", ProfilePhotoId = "some-id" };
+
+        user.RemoveUserProfilePhoto();
+
+        Assert.Null(user.ProfilePhotoId);
     }
 
     [Fact]

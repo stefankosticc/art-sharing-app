@@ -38,7 +38,7 @@ public class UserServiceTests : IntegrationTestBase
         // Arrange
         var service = ServiceProvider!.GetRequiredService<IUserService>();
         var context = DbContext!;
-        context.Users.Add(CreateHelper.CreateUser(1, profilePhoto: new byte[] { 1, 2, 3 }, contentType: "image/png"));
+        context.Users.Add(CreateHelper.CreateUser(1, profilePhotoId: "existing-photo-id"));
         await context.SaveChangesAsync();
 
         var dto = new UpdateUserProfileRequestDTO
@@ -83,8 +83,7 @@ public class UserServiceTests : IntegrationTestBase
         // Assert
         Assert.NotNull(updatedUser);
         Assert.Equal("Updated Name", updatedUser.Name);
-        Assert.NotNull(updatedUser.ProfilePhoto);
-        Assert.Equal("image/png", updatedUser.ContentType);
+        Assert.NotNull(updatedUser.ProfilePhotoId);
     }
 
     [Fact]
@@ -93,7 +92,7 @@ public class UserServiceTests : IntegrationTestBase
         // Arrange
         var service = ServiceProvider!.GetRequiredService<IUserService>();
         var context = DbContext!;
-        context.Users.Add(CreateHelper.CreateUser(1, profilePhoto: new byte[] { 1, 2, 3 }, contentType: "image/png"));
+        context.Users.Add(CreateHelper.CreateUser(1, profilePhotoId: "existing-photo-id"));
         await context.SaveChangesAsync();
 
         var dto = new UpdateUserProfileRequestDTO
@@ -109,8 +108,7 @@ public class UserServiceTests : IntegrationTestBase
         // Assert
         Assert.NotNull(updatedUser);
         Assert.Equal("Updated Name", updatedUser.Name);
-        Assert.Null(updatedUser.ProfilePhoto);
-        Assert.Null(updatedUser.ContentType);
+        Assert.Null(updatedUser.ProfilePhotoId);
     }
 
     [Fact]
@@ -280,52 +278,4 @@ public class UserServiceTests : IntegrationTestBase
         Assert.Empty(result);
     }
 
-    [Fact]
-    public async Task GetProfilePhotoAsync_ReturnsProfilePhoto()
-    {
-        // Arrange
-        var service = ServiceProvider!.GetRequiredService<IUserService>();
-        var context = DbContext!;
-        context.Users.Add(CreateHelper.CreateUser(1, profilePhoto: new byte[] { 1, 2, 3 }, contentType: "image/png"));
-        await context.SaveChangesAsync();
-
-        // Act
-        var (profilePhoto, contentType) = await service.GetProfilePhotoAsync(1);
-
-        // Assert
-        Assert.NotNull(profilePhoto);
-        Assert.Equal(new byte[] { 1, 2, 3 }, profilePhoto);
-        Assert.Equal("image/png", contentType);
-    }
-
-    [Fact]
-    public async Task GetProfilePhotoAsync_ThrowsNotFound_WhenNoProfilePhoto()
-    {
-        // Arrange
-        var service = ServiceProvider!.GetRequiredService<IUserService>();
-        var context = DbContext!;
-        context.Users.Add(CreateHelper.CreateUser(1));
-        await context.SaveChangesAsync();
-
-        // Act & Assert
-        await Assert.ThrowsAsync<NotFoundException>(() => service.GetProfilePhotoAsync(1));
-    }
-
-    [Fact]
-    public async Task GetProfilePhotoAsync_ReturnsDefaultContentType_WhenContentTypeIsNull()
-    {
-        // Arrange
-        var service = ServiceProvider!.GetRequiredService<IUserService>();
-        var context = DbContext!;
-        context.Users.Add(CreateHelper.CreateUser(1, profilePhoto: new byte[] { 1, 2, 3 }, contentType: null));
-        await context.SaveChangesAsync();
-
-        // Act
-        var (profilePhoto, contentType) = await service.GetProfilePhotoAsync(1);
-
-        // Assert
-        Assert.NotNull(profilePhoto);
-        Assert.Equal(new byte[] { 1, 2, 3 }, profilePhoto);
-        Assert.Equal("image/jpeg", contentType);
-    }
 }

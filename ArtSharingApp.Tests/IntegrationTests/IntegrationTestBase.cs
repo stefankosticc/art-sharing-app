@@ -4,6 +4,7 @@ using Microsoft.Extensions.DependencyInjection;
 using ArtSharingApp.Backend.DataAccess;
 using ArtSharingApp.Backend.DataAccess.Repository;
 using ArtSharingApp.Backend.DataAccess.Repository.RepositoryInterface;
+using ArtSharingApp.Backend.Infrastructure;
 using ArtSharingApp.Backend.Service;
 using ArtSharingApp.Backend.Service.ServiceInterface;
 using ArtSharingApp.Backend.Profile;
@@ -70,6 +71,8 @@ public abstract class IntegrationTestBase : IAsyncLifetime
         services.AddScoped<INotificationService, NotificationService>();
         services.AddScoped<IAuctionService, AuctionService>();
         services.AddScoped<IChatService, ChatService>();
+
+        services.AddSingleton<IImageServiceClient, FakeImageServiceClient>();
 
         services.AddIdentity<User, Role>()
             .AddEntityFrameworkStores<ApplicationDbContext>()

@@ -305,22 +305,4 @@ public class ArtworkServiceTests : IntegrationTestBase
             Assert.Empty(result.PrivateArtworks);
     }
 
-    [Fact]
-    public async Task GetArtworkImageAsync_ReturnsImage()
-    {
-        // Arrange
-        var service = ServiceProvider!.GetRequiredService<IArtworkService>();
-        var context = DbContext!;
-        context.Users.Add(CreateHelper.CreateUser(1));
-        var artwork = CreateHelper.CreateArtwork("Image", 1, 1, image: new byte[] { 5 }, contentType: "image/png");
-        context.Artworks.Add(artwork);
-        await context.SaveChangesAsync();
-
-        // Act
-        var (image, contentType) = await service.GetArtworkImageAsync(artwork.Id);
-
-        // Assert
-        Assert.Equal(new byte[] { 5 }, image);
-        Assert.Equal("image/png", contentType);
-    }
 }
