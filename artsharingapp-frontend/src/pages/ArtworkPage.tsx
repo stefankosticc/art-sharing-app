@@ -23,7 +23,6 @@ import TextEditor from "../components/TextEditor";
 import {
   ARTIST_FALLBACK_IMAGE,
   ARTWORK_FALLBACK_IMAGE,
-  BACKEND_BASE_URL,
   IMAGE_SERVICE_BASE_URL,
 } from "../config/constants";
 import AuctionSection from "../components/auctions-and-sales/AuctionSection";
@@ -421,9 +420,7 @@ const ArtworkPage = ({ isNew = false }: ArtworkPageProps) => {
               (isEditing && loggedInUser?.userName) ? (
                 <div className="ap-user-info">
                   <img
-                    src={`${BACKEND_BASE_URL}/api/user/${
-                      artwork?.createdByArtistId || loggedInUser?.id
-                    }/profile-photo`}
+                    src={`${IMAGE_SERVICE_BASE_URL}${artwork?.createdByArtistProfilePhoto ?? loggedInUser?.profilePhoto}`}
                     alt=""
                     className="ap-user-profile-picture"
                     onError={(e) => {
@@ -446,9 +443,7 @@ const ArtworkPage = ({ isNew = false }: ArtworkPageProps) => {
               (isEditing && loggedInUser?.userName) ? (
                 <div className="ap-user-info">
                   <img
-                    src={`${BACKEND_BASE_URL}/api/user/${
-                      artwork?.postedByUserId || loggedInUser?.id
-                    }/profile-photo`}
+                    src={`${IMAGE_SERVICE_BASE_URL}${artwork?.postedByUserProfilePhoto ?? loggedInUser?.profilePhoto}`}
                     alt=""
                     className="ap-user-profile-picture"
                     onError={(e) => {

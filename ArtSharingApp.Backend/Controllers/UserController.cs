@@ -80,11 +80,4 @@ public class UserController : AuthenticatedUserBaseController
         return Ok(new { message = "User biography updated successfully" });
     }
 
-    [AllowAnonymous]
-    [HttpGet("user/{id}/profile-photo")]
-    public async Task<IActionResult> GetProfilePhoto(int id)
-    {
-        var response = await _userService.GetProfilePhotoAsync(id);
-        return File(response.ProfilePhoto, response.ContentType);
-    }
 }

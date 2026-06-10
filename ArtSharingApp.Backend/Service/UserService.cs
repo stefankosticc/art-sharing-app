@@ -27,7 +27,8 @@ public class UserService : IUserService
     /// <param name="mapper">AutoMapper instance for DTO mapping.</param>
     /// <param name="followersRepository">Repository for followers data access.</param>
     /// <param name="imageServiceClient">Client for the image microservice.</param>
-    public UserService(IUserRepository userRepository, IMapper mapper, IFollowersRepository followersRepository, IImageServiceClient imageServiceClient)
+    public UserService(IUserRepository userRepository, IMapper mapper, IFollowersRepository followersRepository,
+        IImageServiceClient imageServiceClient)
     {
         _userRepository = userRepository;
         _mapper = mapper;
@@ -59,20 +60,20 @@ public class UserService : IUserService
 
         if (profilePhoto != null && profilePhoto.Length > 0)
         {
-            var filePart = new StreamPart(profilePhoto.OpenReadStream(), profilePhoto.FileName, profilePhoto.ContentType ?? "image/jpeg");
+            var filePart = new StreamPart(profilePhoto.OpenReadStream(), profilePhoto.FileName,
+                profilePhoto.ContentType ?? "image/jpeg");
 
             var photoResult = string.IsNullOrEmpty(user.ProfilePhotoId)
                 ? await _imageServiceClient.UploadUserPhotoAsync(user.Id, filePart)
                 : await _imageServiceClient.ReplaceUserPhotoAsync(user.ProfilePhotoId, filePart);
 
-            user.ProfilePhotoId = photoResult.ImageId.ToString();
+            user.UpdateUserProfilePhoto(photoResult.ImageId.ToString());
         }
         else if (userDto.RemovePhoto)
         {
             if (!string.IsNullOrEmpty(user.ProfilePhotoId))
                 await _imageServiceClient.DeleteUserPhotoAsync(user.ProfilePhotoId);
-            user.ProfilePhotoId = null;
-            user.RemoveProfilePhoto();
+            user.RemoveUserProfilePhoto();
         }
 
         _userRepository.UpdateUserProfile(user);
@@ -152,15 +153,5 @@ public class UserService : IUserService
             throw new BadRequestException("Username parameter is required.");
         var users = await _userRepository.GetUsersByNameAndUserName(searchString);
         return _mapper.Map<IEnumerable<UserSearchResponseDTO>>(users);
-    }
-
-    /// <inheritdoc />
-    public async Task<(byte[] ProfilePhoto, string ContentType)> GetProfilePhotoAsync(int id)
-    {
-        var result = await _userRepository.GetProfilePhotoAsync(id);
-        if (result.ProfilePhoto == null || result.ProfilePhoto.Length == 0)
-            throw new NotFoundException("Profile photo not found.");
-
-        return (result.ProfilePhoto, string.IsNullOrWhiteSpace(result.ContentType) ? "image/jpeg" : result.ContentType);
     }
 }

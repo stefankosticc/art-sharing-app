@@ -28,24 +28,7 @@ public class Artwork
     /// <summary>
     /// Identifier of the image stored in the image service.
     /// </summary>
-    public string? ImageId { get; set; }
-
-    /// <summary>
-    /// Image of the artwork in byte array format
-    /// </summary>
-    [Required]
-    public byte[] Image { get; set; }
-
-    /// <summary>
-    /// Content type of the image
-    /// <remarks>
-    /// This is used to determine how the image should be displayed in the UI.
-    /// </remarks>
-    /// <example>
-    /// "image/jpeg"
-    /// </example>
-    /// </summary>
-    public string ContentType { get; set; }
+    public string ImageId { get; set; }
 
     /// <summary>
     /// Date when the artwork was created

@@ -108,14 +108,6 @@ public interface IArtworkService
     Task<UserArtworksDTO> GetUserArtworksAsync(int userId, int loggedInUserId);
 
     /// <summary>
-    /// Retrieves the image and content type for an artwork.
-    /// </summary>
-    /// <param name="id">The artwork ID.</param>
-    /// <returns>A tuple containing the image bytes and content type.</returns>
-    /// <exception cref="NotFoundException">Thrown if the image is not found.</exception>
-    Task<(byte[] Image, string ContentType)> GetArtworkImageAsync(int id);
-
-    /// <summary>
     /// Extracts the dominant color from an image file.
     /// </summary>
     /// <param name="image">The image file.</param>

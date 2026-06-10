@@ -13,7 +13,7 @@ public class ChatProfile : AutoMapper.Profile
             .ForMember(dest => dest.UserId,
                 opt => opt.MapFrom(src => src.Id))
             .ForMember(dest => dest.ProfilePhoto,
-                opt => opt.MapFrom(src => $"/api/user/{src.Id}/profile-photo"))
+                opt => opt.MapFrom(src => $"/images/users/profile-photo/{src.ProfilePhotoId}"))
             .ForMember(dest => dest.UnreadMessageCount,
                 opt => opt.MapFrom((src, dest, destMember, context) =>
                 {

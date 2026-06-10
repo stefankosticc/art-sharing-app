@@ -43,16 +43,6 @@ public class UserRepository : GenericRepository<User>, IUserRepository
                         || u.Name.ToLower().Contains(searchString.ToLower())).ToListAsync();
     }
 
-    public async Task<(byte[]? ProfilePhoto, string? ContentType)> GetProfilePhotoAsync(int id)
-    {
-        var result = await _dbSet
-            .Where(u => u.Id == id)
-            .Select(u => new { u.ProfilePhoto, u.ContentType })
-            .FirstOrDefaultAsync();
-
-        return (result?.ProfilePhoto, result?.ContentType);
-    }
-
     public async Task<User?> GetUserByUserNameAsync(string username)
     {
         return await _dbSet
@@ -64,7 +54,6 @@ public class UserRepository : GenericRepository<User>, IUserRepository
     {
         _context.Attach(user);
         _context.Entry(user).Property(u => u.Name).IsModified = true;
-        _context.Entry(user).Property(u => u.ProfilePhoto).IsModified = true;
-        _context.Entry(user).Property(u => u.ContentType).IsModified = true;
+        _context.Entry(user).Property(u => u.ProfilePhotoId).IsModified = true;
     }
 }

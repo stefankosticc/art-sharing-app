@@ -68,7 +68,6 @@ public class ArtworkService : IArtworkService
             throw new BadRequestException("Image not provided correctly.");
 
         var artwork = _mapper.Map<Artwork>(artworkDto);
-        artwork.Image = Array.Empty<byte>();
 
         await _artworkRepository.AddAsync(artwork);
         await _artworkRepository.SaveAsync();
@@ -232,16 +231,6 @@ public class ArtworkService : IArtworkService
         response.PublicArtworks = _mapper.Map<IEnumerable<ArtworkPreviewDTO>>(publicArtworks);
 
         return response;
-    }
-
-    /// <inheritdoc />
-    public async Task<(byte[] Image, string ContentType)> GetArtworkImageAsync(int id)
-    {
-        var result = await _artworkRepository.GetArtworkImageAsync(id);
-        if (result.Image == null || result.Image.Length == 0)
-            throw new NotFoundException("Image not found.");
-
-        return (result.Image, string.IsNullOrWhiteSpace(result.ContentType) ? "image/jpeg" : result.ContentType);
     }
 
     /// <inheritdoc />
