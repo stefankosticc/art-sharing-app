@@ -13,5 +13,6 @@ public class OfferResponseDTO
     public decimal Amount { get; set; }
     public int UserId { get; set; }
     public string UserName { get; set; }
+    public string? UserProfilePhoto { get; set; }
     public OfferStatus Status { get; set; }
 }

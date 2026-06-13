@@ -35,7 +35,7 @@ const FixedSaleSection = ({ artwork }: FixedSaleSectionProps) => {
                     selectedUser: {
                       userId: artwork.postedByUserId,
                       userName: artwork.postedByUserName,
-                      profilePhoto: `/api/user/${artwork.postedByUserId}/profile-photo`,
+                      profilePhoto: artwork.postedByUserProfilePhoto,
                     },
                     input: `Hello, I am interested in purchasing your artwork "${artwork.title}". Could you please provide more details?`,
                   },

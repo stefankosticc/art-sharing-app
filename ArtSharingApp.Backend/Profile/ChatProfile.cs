@@ -1,5 +1,6 @@
 using ArtSharingApp.Backend.DTO;
 using ArtSharingApp.Backend.Models;
+using ArtSharingApp.Backend.Utils;
 
 namespace ArtSharingApp.Backend.Profile;
 
@@ -13,7 +14,7 @@ public class ChatProfile : AutoMapper.Profile
             .ForMember(dest => dest.UserId,
                 opt => opt.MapFrom(src => src.Id))
             .ForMember(dest => dest.ProfilePhoto,
-                opt => opt.MapFrom(src => $"/images/users/profile-photo/{src.ProfilePhotoId}"))
+                opt => opt.MapFrom(src => ImagePaths.UserProfilePhoto(src.ProfilePhotoId)))
             .ForMember(dest => dest.UnreadMessageCount,
                 opt => opt.MapFrom((src, dest, destMember, context) =>
                 {
