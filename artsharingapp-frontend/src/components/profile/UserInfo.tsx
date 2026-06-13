@@ -3,7 +3,7 @@ import { MdOutlineChatBubble } from "react-icons/md";
 import { formatFollowCount } from "../../utils/formatting";
 import {
   ARTIST_FALLBACK_IMAGE,
-  BACKEND_BASE_URL,
+  IMAGE_SERVICE_BASE_URL,
 } from "../../config/constants";
 import "./styles/UserInfo.css";
 import { User } from "../../services/auth";
@@ -42,7 +42,7 @@ const UserInfo = ({
 
   useEffect(() => {
     if (user?.profilePhoto) {
-      setImgSrc(`${BACKEND_BASE_URL}${user.profilePhoto}?t=${Date.now()}`);
+      setImgSrc(`${IMAGE_SERVICE_BASE_URL}${user.profilePhoto}?t=${Date.now()}`);
     }
     if (user?.isFollowedByLoggedInUser)
       setIsFollowing(user.isFollowedByLoggedInUser);

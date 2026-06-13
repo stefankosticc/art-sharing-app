@@ -2,7 +2,7 @@ import { useState } from "react";
 import { ArtworkCardData, FavoriteArtwork } from "../services/artwork";
 import "../styles/ArtworkCard.css";
 import { useNavigate } from "react-router-dom";
-import { ARTWORK_FALLBACK_IMAGE, BACKEND_BASE_URL } from "../config/constants";
+import { ARTWORK_FALLBACK_IMAGE, IMAGE_SERVICE_BASE_URL } from "../config/constants";
 
 type ArtworkCardProps = {
   artwork: ArtworkCardData | FavoriteArtwork | null;
@@ -20,8 +20,8 @@ const ArtworkCard = ({ artwork, loading = false }: ArtworkCardProps) => {
   const getImage = (): string | null => {
     if (!artwork) return null;
     return "image" in artwork
-      ? `${BACKEND_BASE_URL}${artwork.image}`
-      : `${BACKEND_BASE_URL}${artwork.artworkImage}`;
+      ? `${IMAGE_SERVICE_BASE_URL}${artwork.image}`
+      : `${IMAGE_SERVICE_BASE_URL}${artwork.artworkImage}`;
   };
 
   const getId = (): number | null => {

@@ -31,6 +31,7 @@ export interface OfferResponse {
   amount: number;
   userId: number;
   userName: string;
+  userProfilePhoto: string | null;
   status: OfferStatus;
 }
 

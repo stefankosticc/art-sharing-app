@@ -109,14 +109,6 @@ public class ArtworkController : AuthenticatedUserBaseController
         return Ok(await _artworkService.GetUserArtworksAsync(userId, loggedInUserId));
     }
 
-    [AllowAnonymous]
-    [HttpGet("artwork/{id}/image")]
-    public async Task<IActionResult> GetArtworkImage(int id)
-    {
-        var response = await _artworkService.GetArtworkImageAsync(id);
-        return File(response.Image, response.ContentType);
-    }
-
     [HttpPost("artwork/extract-color")]
     public async Task<IActionResult> ExtractColor([FromForm] IFormFile image)
     {

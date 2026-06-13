@@ -6,7 +6,7 @@ import {
 } from "../../services/user";
 import {
   ARTIST_FALLBACK_IMAGE,
-  BACKEND_BASE_URL,
+  IMAGE_SERVICE_BASE_URL,
 } from "../../config/constants";
 import { HiArrowPathRoundedSquare } from "react-icons/hi2";
 import "./styles/AccountSettings.css";
@@ -24,7 +24,7 @@ const AccountSettings = ({
   onClose,
 }: AccountSettingsProps) => {
   const [profilePhoto, setProfilePhoto] = useState<string>(
-    `${BACKEND_BASE_URL}${user.profilePhoto}?t=${Date.now()}`
+    `${IMAGE_SERVICE_BASE_URL}${user.profilePhoto}?t=${Date.now()}`
   ); // for img tag
   const [profilePhotoFile, setProfilePhotoFile] = useState<File | null>(null); // for backend
   const [editingUserData, setEditingUserData] =
@@ -55,7 +55,7 @@ const AccountSettings = ({
       name: user.name,
       removePhoto: false,
     });
-    setProfilePhoto(`${BACKEND_BASE_URL}${user.profilePhoto}?t=${Date.now()}`);
+    setProfilePhoto(`${IMAGE_SERVICE_BASE_URL}${user.profilePhoto}?t=${Date.now()}`);
     onClose();
   };
 

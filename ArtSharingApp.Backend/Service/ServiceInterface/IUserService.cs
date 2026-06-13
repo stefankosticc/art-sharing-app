@@ -54,14 +54,6 @@ namespace ArtSharingApp.Backend.Service.ServiceInterface
         Task<IEnumerable<UserSearchResponseDTO?>> GetUsersByNameAndUserName(string searchString);
 
         /// <summary>
-        /// Retrieves the profile photo and content type for a user.
-        /// </summary>
-        /// <param name="id">The user ID.</param>
-        /// <returns>A tuple containing the profile photo bytes and content type.</returns>
-        /// <exception cref="NotFoundException">Thrown if the profile photo is not found.</exception>
-        Task<(byte[] ProfilePhoto, string ContentType)> GetProfilePhotoAsync(int id);
-
-        /// <summary>
         /// Retrieves a user by their username.
         /// </summary>
         /// <param name="username">The username of the user.</param>

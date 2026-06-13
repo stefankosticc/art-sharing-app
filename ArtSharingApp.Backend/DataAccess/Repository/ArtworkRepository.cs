@@ -84,16 +84,6 @@ public class ArtworkRepository : GenericRepository<Artwork>, IArtworkRepository
             .ToListAsync();
     }
 
-    public async Task<(byte[]? Image, string? ContentType)> GetArtworkImageAsync(int id)
-    {
-        var result = await _dbSet
-            .Where(a => a.Id == id)
-            .Select(a => new { a.Image, a.ContentType })
-            .FirstOrDefaultAsync();
-
-        return (result?.Image, result?.ContentType);
-    }
-
     public async Task<IEnumerable<Artwork>?> GetDiscoverArtworksAsync(int loggedInUserId, int skip, int take)
     {
         // Get IDs of users the current user follows

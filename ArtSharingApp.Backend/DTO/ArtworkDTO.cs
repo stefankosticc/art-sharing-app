@@ -16,8 +16,10 @@ public class ArtworkResponseDTO
     public Currency Currency { get; set; }
     public int CreatedByArtistId { get; set; }
     public string CreatedByArtistUserName { get; set; }
+    public string? CreatedByArtistProfilePhoto { get; set; }
     public int PostedByUserId { get; set; }
     public string PostedByUserName { get; set; }
+    public string? PostedByUserProfilePhoto { get; set; }
     public int? CityId { get; set; }
     public string? CityName { get; set; }
     public int? GalleryId { get; set; }

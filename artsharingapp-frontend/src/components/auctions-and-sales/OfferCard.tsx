@@ -25,7 +25,7 @@ const OfferCard = ({
   const handleAccept = async () => {
     if (
       window.confirm(
-        "Are you sure you want to accept this offer? This action cannot be undone."
+        "Are you sure you want to accept this offer? This action cannot be undone.",
       )
     ) {
       const success = await acceptOffer(offer.id);
@@ -36,10 +36,10 @@ const OfferCard = ({
             selectedUser: {
               userId: offer.userId,
               userName: offer.userName,
-              profilePhoto: `/api/user/${offer.userId}/profile-photo`,
+              profilePhoto: offer.userProfilePhoto,
             },
             input: `Hello, I am accepting your offer of ${offer.amount.toLocaleString(
-              "en-US"
+              "en-US",
             )} ${
               currency !== undefined && Currency[currency]
             } for the artwork. Please provide your payment details so we can proceed with the transaction.

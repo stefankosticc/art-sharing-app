@@ -31,8 +31,10 @@ export interface Artwork {
   currency: Currency;
   createdByArtistId: number;
   createdByArtistUserName: string;
+  createdByArtistProfilePhoto: string | null;
   postedByUserId: number;
   postedByUserName: string;
+  postedByUserProfilePhoto: string | null;
   cityId: number | null;
   cityName: string | null;
   galleryId: number | null;

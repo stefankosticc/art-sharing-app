@@ -1,4 +1,3 @@
-using ArtSharingApp.Backend.Exceptions;
 using SkiaSharp;
 
 namespace ArtSharingApp.Backend.Utils;
@@ -104,4 +103,3 @@ public static class ImageColorHelper
         }
     }
 }
-

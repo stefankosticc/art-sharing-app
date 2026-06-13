@@ -3,7 +3,7 @@ import { FaLandmark } from "react-icons/fa6";
 import { FaCity } from "react-icons/fa";
 import { ArtworkSearchResponse } from "../../services/artwork";
 import { useNavigate } from "react-router-dom";
-import { BACKEND_BASE_URL } from "../../config/constants";
+import { IMAGE_SERVICE_BASE_URL } from "../../config/constants";
 
 const fallbackImage =
   "https://upload.wikimedia.org/wikipedia/commons/a/a3/Image-not-found.png?20210521171500";
@@ -24,7 +24,7 @@ const ArtworkSearchCard = ({ artwork }: ArtworkSearchCardProps) => {
     >
       <div className="asc-img-container">
         <img
-          src={`${BACKEND_BASE_URL}${artwork.image}` || fallbackImage}
+          src={`${IMAGE_SERVICE_BASE_URL}${artwork.image}` || fallbackImage}
           alt={artwork.title}
           onError={(e) => {
             (e.target as HTMLImageElement).src = fallbackImage;

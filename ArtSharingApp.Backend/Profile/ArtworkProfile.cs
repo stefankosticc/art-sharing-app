@@ -1,5 +1,6 @@
 using ArtSharingApp.Backend.DTO;
 using ArtSharingApp.Backend.Models;
+using ArtSharingApp.Backend.Utils;
 
 namespace ArtSharingApp.Backend.Profile;
 
@@ -10,14 +11,22 @@ public class ArtworkProfile : AutoMapper.Profile
         CreateMap<Artwork, ArtworkResponseDTO>()
             .ForMember(dest => dest.CreatedByArtistUserName, opt =>
                 opt.MapFrom(src => src.CreatedByArtist != null ? src.CreatedByArtist.UserName : null))
+            .ForMember(dest => dest.CreatedByArtistProfilePhoto, opt =>
+                opt.MapFrom(src => src.CreatedByArtist != null && src.CreatedByArtist.ProfilePhotoId != null
+                    ? ImagePaths.UserProfilePhoto(src.CreatedByArtist.ProfilePhotoId)
+                    : null))
             .ForMember(dest => dest.PostedByUserName, opt =>
                 opt.MapFrom(src => src.PostedByUser != null ? src.PostedByUser.UserName : null))
+            .ForMember(dest => dest.PostedByUserProfilePhoto, opt =>
+                opt.MapFrom(src => src.PostedByUser != null && src.PostedByUser.ProfilePhotoId != null
+                    ? ImagePaths.UserProfilePhoto(src.PostedByUser.ProfilePhotoId)
+                    : null))
             .ForMember(dest => dest.CityName, opt =>
                 opt.MapFrom(src => src.City != null ? src.City.Name : null))
             .ForMember(dest => dest.GalleryName, opt =>
                 opt.MapFrom(src => src.Gallery != null ? src.Gallery.Name : null))
             .ForMember(dest => dest.Image, opt =>
-                opt.MapFrom(src => $"/api/artwork/{src.Id}/image"));
+                opt.MapFrom(src => ImagePaths.Artwork(src.ImageId)));
 
         CreateMap<ArtworkRequestDTO, Artwork>()
             .ForMember(dest => dest.CreatedByArtist, opt => opt.Ignore())
@@ -26,10 +35,10 @@ public class ArtworkProfile : AutoMapper.Profile
             .ForMember(dest => dest.City, opt => opt.Ignore());
 
         CreateMap<Artwork, ArtworkPreviewDTO>()
-            .ForMember(dest => dest.PostedByUserName, opt => 
+            .ForMember(dest => dest.PostedByUserName, opt =>
                 opt.MapFrom(src => src.PostedByUser != null ? src.PostedByUser.UserName : null))
             .ForMember(dest => dest.Image, opt =>
-                opt.MapFrom(src => $"/api/artwork/{src.Id}/image"));
+                opt.MapFrom(src => ImagePaths.Artwork(src.ImageId)));
 
         CreateMap<Artwork, ArtworkSearchResponseDTO>()
             .ForMember(dest => dest.PostedByUserName, opt =>
@@ -41,18 +50,18 @@ public class ArtworkProfile : AutoMapper.Profile
             .ForMember(dest => dest.GalleryName, opt =>
                 opt.MapFrom(src => src.Gallery != null ? src.Gallery.Name : null))
             .ForMember(dest => dest.Image, opt =>
-                opt.MapFrom(src => $"/api/artwork/{src.Id}/image"));
-        
+                opt.MapFrom(src => ImagePaths.Artwork(src.ImageId)));
+
         CreateMap<Artwork, FollowedUserArtworkDTO>()
             .ForMember(dest => dest.PostedByUserName, opt =>
                 opt.MapFrom(src => src.PostedByUser.UserName))
             .ForMember(dest => dest.Image, opt =>
-                opt.MapFrom(src => $"/api/artwork/{src.Id}/image"));
-        
+                opt.MapFrom(src => ImagePaths.Artwork(src.ImageId)));
+
         CreateMap<Artwork, DiscoverArtworkDTO>()
             .ForMember(dest => dest.PostedByUserName, opt =>
                 opt.MapFrom(src => src.PostedByUser.UserName))
             .ForMember(dest => dest.Image, opt =>
-                opt.MapFrom(src => $"/api/artwork/{src.Id}/image"));
+                opt.MapFrom(src => ImagePaths.Artwork(src.ImageId)));
     }
 }
