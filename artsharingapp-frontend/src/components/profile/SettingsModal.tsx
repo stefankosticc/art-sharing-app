@@ -4,6 +4,7 @@ import { useState } from "react";
 import { logout, User } from "../../services/auth";
 import { useNavigate } from "react-router-dom";
 import AccountSettings from "./AccountSettings";
+import notificationService from "../../services/notifications";
 
 const TABS: { key: string }[] = [{ key: "Account" }];
 
@@ -25,6 +26,7 @@ const SettingsModal = ({
   const handleLogout = async () => {
     try {
       await logout();
+      notificationService.stop();
       localStorage.removeItem("accessToken");
       localStorage.removeItem("refreshToken");
       navigate("/login");

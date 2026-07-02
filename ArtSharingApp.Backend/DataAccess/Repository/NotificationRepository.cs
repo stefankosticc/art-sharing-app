@@ -21,6 +21,12 @@ public class NotificationRepository : GenericRepository<Notification>, INotifica
             .ToListAsync();
     }
 
+    public async Task<int> GetUnreadCountAsync(int loggedInUserId)
+    {
+        return await _dbSet
+            .CountAsync(n => n.RecipientId == loggedInUserId && n.Status == NotificationStatus.UNREAD);
+    }
+
     public void UpdateNotificationStatus(Notification notification)
     {
         _context.Attach(notification);
