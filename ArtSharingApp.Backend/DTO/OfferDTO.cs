@@ -10,6 +10,7 @@ public class OfferRequestDTO
 public class OfferResponseDTO
 {
     public int Id { get; set; }
+    public int AuctionId { get; set; }
     public decimal Amount { get; set; }
     public int UserId { get; set; }
     public string UserName { get; set; }

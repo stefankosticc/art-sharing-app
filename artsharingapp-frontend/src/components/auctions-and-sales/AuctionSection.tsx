@@ -1,4 +1,3 @@
-import { useActiveAuction } from "../../hooks/useActiveAuction";
 import { Currency } from "../../services/enums";
 import "./styles/AuctionSection.css";
 import { AiOutlineSend } from "react-icons/ai";
@@ -8,15 +7,9 @@ import { makeAnOffer, OfferRequest } from "../../services/auction";
 import { useAuctionContext } from "../../context/AuctionContext";
 import { toast } from "react-toastify";
 
-type AuctionSectionProps = {
-  artworkId: number;
-};
-
-const AuctionSection = ({ artworkId }: AuctionSectionProps) => {
+const AuctionSection = () => {
   const [offerRequest, setOfferRequest] = useState<OfferRequest>({ amount: 0 });
-  const { triggerRefetchAuction } = useAuctionContext();
-
-  const { auction } = useActiveAuction(artworkId);
+  const { auction, triggerRefetchAuction } = useAuctionContext();
 
   if (!auction) return null;
 

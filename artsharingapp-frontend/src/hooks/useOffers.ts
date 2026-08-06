@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { getOffers, OfferResponse } from "../services/auction";
+import { auctionHubService, getOffers, OfferResponse } from "../services/auction";
 
 export const useOffers = (auctionId: number, refetch: boolean = false) => {
   const [offers, setOffers] = useState<OfferResponse[] | null>(null);
@@ -38,6 +38,26 @@ export const useOffers = (auctionId: number, refetch: boolean = false) => {
       isCancelled = true;
     };
   }, [auctionId, refetch]);
+
+  useEffect(() => {
+    if (auctionId <= 0) return;
+
+    const unsubscribe = auctionHubService.subscribeOfferUpdate((update) => {
+      if (update.auctionId !== auctionId) return;
+
+      setOffers((prev) => {
+        const existing = prev ?? [];
+        const index = existing.findIndex((offer) => offer.id === update.id);
+        if (index === -1) return [update, ...existing];
+
+        const next = [...existing];
+        next[index] = update;
+        return next;
+      });
+    });
+
+    return unsubscribe;
+  }, [auctionId]);
 
   return { offers, loadingOffers };
 };

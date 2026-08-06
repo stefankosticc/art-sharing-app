@@ -11,7 +11,6 @@ import {
   startAnAuction,
   updateAuction,
 } from "../../services/auction";
-import { useActiveAuction } from "../../hooks/useActiveAuction";
 import NewAuctionForm from "./NewAuctionForm";
 import { useAuctionContext } from "../../context/AuctionContext";
 import EditAuctionForm from "./EditAuctionForm";
@@ -31,7 +30,7 @@ const PutOnSaleModal = ({
   const [activeTab, setActiveTab] = useState<string>("fixed");
   const [fixedPrice, setFixedPrice] = useState<number>(0);
   const [fixedCurrency, setFixedCurrency] = useState<Currency>(Currency.USD);
-  const { triggerRefetchAuction } = useAuctionContext();
+  const { auction, triggerRefetchAuction } = useAuctionContext();
 
   const [auctionData, setAuctionData] = useState<AuctionStartRequest>({
     startTime: new Date(),
@@ -44,8 +43,6 @@ const PutOnSaleModal = ({
     useState<AuctionUpdateRequest>({
       endTime: new Date(),
     });
-
-  const { auction } = useActiveAuction(artworkId);
 
   useEffect(() => {
     if (auction) setEditActiveAuctionData({ endTime: auction.endTime });

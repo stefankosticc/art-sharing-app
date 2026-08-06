@@ -1,4 +1,4 @@
-import { useActiveAuction } from "../../hooks/useActiveAuction";
+import { useAuctionContext } from "../../context/AuctionContext";
 import { useOffers } from "../../hooks/useOffers";
 import "./styles/AuctionAnalyticsModal.css";
 import { IoCloseCircleOutline } from "react-icons/io5";
@@ -6,17 +6,13 @@ import OfferCard from "./OfferCard";
 import { useState } from "react";
 
 type AuctionAnalyticsModalProps = {
-  artworkId: number;
   onClose: () => void;
 };
 
-const AuctionAnalyticsModal = ({
-  artworkId,
-  onClose,
-}: AuctionAnalyticsModalProps) => {
+const AuctionAnalyticsModal = ({ onClose }: AuctionAnalyticsModalProps) => {
   const [refetchOffers, setRefetchOffers] = useState<boolean>(false);
 
-  const { auction } = useActiveAuction(artworkId);
+  const { auction } = useAuctionContext();
 
   const { offers } = useOffers(auction?.id ? auction.id : -1, refetchOffers);
 

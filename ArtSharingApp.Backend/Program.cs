@@ -148,4 +148,6 @@ app.MapHub<ChatHub>("/hubs/chat");
 
 app.MapHub<NotificationHub>("/hubs/notifications");
 
+app.MapHub<AuctionHub>("/hubs/auction");
+
 app.Run();

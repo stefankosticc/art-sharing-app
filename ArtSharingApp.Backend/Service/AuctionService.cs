@@ -1,10 +1,12 @@
 using ArtSharingApp.Backend.DataAccess.Repository.RepositoryInterface;
 using ArtSharingApp.Backend.DTO;
 using ArtSharingApp.Backend.Exceptions;
+using ArtSharingApp.Backend.Hubs;
 using ArtSharingApp.Backend.Models;
 using ArtSharingApp.Backend.Models.Enums;
 using ArtSharingApp.Backend.Service.ServiceInterface;
 using AutoMapper;
+using Microsoft.AspNetCore.SignalR;
 using UnauthorizedAccessException = ArtSharingApp.Backend.Exceptions.UnauthorizedAccessException;
 
 namespace ArtSharingApp.Backend.Service;
@@ -18,6 +20,7 @@ public class AuctionService : IAuctionService
     private readonly IArtworkRepository _artworkRepository;
     private readonly IOfferRepository _offerRepository;
     private readonly IMapper _mapper;
+    private readonly IHubContext<AuctionHub> _hubContext;
 
     /// <summary>
     /// Initializes a new instance of the <see cref="AuctionService"/> class.
@@ -26,16 +29,19 @@ public class AuctionService : IAuctionService
     /// <param name="artworkRepository">Repository for artwork data access.</param>
     /// <param name="offerRepository">Repository for offer data access.</param>
     /// <param name="mapper">AutoMapper instance for DTO mapping.</param>
+    /// <param name="hubContext">SignalR hub context for broadcasting auction updates.</param>
     public AuctionService(
         IAuctionRepository auctionRepository,
         IArtworkRepository artworkRepository,
         IOfferRepository offerRepository,
-        IMapper mapper)
+        IMapper mapper,
+        IHubContext<AuctionHub> hubContext)
     {
         _auctionRepository = auctionRepository;
         _artworkRepository = artworkRepository;
         _offerRepository = offerRepository;
         _mapper = mapper;
+        _hubContext = hubContext;
     }
 
     /// <inheritdoc />
@@ -93,6 +99,28 @@ public class AuctionService : IAuctionService
 
         await _offerRepository.AddAsync(offer);
         await _offerRepository.SaveAsync();
+
+        var offerCount = await _offerRepository.GetOfferCountByAuctionIdAsync(auctionId);
+        var currentMax = await _offerRepository.GetMaxOfferAmountAsync(auctionId);
+        var auctionUpdate = new AuctionResponseDTO
+        {
+            Id = auction.Id,
+            StartTime = auction.StartTime,
+            EndTime = auction.EndTime,
+            Currency = auction.Currency,
+            OfferCount = offerCount,
+            CurrentPrice = currentMax
+        };
+        await _hubContext.Clients.Group($"auction-{auctionId}").SendAsync("ReceiveAuctionUpdate", auctionUpdate);
+
+        var createdOffer = await _offerRepository.GetByIdAsync(offer.Id, o => o.User);
+        await BroadcastOfferUpdateAsync(createdOffer, auction.Artwork.PostedByUserId);
+    }
+
+    private async Task BroadcastOfferUpdateAsync(Offer offer, int sellerId)
+    {
+        var offerResponse = _mapper.Map<OfferResponseDTO>(offer);
+        await _hubContext.Clients.User(sellerId.ToString()).SendAsync("ReceiveOfferUpdate", offerResponse);
     }
 
     /// <inheritdoc />
@@ -160,7 +188,7 @@ public class AuctionService : IAuctionService
     /// <inheritdoc />
     public async Task WithdrawOfferAsync(int offerId, int userId)
     {
-        var offer = await _offerRepository.GetByIdAsync(offerId, includes: o => o.Auction);
+        var offer = await _offerRepository.GetByIdAsync(offerId, o => o.Auction, o => o.User);
         if (offer == null)
             throw new NotFoundException("Offer not found.");
 
@@ -171,6 +199,8 @@ public class AuctionService : IAuctionService
         offer.Withdraw();
         _offerRepository.UpdateOfferStatus(offer);
         await _offerRepository.SaveAsync();
+
+        await BroadcastOfferUpdateAsync(offer, auction.Artwork.PostedByUserId);
     }
 
     /// <inheritdoc />
