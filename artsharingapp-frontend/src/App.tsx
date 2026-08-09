@@ -14,6 +14,7 @@ import FollowingPage from "./pages/FollowingPage";
 import ChatPage from "./pages/ChatPage";
 import MapPage from "./pages/MapPage";
 import { Bounce, ToastContainer } from "react-toastify";
+import ActiveAuctionsPage from "./pages/ActiveAuctionsPage";
 
 function App() {
   return (
@@ -82,6 +83,14 @@ function App() {
             element={
               <PrivateRoute>
                 <FollowingPage />
+              </PrivateRoute>
+            }
+          />
+          <Route
+            path="/active-auctions"
+            element={
+              <PrivateRoute>
+                <ActiveAuctionsPage />
               </PrivateRoute>
             }
           />

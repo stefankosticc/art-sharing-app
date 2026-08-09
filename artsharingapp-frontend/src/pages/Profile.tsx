@@ -115,7 +115,7 @@ const Profile = () => {
         {/* FAVORITES */}
         <FavoriteArtworksGrid activeTab={activeTab} user={profileUser} />
 
-        {/* BIOPGRAPHY */}
+        {/* BIOGRAPHY */}
         <div
           className={`profile-content${
             activeTab === "biography" ? " active" : ""

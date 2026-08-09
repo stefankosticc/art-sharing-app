@@ -1,10 +1,10 @@
-import { NavLink } from "react-router-dom";
 import Dock from "../components/Dock";
 import "../styles/FollowingPage.css";
 import { useDiscoverArtworks } from "../hooks/useDiscoverArtworks";
 import { useRef } from "react";
 import { useScroll } from "../hooks/useScroll";
 import ArtworkFeedCard from "../components/discover-page/ArtworkFeedCard";
+import DiscoverNavbar from "../components/DiscoverNavbar";
 
 const FollowingPage = () => {
   const { artworks, loadingArtworks, loadMoreArtworks } =
@@ -21,12 +21,7 @@ const FollowingPage = () => {
   return (
     <div className="fixed-page">
       <div className="following-page" ref={followedUsersArtworksRef}>
-        <div className="discover-nav-container">
-          <NavLink to={"/discover"}>Discover</NavLink>
-          <NavLink to={"/following"} className={"active"}>
-            Following
-          </NavLink>
-        </div>
+        <DiscoverNavbar />
 
         <h1>Following</h1>
         <div className="following-feed">
