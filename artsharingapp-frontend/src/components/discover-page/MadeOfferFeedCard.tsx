@@ -1,49 +1,51 @@
-import { useRef } from "react";
-import { toast } from "react-toastify";
+import { useRef, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { PiDotsThreeOutlineVerticalFill } from "react-icons/pi";
+import {
+  ARTWORK_FALLBACK_IMAGE,
+  IMAGE_SERVICE_BASE_URL,
+} from "../../config/constants";
+import { MyOfferResponse } from "../../services/auction";
 import Countdown from "../Countdown";
 import { useClickOutside } from "../../hooks/useClickOutside";
 import { Currency, OfferStatus } from "../../services/enums";
 import "./styles/MadeOfferFeedCard.css";
 
-export type MockOffer = {
-  id: number;
-  auctionId: number;
-  artworkId: number;
-  artworkTitle: string;
-  artworkImage: string;
-  artistUserName: string;
-  amount: number;
-  currency: Currency;
-  status: OfferStatus;
-  auctionEndTime: Date;
-};
-
 type MadeOfferFeedCardProps = {
-  offer: MockOffer;
+  offer: MyOfferResponse;
   isMenuOpen: boolean;
   onOpenChange: (open: boolean) => void;
+  onWithdraw: (offerId: number) => void;
 };
 
 const MadeOfferFeedCard = ({
   offer,
   isMenuOpen,
   onOpenChange,
+  onWithdraw,
 }: MadeOfferFeedCardProps) => {
+  const navigate = useNavigate();
   const menuRef = useRef<HTMLDivElement>(null);
   useClickOutside(menuRef, () => onOpenChange(false));
+
+  const [imgSrc, setImgSrc] = useState<string>(
+    offer.artworkImage
+      ? `${IMAGE_SERVICE_BASE_URL}${offer.artworkImage}`
+      : ARTWORK_FALLBACK_IMAGE,
+  );
 
   return (
     <div className="moc-container">
       <img
-        src={offer.artworkImage}
+        src={imgSrc}
         alt={offer.artworkTitle}
+        onError={() => setImgSrc(ARTWORK_FALLBACK_IMAGE)}
         className="moc-img"
       />
 
       <div className="moc-body">
         <p className="moc-title">{offer.artworkTitle}</p>
-        <p className="moc-artist">@{offer.artistUserName}</p>
+        <p className="moc-artist">@{offer.postedByUserName}</p>
       </div>
 
       <div className="moc-highlight">
@@ -77,7 +79,7 @@ const MadeOfferFeedCard = ({
               className="moc-menu-option"
               onClick={() => {
                 onOpenChange(false);
-                toast.info("Opening the artwork isn't wired up yet.");
+                navigate(`/artwork/${offer.artworkId}`);
               }}
             >
               Open Artwork
@@ -87,7 +89,13 @@ const MadeOfferFeedCard = ({
                 className="moc-menu-option moc-menu-option-danger"
                 onClick={() => {
                   onOpenChange(false);
-                  toast.info("Withdrawing offers isn't available yet.");
+                  if (
+                    window.confirm(
+                      "Are you sure you want to withdraw this offer? This action cannot be undone.",
+                    )
+                  ) {
+                    onWithdraw(offer.id);
+                  }
                 }}
               >
                 Withdraw

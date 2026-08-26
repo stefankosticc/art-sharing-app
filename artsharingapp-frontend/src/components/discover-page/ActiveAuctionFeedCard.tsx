@@ -30,7 +30,9 @@ const ActiveAuctionFeedCard = ({ listing }: ActiveAuctionFeedCardProps) => {
   const artworkId = listing.type === "auction" ? listing.artworkId : listing.id;
 
   const [imgSrc, setImgSrc] = useState<string>(
-    imagePath ? `${IMAGE_SERVICE_BASE_URL}${imagePath}` : ARTWORK_FALLBACK_IMAGE,
+    imagePath
+      ? `${IMAGE_SERVICE_BASE_URL}${imagePath}`
+      : ARTWORK_FALLBACK_IMAGE,
   );
 
   return (

@@ -50,6 +50,19 @@ export interface OfferResponse {
   status: OfferStatus;
 }
 
+export interface MyOfferResponse {
+  id: number;
+  auctionId: number;
+  artworkId: number;
+  artworkTitle: string;
+  artworkImage: string;
+  postedByUserName: string;
+  amount: number;
+  currency: Currency;
+  status: OfferStatus;
+  auctionEndTime: Date;
+}
+
 export async function startAnAuction(
   artworkId: number,
   auctionData: AuctionStartRequest,
@@ -126,6 +139,16 @@ export async function getOffers(auctionId: number): Promise<OfferResponse[]> {
   return response.data;
 }
 
+export async function getMyOffers(
+  skip = 0,
+  take = 20,
+): Promise<MyOfferResponse[]> {
+  const response = await authAxios.get(`offers/my`, {
+    params: { skip, take },
+  });
+  return response.data;
+}
+
 export async function acceptOffer(offerId: number): Promise<boolean> {
   try {
     await authAxios.put(`offer/${offerId}/accept`);
@@ -150,6 +173,21 @@ export async function rejectOffer(offerId: number): Promise<boolean> {
       error?.message ||
       "An unknown error occurred.";
     console.error("Error:", message);
+    return false;
+  }
+}
+
+export async function withdrawOffer(offerId: number): Promise<boolean> {
+  try {
+    await authAxios.put(`offer/${offerId}/withdraw`);
+    return true;
+  } catch (error: any) {
+    const message =
+      error?.response?.data?.error ||
+      error?.message ||
+      "An unknown error occurred.";
+    console.error("Error:", message);
+    toast.error(message);
     return false;
   }
 }

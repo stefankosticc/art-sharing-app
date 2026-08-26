@@ -2,67 +2,14 @@ import { useRef, useState } from "react";
 import DiscoverNavbar from "../components/DiscoverNavbar";
 import Dock from "../components/Dock";
 import ActiveAuctionFeedCard from "../components/discover-page/ActiveAuctionFeedCard";
-import MadeOfferFeedCard, {
-  MockOffer,
-} from "../components/discover-page/MadeOfferFeedCard";
+import MadeOfferFeedCard from "../components/discover-page/MadeOfferFeedCard";
 import { useActiveAuctions } from "../hooks/useActiveAuctions";
+import { useMyOffers } from "../hooks/useMyOffers";
 import { useOnSaleArtworks } from "../hooks/useOnSaleArtworks";
 import { useScroll } from "../hooks/useScroll";
-import { Currency, OfferStatus } from "../services/enums";
 import "../styles/ActiveAuctionsPage.css";
 
 type ActiveAuctionsTab = "auctions" | "fixed" | "offers";
-
-const MOCK_OFFERS: MockOffer[] = [
-  {
-    id: 1,
-    auctionId: 3,
-    artworkId: 103,
-    artworkTitle: "Midnight Orchard",
-    artworkImage: "https://picsum.photos/seed/auction3/600/450",
-    artistUserName: "sofia.ink",
-    amount: 9600,
-    currency: Currency.USD,
-    status: OfferStatus.SUBMITTED,
-    auctionEndTime: new Date(Date.now() + 1000 * 60 * 3),
-  },
-  {
-    id: 2,
-    auctionId: 6,
-    artworkId: 106,
-    artworkTitle: "Static Bloom",
-    artworkImage: "https://picsum.photos/seed/offer2/600/450",
-    artistUserName: "ren.oda",
-    amount: 1500,
-    currency: Currency.USD,
-    status: OfferStatus.ACCEPTED,
-    auctionEndTime: new Date(Date.now() - 1000 * 60 * 60 * 3),
-  },
-  {
-    id: 3,
-    auctionId: 7,
-    artworkId: 107,
-    artworkTitle: "Hollow Gold",
-    artworkImage: "https://picsum.photos/seed/offer3/600/450",
-    artistUserName: "priya.d",
-    amount: 640,
-    currency: Currency.GBP,
-    status: OfferStatus.REJECTED,
-    auctionEndTime: new Date(Date.now() - 1000 * 60 * 60 * 20),
-  },
-  {
-    id: 4,
-    auctionId: 2,
-    artworkId: 102,
-    artworkTitle: "Fractured Light",
-    artworkImage: "https://picsum.photos/seed/auction2/600/450",
-    artistUserName: "kwabena.art",
-    amount: 1700,
-    currency: Currency.EUR,
-    status: OfferStatus.WITHDRAWN,
-    auctionEndTime: new Date(Date.now() + 1000 * 60 * 60 * 5),
-  },
-];
 
 const ActiveAuctionsPage = () => {
   const [activeTab, setActiveTab] = useState<ActiveAuctionsTab>("auctions");
@@ -74,6 +21,7 @@ const ActiveAuctionsPage = () => {
     loadingArtworks: loadingFixedPriceArtworks,
     loadMoreArtworks: loadMoreFixedPriceArtworks,
   } = useOnSaleArtworks();
+  const { offers, loadingOffers, loadMoreOffers, withdraw } = useMyOffers();
 
   const activeAuctionsPageRef = useRef<HTMLDivElement>(null);
 
@@ -83,6 +31,7 @@ const ActiveAuctionsPage = () => {
     onReachBottom: () => {
       if (activeTab === "auctions") loadMoreAuctions();
       else if (activeTab === "fixed") loadMoreFixedPriceArtworks();
+      else if (activeTab === "offers") loadMoreOffers();
     },
   });
 
@@ -158,13 +107,13 @@ const ActiveAuctionsPage = () => {
               ))}
 
             {activeTab === "offers" &&
-              (MOCK_OFFERS.length === 0 ? (
+              (!loadingOffers && offers.length === 0 ? (
                 <p className="aap-no-results">
                   You haven't made any offers yet.
                 </p>
               ) : (
                 <div className="aap-offers-list">
-                  {MOCK_OFFERS.map((offer) => (
+                  {offers.map((offer) => (
                     <MadeOfferFeedCard
                       offer={offer}
                       key={offer.id}
@@ -172,8 +121,11 @@ const ActiveAuctionsPage = () => {
                       onOpenChange={(open) =>
                         setOpenOfferId(open ? offer.id : null)
                       }
+                      onWithdraw={withdraw}
                     />
                   ))}
+
+                  {loadingOffers && <div className="loading-spinner" />}
                 </div>
               ))}
           </div>

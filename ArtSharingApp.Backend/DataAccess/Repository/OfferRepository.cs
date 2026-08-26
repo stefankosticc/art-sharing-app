@@ -43,4 +43,17 @@ public class OfferRepository : GenericRepository<Offer>, IOfferRepository
     {
         return await _dbSet.AnyAsync(o => o.AuctionId == auctionId && o.Status == OfferStatus.ACCEPTED);
     }
+
+    public async Task<IEnumerable<Offer>> GetOffersByUserIdAsync(int userId, int skip, int take)
+    {
+        return await _dbSet
+            .Where(o => o.UserId == userId)
+            .Include(o => o.Auction)
+            .ThenInclude(a => a.Artwork)
+            .ThenInclude(artwork => artwork.PostedByUser)
+            .OrderByDescending(o => o.Timestamp)
+            .Skip(skip)
+            .Take(take)
+            .ToListAsync();
+    }
 }

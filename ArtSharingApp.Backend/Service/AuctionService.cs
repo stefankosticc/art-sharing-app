@@ -196,6 +196,12 @@ public class AuctionService : IAuctionService
         if (auction.Artwork.PostedByUserId == userId || offer.UserId != userId)
             throw new UnauthorizedAccessException("You are not authorized to withdraw this offer.");
 
+        if (!offer.CanBeModified())
+            throw new BadRequestException("Offer cannot be withdrawn because it has already been accepted or rejected.");
+
+        if (auction.EndTime < DateTime.UtcNow)
+            throw new BadRequestException("Cannot withdraw an offer after the auction has ended.");
+
         offer.Withdraw();
         _offerRepository.UpdateOfferStatus(offer);
         await _offerRepository.SaveAsync();
@@ -259,5 +265,12 @@ public class AuctionService : IAuctionService
     {
         var auctions = await _auctionRepository.GetActiveAuctionsAsync(DateTime.UtcNow, skip, take);
         return _mapper.Map<IEnumerable<ActiveAuctionDTO>>(auctions);
+    }
+
+    /// <inheritdoc />
+    public async Task<IEnumerable<MyOfferDTO>> GetOffersByUserIdAsync(int userId, int skip, int take)
+    {
+        var offers = await _offerRepository.GetOffersByUserIdAsync(userId, skip, take);
+        return _mapper.Map<IEnumerable<MyOfferDTO>>(offers);
     }
 }

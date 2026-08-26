@@ -105,4 +105,12 @@ public class AuctionController : AuthenticatedUserBaseController
         var auctions = await _auctionService.GetActiveAuctionsAsync(skip, take);
         return Ok(auctions);
     }
+
+    [HttpGet("offers/my")]
+    public async Task<IActionResult> GetMyOffers([FromQuery] int skip = 0, [FromQuery] int take = 20)
+    {
+        var userId = GetLoggedInUserId();
+        var offers = await _auctionService.GetOffersByUserIdAsync(userId, skip, take);
+        return Ok(offers);
+    }
 }

@@ -19,5 +19,23 @@ public class OfferProfile : AutoMapper.Profile
                 => opt.MapFrom(src => src.User.ProfilePhotoId != null
                     ? ImagePaths.UserProfilePhoto(src.User.ProfilePhotoId)
                     : null));
+
+        CreateMap<Offer, MyOfferDTO>()
+            .ForMember(dest => dest.AuctionId, opt =>
+                opt.MapFrom(src => src.Auction.Id))
+            .ForMember(dest => dest.ArtworkId, opt =>
+                opt.MapFrom(src => src.Auction.Artwork.Id))
+            .ForMember(dest => dest.ArtworkTitle, opt =>
+                opt.MapFrom(src => src.Auction.Artwork.Title))
+            .ForMember(dest => dest.ArtworkImage, opt =>
+                opt.MapFrom(src => src.Auction.Artwork.ImageId != null
+                    ? ImagePaths.Artwork(src.Auction.Artwork.ImageId)
+                    : null))
+            .ForMember(dest => dest.PostedByUserName, opt =>
+                opt.MapFrom(src => src.Auction.Artwork.PostedByUser.UserName))
+            .ForMember(dest => dest.Currency, opt =>
+                opt.MapFrom(src => src.Auction.Currency))
+            .ForMember(dest => dest.AuctionEndTime, opt =>
+                opt.MapFrom(src => src.Auction.EndTime));
     }
 }
