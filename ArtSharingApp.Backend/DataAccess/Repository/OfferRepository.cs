@@ -14,7 +14,9 @@ public class OfferRepository : GenericRepository<Offer>, IOfferRepository
     public async Task<decimal> GetMaxOfferAmountAsync(int auctionId)
     {
         var maxOfferAmount = await _dbSet
-            .Where(o => o.AuctionId == auctionId)
+            .Where(o => o.AuctionId == auctionId &&
+                        o.Status != OfferStatus.REJECTED &&
+                        o.Status != OfferStatus.WITHDRAWN)
             .MaxAsync(o => (decimal?)o.Amount);
         return maxOfferAmount ?? 0;
     }
@@ -36,7 +38,11 @@ public class OfferRepository : GenericRepository<Offer>, IOfferRepository
 
     public async Task<int> GetOfferCountByAuctionIdAsync(int auctionId)
     {
-        return await _dbSet.Where(o => o.AuctionId == auctionId).CountAsync();
+        return await _dbSet
+            .Where(o => o.AuctionId == auctionId &&
+                        o.Status != OfferStatus.REJECTED &&
+                        o.Status != OfferStatus.WITHDRAWN)
+            .CountAsync();
     }
 
     public async Task<bool> AuctionHasAcceptedOffer(int auctionId)

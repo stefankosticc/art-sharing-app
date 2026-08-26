@@ -1,5 +1,6 @@
 using ArtSharingApp.Backend.DTO;
 using ArtSharingApp.Backend.Models;
+using ArtSharingApp.Backend.Models.Enums;
 using ArtSharingApp.Backend.Utils;
 
 namespace ArtSharingApp.Backend.Profile;
@@ -21,8 +22,10 @@ public class AuctionProfile : AutoMapper.Profile
             .ForMember(dest => dest.PostedByUserName, opt =>
                 opt.MapFrom(src => src.Artwork.PostedByUser.UserName))
             .ForMember(dest => dest.CurrentPrice, opt =>
-                opt.MapFrom(src => src.Offers.Any() ? src.Offers.Max(o => o.Amount) : src.StartingPrice))
+                opt.MapFrom(src => src.Offers.Any(o => o.Status != OfferStatus.REJECTED && o.Status != OfferStatus.WITHDRAWN)
+                    ? src.Offers.Where(o => o.Status != OfferStatus.REJECTED && o.Status != OfferStatus.WITHDRAWN).Max(o => o.Amount)
+                    : src.StartingPrice))
             .ForMember(dest => dest.OfferCount, opt =>
-                opt.MapFrom(src => src.Offers.Count));
+                opt.MapFrom(src => src.Offers.Count(o => o.Status != OfferStatus.REJECTED && o.Status != OfferStatus.WITHDRAWN)));
     }
 }

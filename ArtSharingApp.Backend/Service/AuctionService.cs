@@ -100,8 +100,21 @@ public class AuctionService : IAuctionService
         await _offerRepository.AddAsync(offer);
         await _offerRepository.SaveAsync();
 
-        var offerCount = await _offerRepository.GetOfferCountByAuctionIdAsync(auctionId);
-        var currentMax = await _offerRepository.GetMaxOfferAmountAsync(auctionId);
+        await BroadcastAuctionUpdateAsync(auction);
+
+        var createdOffer = await _offerRepository.GetByIdAsync(offer.Id, o => o.User);
+        await BroadcastOfferUpdateAsync(createdOffer, auction.Artwork.PostedByUserId);
+    }
+
+    /// <summary>
+    /// Recomputes the auction's current price and offer count from live (non-rejected, non-withdrawn)
+    /// offers and broadcasts the update to everyone viewing the auction.
+    /// </summary>
+    /// <param name="auction">The auction whose state changed.</param>
+    private async Task BroadcastAuctionUpdateAsync(Auction auction)
+    {
+        var offerCount = await _offerRepository.GetOfferCountByAuctionIdAsync(auction.Id);
+        var currentMax = await _offerRepository.GetMaxOfferAmountAsync(auction.Id);
         var auctionUpdate = new AuctionResponseDTO
         {
             Id = auction.Id,
@@ -109,14 +122,16 @@ public class AuctionService : IAuctionService
             EndTime = auction.EndTime,
             Currency = auction.Currency,
             OfferCount = offerCount,
-            CurrentPrice = currentMax
+            CurrentPrice = currentMax == 0 ? auction.StartingPrice : currentMax
         };
-        await _hubContext.Clients.Group($"auction-{auctionId}").SendAsync("ReceiveAuctionUpdate", auctionUpdate);
-
-        var createdOffer = await _offerRepository.GetByIdAsync(offer.Id, o => o.User);
-        await BroadcastOfferUpdateAsync(createdOffer, auction.Artwork.PostedByUserId);
+        await _hubContext.Clients.Group($"auction-{auction.Id}").SendAsync("ReceiveAuctionUpdate", auctionUpdate);
     }
 
+    /// <summary>
+    /// Notifies the seller of a change to one of their auction's offers (created, accepted, rejected, or withdrawn).
+    /// </summary>
+    /// <param name="offer">The offer that changed.</param>
+    /// <param name="sellerId">The ID of the user who posted the auctioned artwork.</param>
     private async Task BroadcastOfferUpdateAsync(Offer offer, int sellerId)
     {
         var offerResponse = _mapper.Map<OfferResponseDTO>(offer);
@@ -206,6 +221,7 @@ public class AuctionService : IAuctionService
         _offerRepository.UpdateOfferStatus(offer);
         await _offerRepository.SaveAsync();
 
+        await BroadcastAuctionUpdateAsync(auction);
         await BroadcastOfferUpdateAsync(offer, auction.Artwork.PostedByUserId);
     }
 

@@ -1,6 +1,7 @@
 using ArtSharingApp.Backend.DataAccess.Repository.RepositoryInterface;
 using ArtSharingApp.Backend.DTO;
 using ArtSharingApp.Backend.Models;
+using ArtSharingApp.Backend.Models.Enums;
 using Microsoft.EntityFrameworkCore;
 
 namespace ArtSharingApp.Backend.DataAccess.Repository;
@@ -46,8 +47,10 @@ public class AuctionRepository : GenericRepository<Auction>, IAuctionRepository
                 ArtworkId = a.Artwork.Id,
                 ArtworkTitle = a.Artwork.Title,
                 a.StartingPrice,
-                MaxOffer = a.Offers.Any() ? a.Offers.Max(o => o.Amount) : 0,
-                OfferCount = a.Offers.Count,
+                MaxOffer = a.Offers.Any(o => o.Status != OfferStatus.REJECTED && o.Status != OfferStatus.WITHDRAWN)
+                    ? a.Offers.Where(o => o.Status != OfferStatus.REJECTED && o.Status != OfferStatus.WITHDRAWN).Max(o => o.Amount)
+                    : 0,
+                OfferCount = a.Offers.Count(o => o.Status != OfferStatus.REJECTED && o.Status != OfferStatus.WITHDRAWN),
                 a.Currency
             })
             .Where(x => x.OfferCount >= 5)
