@@ -91,6 +91,15 @@ export interface DiscoverArtworkResponse {
   postedByUserName: string;
 }
 
+export interface OnSaleArtworkResponse {
+  id: number;
+  title: string;
+  image: string;
+  postedByUserName: string;
+  price: number;
+  currency: Currency;
+}
+
 export interface UserArtworksResponse {
   privateArtworks: ArtworkCardData[];
   publicArtworks: ArtworkCardData[];
@@ -319,6 +328,16 @@ export async function getDiscoverArtworks(
   take = 30
 ): Promise<DiscoverArtworkResponse[]> {
   const response = await authAxios.get(`artworks/discover`, {
+    params: { skip, take },
+  });
+  return response.data;
+}
+
+export async function getOnSaleArtworks(
+  skip = 0,
+  take = 20
+): Promise<OnSaleArtworkResponse[]> {
+  const response = await authAxios.get(`artworks/on-sale`, {
     params: { skip, take },
   });
   return response.data;

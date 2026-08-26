@@ -102,4 +102,21 @@ public interface IAuctionService
     /// <param name="count">The number of auctions to retrieve.</param>
     /// <returns>A collection of <see cref="HighStakesAuctionDTO"/>.</returns>
     Task<IEnumerable<HighStakesAuctionDTO>?> GetHighStakesAuctionsAsync(int count);
+
+    /// <summary>
+    /// Retrieves currently active auctions.
+    /// </summary>
+    /// <param name="skip">The number of auctions to skip.</param>
+    /// <param name="take">The number of auctions to take.</param>
+    /// <returns>A collection of <see cref="ActiveAuctionDTO"/>.</returns>
+    Task<IEnumerable<ActiveAuctionDTO>> GetActiveAuctionsAsync(int skip, int take);
+
+    /// <summary>
+    /// Retrieves offers made by a specific user.
+    /// </summary>
+    /// <param name="userId">The ID of the user whose offers to retrieve.</param>
+    /// <param name="skip">The number of offers to skip.</param>
+    /// <param name="take">The number of offers to take.</param>
+    /// <returns>A collection of <see cref="MyOfferDTO"/>.</returns>
+    Task<IEnumerable<MyOfferDTO>> GetOffersByUserIdAsync(int userId, int skip, int take);
 }

@@ -1,11 +1,13 @@
 import { useState, useEffect } from "react";
-import { AuctionResponse, getActiveAuction } from "../services/auction";
-import { useAuctionContext } from "../context/AuctionContext";
+import {
+  AuctionResponse,
+  auctionHubService,
+  getActiveAuction,
+} from "../services/auction";
 
-export const useActiveAuction = (artworkId: number) => {
+export const useActiveAuction = (artworkId: number, refetchAuction: number) => {
   const [auction, setAuction] = useState<AuctionResponse | null>(null);
   const [loadingAuction, setLoadingAuction] = useState<boolean>(false);
-  const { refetchAuction } = useAuctionContext();
 
   useEffect(() => {
     let isCancelled = false;
@@ -40,6 +42,32 @@ export const useActiveAuction = (artworkId: number) => {
       isCancelled = true;
     };
   }, [artworkId, refetchAuction]);
+
+  useEffect(() => {
+    if (!auction) return;
+
+    const accessToken = localStorage.getItem("accessToken");
+    if (!accessToken) return;
+
+    const auctionId = auction.id;
+    let isCancelled = false;
+
+    auctionHubService.start(accessToken).then(() => {
+      if (!isCancelled) auctionHubService.joinAuction(auctionId);
+    });
+
+    const unsubscribe = auctionHubService.subscribe((update) => {
+      if (update.id === auctionId) {
+        setAuction(update);
+      }
+    });
+
+    return () => {
+      isCancelled = true;
+      auctionHubService.leaveAuction(auctionId);
+      unsubscribe();
+    };
+  }, [auction?.id]);
 
   return { auction, loadingAuction };
 };

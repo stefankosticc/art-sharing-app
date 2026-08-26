@@ -1,0 +1,79 @@
+.active-auctions-page {
+    height: 100%;
+    width: 100%;
+    padding: 2rem 20% 4rem 20%;
+    overflow-y: scroll;
+}
+
+.active-auctions-page h1 {
+    margin: 6rem 0 4rem 1rem;
+}
+
+.aap-container {
+    display: flex;
+    gap: 2rem;
+    min-height: calc(100vh - 18rem);
+}
+
+.aap-sidebar {
+    width: 24%;
+    position: sticky;
+    top: 1rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    padding: 0 1.4rem 0 0.4rem;
+    align-self: stretch;
+    border-right: 1px solid var(--black-highlight);
+}
+
+.aap-sidebar-btn {
+    background-color: var(--black-highlight);
+    color: var(--gray-light);
+    border: none;
+    cursor: pointer;
+    height: 2.2rem;
+    padding: 0.4rem 0;
+    border-radius: 0.4rem;
+    font-size: 0.9rem;
+    width: 100%;
+}
+
+.aap-sidebar-btn:hover,
+.aap-sidebar-btn.active {
+    color: var(--purple);
+}
+
+.aap-content {
+    width: 76%;
+    padding: 0 0.4rem;
+}
+
+.aap-no-results {
+    color: var(--gray-light);
+    text-align: center;
+    margin-top: 3rem;
+}
+
+/* Active Auctions grid */
+
+.aap-auctions-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(19rem, 1fr));
+    align-items: start;
+    align-content: start;
+    gap: 1.8rem;
+    min-height: 100%;
+}
+
+.aap-auctions-grid .loading-spinner {
+    grid-column: 1 / -1;
+    place-self: center;
+}
+
+/* Made Offers list */
+
+.aap-offers-list {
+    display: flex;
+    flex-direction: column;
+}

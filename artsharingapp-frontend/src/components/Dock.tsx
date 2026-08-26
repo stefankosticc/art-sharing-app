@@ -9,6 +9,7 @@ import { useEffect, useState } from "react";
 import Search from "./search/Search";
 import Notifications from "./Notifications";
 import { useLoggedInUser } from "../hooks/useLoggedInUser";
+import { useUnreadNotifications } from "../hooks/useUnreadNotifications";
 
 const Dock = () => {
   const [isSearchOpen, setIsSearchOpen] = useState<boolean>(false);
@@ -16,6 +17,7 @@ const Dock = () => {
     useState<boolean>(false);
 
   const { loggedInUser } = useLoggedInUser();
+  const { unreadCount, decrementUnread } = useUnreadNotifications();
 
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
@@ -46,8 +48,16 @@ const Dock = () => {
               setIsNotificationsOpen(!isNotificationsOpen);
             }}
           />
+          {unreadCount > 0 && (
+            <span className="notifications-badge">
+              {unreadCount > 99 ? "99+" : unreadCount}
+            </span>
+          )}
           {isNotificationsOpen && (
-            <Notifications onClose={() => setIsNotificationsOpen(false)} />
+            <Notifications
+              onClose={() => setIsNotificationsOpen(false)}
+              onNotificationRead={decrementUnread}
+            />
           )}
         </div>
         <NavLink to={"/map"} title="Map">

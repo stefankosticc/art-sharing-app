@@ -124,4 +124,11 @@ public class ArtworkController : AuthenticatedUserBaseController
         var artworks = await _artworkService.GetDiscoverArtworksAsync(loggedInUserId, skip, take);
         return Ok(artworks);
     }
+
+    [HttpGet("artworks/on-sale")]
+    public async Task<IActionResult> GetOnSaleArtworks([FromQuery] int skip = 0, [FromQuery] int take = 20)
+    {
+        var artworks = await _artworkService.GetOnSaleArtworksAsync(skip, take);
+        return Ok(artworks);
+    }
 }

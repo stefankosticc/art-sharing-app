@@ -91,7 +91,6 @@ const ThreeDotsMenu = ({
 
       {isAnalyticsModalOpen && (
         <AuctionAnalyticsModal
-          artworkId={artworkId}
           onClose={() => {
             setIsAnalyticsModalOpen(false);
             onClose();

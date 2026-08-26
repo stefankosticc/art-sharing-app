@@ -1,5 +1,4 @@
 using ArtSharingApp.Backend.Controllers.Common;
-using ArtSharingApp.Backend.DTO;
 using ArtSharingApp.Backend.Service.ServiceInterface;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -26,11 +25,12 @@ public class NotificationController : AuthenticatedUserBaseController
         return Ok(notifications);
     }
 
-    [HttpPost("notification")]
-    public async Task<IActionResult> CreateNotification([FromBody] NotificationRequestDTO request)
+    [HttpGet("notifications/unread-count")]
+    public async Task<IActionResult> GetUnreadNotificationCount()
     {
-        await _notificationService.CreateNotificationAsync(request);
-        return Ok(new { message = "Notification sent successfully." });
+        var userId = GetLoggedInUserId();
+        var count = await _notificationService.GetUnreadCountAsync(userId);
+        return Ok(new { count });
     }
 
     [HttpPut("notification/{id}/read")]

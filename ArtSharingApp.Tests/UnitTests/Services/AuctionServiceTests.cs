@@ -1,11 +1,13 @@
 using ArtSharingApp.Backend.DataAccess.Repository.RepositoryInterface;
 using ArtSharingApp.Backend.DTO;
 using ArtSharingApp.Backend.Exceptions;
+using ArtSharingApp.Backend.Hubs;
 using ArtSharingApp.Backend.Models;
 using ArtSharingApp.Backend.Models.Enums;
 using ArtSharingApp.Backend.Service;
 using ArtSharingApp.Backend.Service.ServiceInterface;
 using AutoMapper;
+using Microsoft.AspNetCore.SignalR;
 using Moq;
 using UnauthorizedAccessException = ArtSharingApp.Backend.Exceptions.UnauthorizedAccessException;
 
@@ -18,6 +20,7 @@ public class AuctionServiceTests
     private readonly Mock<IOfferRepository> _mockOfferRepository;
     private readonly Mock<IArtworkRepository> _mockArtworkRepository;
     private readonly Mock<IMapper> _mockMapper;
+    private readonly Mock<IHubContext<AuctionHub>> _mockHubContext;
 
     public AuctionServiceTests()
     {
@@ -25,12 +28,24 @@ public class AuctionServiceTests
         _mockOfferRepository = new Mock<IOfferRepository>();
         _mockArtworkRepository = new Mock<IArtworkRepository>();
         _mockMapper = new Mock<IMapper>();
+        _mockHubContext = new Mock<IHubContext<AuctionHub>>();
+
+        var mockClientProxy = new Mock<IClientProxy>();
+        mockClientProxy
+            .Setup(p => p.SendCoreAsync(It.IsAny<string>(), It.IsAny<object[]>(), It.IsAny<CancellationToken>()))
+            .Returns(Task.CompletedTask);
+
+        var mockClients = new Mock<IHubClients>();
+        mockClients.Setup(c => c.Group(It.IsAny<string>())).Returns(mockClientProxy.Object);
+        mockClients.Setup(c => c.User(It.IsAny<string>())).Returns(mockClientProxy.Object);
+        _mockHubContext.Setup(h => h.Clients).Returns(mockClients.Object);
 
         _auctionService = new AuctionService(
             _mockAuctionRepository.Object,
             _mockArtworkRepository.Object,
             _mockOfferRepository.Object,
-            _mockMapper.Object);
+            _mockMapper.Object,
+            _mockHubContext.Object);
     }
 
     [Fact]
@@ -500,5 +515,145 @@ public class AuctionServiceTests
         Assert.Equal(request.EndTime, auction.EndTime);
         _mockAuctionRepository.Verify(repo => repo.UpdateEndTime(auction), Times.Once);
         _mockAuctionRepository.Verify(repo => repo.SaveAsync(), Times.Once);
+    }
+
+    [Fact]
+    public async Task WithdrawOfferAsync_OfferNotFound_ThrowsNotFoundException()
+    {
+        // Arrange
+        int offerId = 1;
+        int userId = 1;
+
+        _mockOfferRepository
+            .Setup(repo => repo.GetByIdAsync(offerId, o => o.Auction, o => o.User))!
+            .ReturnsAsync((Offer?)null);
+
+        // Act & Assert
+        await Assert.ThrowsAsync<NotFoundException>(() => _auctionService.WithdrawOfferAsync(offerId, userId));
+        _mockOfferRepository.Verify(repo => repo.SaveAsync(), Times.Never);
+    }
+
+    [Fact]
+    public async Task WithdrawOfferAsync_UserIsSeller_ThrowsUnauthorizedAccessException()
+    {
+        // Arrange
+        int offerId = 1;
+        int auctionId = 1;
+        int userId = 1;
+
+        _mockOfferRepository
+            .Setup(repo => repo.GetByIdAsync(offerId, o => o.Auction, o => o.User))
+            .ReturnsAsync(new Offer { Id = offerId, AuctionId = auctionId, UserId = userId + 1, Status = OfferStatus.SUBMITTED });
+        _mockAuctionRepository
+            .Setup(repo => repo.GetByIdAsync(auctionId, ac => ac.Artwork))
+            .ReturnsAsync(new Auction { Id = auctionId, Artwork = new Artwork { PostedByUserId = userId } });
+
+        // Act & Assert
+        await Assert.ThrowsAsync<UnauthorizedAccessException>(() => _auctionService.WithdrawOfferAsync(offerId, userId));
+        _mockOfferRepository.Verify(repo => repo.SaveAsync(), Times.Never);
+    }
+
+    [Fact]
+    public async Task WithdrawOfferAsync_UserDidNotMakeTheOffer_ThrowsUnauthorizedAccessException()
+    {
+        // Arrange
+        int offerId = 1;
+        int auctionId = 1;
+        int userId = 1;
+
+        _mockOfferRepository
+            .Setup(repo => repo.GetByIdAsync(offerId, o => o.Auction, o => o.User))
+            .ReturnsAsync(new Offer { Id = offerId, AuctionId = auctionId, UserId = userId + 1, Status = OfferStatus.SUBMITTED });
+        _mockAuctionRepository
+            .Setup(repo => repo.GetByIdAsync(auctionId, ac => ac.Artwork))
+            .ReturnsAsync(new Auction { Id = auctionId, Artwork = new Artwork { PostedByUserId = userId + 2 } });
+
+        // Act & Assert
+        await Assert.ThrowsAsync<UnauthorizedAccessException>(() => _auctionService.WithdrawOfferAsync(offerId, userId));
+        _mockOfferRepository.Verify(repo => repo.SaveAsync(), Times.Never);
+    }
+
+    [Theory]
+    [InlineData(OfferStatus.ACCEPTED)]
+    [InlineData(OfferStatus.REJECTED)]
+    [InlineData(OfferStatus.WITHDRAWN)]
+    public async Task WithdrawOfferAsync_OfferCannotBeModified_ThrowsBadRequestException(OfferStatus status)
+    {
+        // Arrange
+        int offerId = 1;
+        int auctionId = 1;
+        int userId = 1;
+
+        _mockOfferRepository
+            .Setup(repo => repo.GetByIdAsync(offerId, o => o.Auction, o => o.User))
+            .ReturnsAsync(new Offer { Id = offerId, AuctionId = auctionId, UserId = userId, Status = status });
+        _mockAuctionRepository
+            .Setup(repo => repo.GetByIdAsync(auctionId, ac => ac.Artwork))
+            .ReturnsAsync(new Auction
+            {
+                Id = auctionId,
+                EndTime = DateTime.UtcNow.AddHours(1),
+                Artwork = new Artwork { PostedByUserId = userId + 1 }
+            });
+
+        // Act & Assert
+        await Assert.ThrowsAsync<BadRequestException>(() => _auctionService.WithdrawOfferAsync(offerId, userId));
+        _mockOfferRepository.Verify(repo => repo.SaveAsync(), Times.Never);
+    }
+
+    [Fact]
+    public async Task WithdrawOfferAsync_AuctionHasEnded_ThrowsBadRequestException()
+    {
+        // Arrange
+        int offerId = 1;
+        int auctionId = 1;
+        int userId = 1;
+
+        _mockOfferRepository
+            .Setup(repo => repo.GetByIdAsync(offerId, o => o.Auction, o => o.User))
+            .ReturnsAsync(new Offer { Id = offerId, AuctionId = auctionId, UserId = userId, Status = OfferStatus.SUBMITTED });
+        _mockAuctionRepository
+            .Setup(repo => repo.GetByIdAsync(auctionId, ac => ac.Artwork))
+            .ReturnsAsync(new Auction
+            {
+                Id = auctionId,
+                EndTime = DateTime.UtcNow.AddHours(-1),
+                Artwork = new Artwork { PostedByUserId = userId + 1 }
+            });
+
+        // Act & Assert
+        await Assert.ThrowsAsync<BadRequestException>(() => _auctionService.WithdrawOfferAsync(offerId, userId));
+        _mockOfferRepository.Verify(repo => repo.SaveAsync(), Times.Never);
+    }
+
+    [Fact]
+    public async Task WithdrawOfferAsync_Success()
+    {
+        // Arrange
+        int offerId = 1;
+        int auctionId = 1;
+        int userId = 1;
+
+        var offer = new Offer { Id = offerId, AuctionId = auctionId, UserId = userId, Status = OfferStatus.SUBMITTED };
+
+        _mockOfferRepository
+            .Setup(repo => repo.GetByIdAsync(offerId, o => o.Auction, o => o.User))
+            .ReturnsAsync(offer);
+        _mockAuctionRepository
+            .Setup(repo => repo.GetByIdAsync(auctionId, ac => ac.Artwork))
+            .ReturnsAsync(new Auction
+            {
+                Id = auctionId,
+                EndTime = DateTime.UtcNow.AddHours(1),
+                Artwork = new Artwork { PostedByUserId = userId + 1 }
+            });
+
+        // Act
+        await _auctionService.WithdrawOfferAsync(offerId, userId);
+
+        // Assert
+        Assert.Equal(OfferStatus.WITHDRAWN, offer.Status);
+        _mockOfferRepository.Verify(repo => repo.UpdateOfferStatus(offer), Times.Once);
+        _mockOfferRepository.Verify(repo => repo.SaveAsync(), Times.Once);
     }
 }

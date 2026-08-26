@@ -265,4 +265,11 @@ public class ArtworkService : IArtworkService
         var artworks = await _artworkRepository.GetDiscoverArtworksAsync(loggedInUserId, skip, take);
         return _mapper.Map<IEnumerable<DiscoverArtworkDTO>>(artworks);
     }
+
+    /// <inheritdoc />
+    public async Task<IEnumerable<OnSaleArtworkDTO>?> GetOnSaleArtworksAsync(int skip, int take)
+    {
+        var artworks = await _artworkRepository.GetOnSaleArtworksAsync(skip, take);
+        return _mapper.Map<IEnumerable<OnSaleArtworkDTO>>(artworks);
+    }
 }

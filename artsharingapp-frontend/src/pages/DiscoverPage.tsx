@@ -3,12 +3,12 @@ import Dock from "../components/Dock";
 import TopArtistsSection from "../components/discover-page/TopArtistsSection";
 import { useScroll } from "../hooks/useScroll";
 import "../styles/DiscoverPage.css";
-import { NavLink } from "react-router-dom";
 import { useDiscoverArtworks } from "../hooks/useDiscoverArtworks";
 import ArtworkFeedCard from "../components/discover-page/ArtworkFeedCard";
 import { DiscoverData, getDiscoverData } from "../services/discover";
 import HighStakesAuctionsSection from "../components/discover-page/HighStakesAuctionSection";
 import TrendingArtworksSection from "../components/discover-page/TrendingArtworksSection";
+import DiscoverNavbar from "../components/DiscoverNavbar";
 
 const DiscoverPage = () => {
   const [discoverData, setDiscoverData] = useState<DiscoverData | null>(null);
@@ -58,12 +58,7 @@ const DiscoverPage = () => {
   return (
     <div className="fixed-page">
       <div className="discover-page">
-        <div className="discover-nav-container">
-          <NavLink to={"/discover"} className={"active"}>
-            Discover
-          </NavLink>
-          <NavLink to={"/following"}>Following</NavLink>
-        </div>
+        <DiscoverNavbar />
 
         {loadingDiscoverData ? (
           <div className="loading-discover-data">

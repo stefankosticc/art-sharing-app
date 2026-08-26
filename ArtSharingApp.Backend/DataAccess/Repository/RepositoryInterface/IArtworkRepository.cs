@@ -11,4 +11,5 @@ public interface IArtworkRepository : IGenericRepository<Artwork>
 Task<IEnumerable<Artwork>?> GetDiscoverArtworksAsync(int loggedInUserId, int skip, int take);
     Task<IEnumerable<Artwork>?> GetPrivateArtworksByUserAsync(int postedByUserId);
     Task<IEnumerable<Artwork>?> GetPublicArtworksByUserAsync(int postedByUserId);
+    Task<IEnumerable<Artwork>?> GetOnSaleArtworksAsync(int skip, int take);
 }
