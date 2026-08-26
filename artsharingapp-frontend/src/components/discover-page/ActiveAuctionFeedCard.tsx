@@ -1,49 +1,59 @@
+import { useState } from "react";
+import { useNavigate } from "react-router-dom";
+import {
+  ARTWORK_FALLBACK_IMAGE,
+  IMAGE_SERVICE_BASE_URL,
+} from "../../config/constants";
+import { ActiveAuctionResponse } from "../../services/auction";
+import { OnSaleArtworkResponse } from "../../services/artwork";
 import { Currency } from "../../services/enums";
 import Countdown from "../Countdown";
 import "./styles/ActiveAuctionFeedCard.css";
 
-export type MockAuctionListing = {
-  type: "auction";
-  id: number;
-  artworkId: number;
-  artworkTitle: string;
-  artworkImage: string;
-  artistUserName: string;
-  currentPrice: number;
-  offerCount: number;
-  currency: Currency;
-  endTime: Date;
-};
+export type AuctionListing = ActiveAuctionResponse & { type: "auction" };
 
-export type MockFixedSaleListing = {
-  type: "fixed";
-  id: number;
-  artworkId: number;
-  artworkTitle: string;
-  artworkImage: string;
-  artistUserName: string;
-  price: number;
-  currency: Currency;
-};
+export type FixedPriceListing = OnSaleArtworkResponse & { type: "fixed" };
 
-export type MockListing = MockAuctionListing | MockFixedSaleListing;
+export type Listing = AuctionListing | FixedPriceListing;
 
 type ActiveAuctionFeedCardProps = {
-  listing: MockListing;
+  listing: Listing;
 };
 
 const ActiveAuctionFeedCard = ({ listing }: ActiveAuctionFeedCardProps) => {
+  const navigate = useNavigate();
+
+  const imagePath =
+    listing.type === "auction" ? listing.artworkImage : listing.image;
+  const artworkTitle =
+    listing.type === "auction" ? listing.artworkTitle : listing.title;
+  const artworkId = listing.type === "auction" ? listing.artworkId : listing.id;
+
+  const [imgSrc, setImgSrc] = useState<string>(
+    imagePath ? `${IMAGE_SERVICE_BASE_URL}${imagePath}` : ARTWORK_FALLBACK_IMAGE,
+  );
+
   return (
-    <div className="aac-container">
+    <div
+      className="aac-container"
+      style={
+        {
+          "--artwork-color":
+            listing.type === "auction" ? "#AA9D90" : "var(--cyan)",
+        } as React.CSSProperties
+      }
+      onClick={() => navigate(`/artwork/${artworkId}`)}
+    >
       <img
-        src={listing.artworkImage}
-        alt={listing.artworkTitle}
+        src={imgSrc}
+        alt={artworkTitle}
+        onError={() => setImgSrc(ARTWORK_FALLBACK_IMAGE)}
         className="aac-img"
       />
 
       <div className="aac-content">
         <div className="aac-header">
-          <p className="aac-title">{listing.artworkTitle}</p>
+          <p className="aac-title">{artworkTitle}</p>
           {listing.type === "auction" ? (
             <p className="aac-time">
               Time left: <Countdown endTime={listing.endTime} />
@@ -52,7 +62,7 @@ const ActiveAuctionFeedCard = ({ listing }: ActiveAuctionFeedCardProps) => {
             <p className="aac-time aac-fixed-badge">Fixed Price</p>
           )}
         </div>
-        <p className="aac-artist">@{listing.artistUserName}</p>
+        <p className="aac-artist">@{listing.postedByUserName}</p>
 
         <hr />
 

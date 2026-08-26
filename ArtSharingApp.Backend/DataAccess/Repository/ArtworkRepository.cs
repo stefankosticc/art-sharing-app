@@ -107,4 +107,15 @@ public class ArtworkRepository : GenericRepository<Artwork>, IArtworkRepository
 
         return artworks;
     }
+
+    public async Task<IEnumerable<Artwork>?> GetOnSaleArtworksAsync(int skip, int take)
+    {
+        return await _dbSet
+            .Where(a => a.IsOnSale && !a.IsPrivate)
+            .Include(a => a.PostedByUser)
+            .OrderByDescending(a => a.Date)
+            .Skip(skip)
+            .Take(take)
+            .ToListAsync();
+    }
 }

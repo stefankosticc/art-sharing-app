@@ -6,7 +6,7 @@ const DiscoverNavbar = () => {
     <div className="discover-nav-container">
       <NavLink to={"/discover"}>Discover</NavLink>
       <NavLink to={"/following"}>Following</NavLink>
-      <NavLink to={"/active-auctions"}>Active Auctions</NavLink>
+      <NavLink to={"/active-auctions"}>Auctions</NavLink>
     </div>
   );
 };

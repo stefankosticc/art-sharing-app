@@ -64,4 +64,17 @@ public class AuctionRepository : GenericRepository<Auction>, IAuctionRepository
             .Take(count)
             .ToListAsync();
     }
+
+    public async Task<IEnumerable<Auction>> GetActiveAuctionsAsync(DateTime now, int skip, int take)
+    {
+        return await _dbSet
+            .Include(a => a.Artwork)
+            .ThenInclude(artwork => artwork.PostedByUser)
+            .Include(a => a.Offers)
+            .Where(a => a.StartTime <= now && a.EndTime > now && !a.Artwork.IsPrivate)
+            .OrderByDescending(a => a.StartTime)
+            .Skip(skip)
+            .Take(take)
+            .ToListAsync();
+    }
 }

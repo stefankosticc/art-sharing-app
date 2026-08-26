@@ -24,6 +24,18 @@ export interface AuctionResponse {
   currency: Currency;
 }
 
+export interface ActiveAuctionResponse {
+  auctionId: number;
+  artworkId: number;
+  artworkTitle: string;
+  artworkImage: string;
+  postedByUserName: string;
+  currentPrice: number;
+  offerCount: number;
+  currency: Currency;
+  endTime: Date;
+}
+
 export interface OfferRequest {
   amount: number;
 }
@@ -60,6 +72,16 @@ export async function getActiveAuction(
   artworkId: number,
 ): Promise<AuctionResponse> {
   const response = await authAxios.get(`artwork/${artworkId}/auction/active`);
+  return response.data;
+}
+
+export async function getActiveAuctions(
+  skip = 0,
+  take = 20,
+): Promise<ActiveAuctionResponse[]> {
+  const response = await authAxios.get(`auctions/active`, {
+    params: { skip, take },
+  });
   return response.data;
 }
 

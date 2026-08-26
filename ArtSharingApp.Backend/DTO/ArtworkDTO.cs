@@ -97,6 +97,16 @@ public class DiscoverArtworkDTO
     public string PostedByUserName { get; set; }
 }
 
+public class OnSaleArtworkDTO
+{
+    public int Id { get; set; }
+    public string Title { get; set; }
+    public string Image { get; set; }
+    public string PostedByUserName { get; set; }
+    public decimal Price { get; set; }
+    public Currency Currency { get; set; }
+}
+
 public class UserArtworksDTO
 {
     public IEnumerable<ArtworkPreviewDTO> PrivateArtworks { get; set; } = Array.Empty<ArtworkPreviewDTO>();

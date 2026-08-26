@@ -253,4 +253,11 @@ public class AuctionService : IAuctionService
         var now = DateTime.UtcNow;
         return await _auctionRepository.GetHighStakesAuctionsAsync(count, now);
     }
+
+    /// <inheritdoc />
+    public async Task<IEnumerable<ActiveAuctionDTO>> GetActiveAuctionsAsync(int skip, int take)
+    {
+        var auctions = await _auctionRepository.GetActiveAuctionsAsync(DateTime.UtcNow, skip, take);
+        return _mapper.Map<IEnumerable<ActiveAuctionDTO>>(auctions);
+    }
 }

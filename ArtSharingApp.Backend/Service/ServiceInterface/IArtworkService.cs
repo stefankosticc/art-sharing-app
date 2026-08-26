@@ -123,4 +123,12 @@ public interface IArtworkService
     /// <param name="take">The number of artworks to take.</param>
     /// <returns>A collection of <see cref="DiscoverArtworkDTO"/> for discovery.</returns>
     Task<IEnumerable<DiscoverArtworkDTO>?> GetDiscoverArtworksAsync(int loggedInUserId, int skip, int take);
+
+    /// <summary>
+    /// Retrieves artworks currently on sale with a fixed price.
+    /// </summary>
+    /// <param name="skip">The number of artworks to skip.</param>
+    /// <param name="take">The number of artworks to take.</param>
+    /// <returns>A collection of <see cref="OnSaleArtworkDTO"/>.</returns>
+    Task<IEnumerable<OnSaleArtworkDTO>?> GetOnSaleArtworksAsync(int skip, int take);
 }
