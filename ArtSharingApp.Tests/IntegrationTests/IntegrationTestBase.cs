@@ -73,6 +73,7 @@ public abstract class IntegrationTestBase : IAsyncLifetime
         services.AddScoped<IChatService, ChatService>();
 
         services.AddSingleton<IImageServiceClient, FakeImageServiceClient>();
+        services.AddSignalR();
 
         services.AddIdentity<User, Role>()
             .AddEntityFrameworkStores<ApplicationDbContext>()
