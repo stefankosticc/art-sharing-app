@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { useTranslation } from "react-i18next";
 import "./styles/PutOnSaleModal.css";
 import { Currency } from "../../services/enums";
 import {
@@ -27,6 +28,7 @@ const PutOnSaleModal = ({
   artworkId,
   refetchArtwork,
 }: PutOnSaleModalProps) => {
+  const { t } = useTranslation();
   const [activeTab, setActiveTab] = useState<string>("fixed");
   const [fixedPrice, setFixedPrice] = useState<number>(0);
   const [fixedCurrency, setFixedCurrency] = useState<Currency>(Currency.USD);
@@ -66,14 +68,16 @@ const PutOnSaleModal = ({
     } else {
       if (activeTab === "auction" && auction) {
         success = await updateAuction(auction.id, editActiveAuctionData);
-        if (success) toast.success("Auction updated successfully!");
+        if (success) toast.success(t("auctions.auctionUpdatedSuccess"));
       } else {
         success = await startAnAuction(artworkId, auctionData);
         if (success)
           toast.success(
-            `Auction ${
-              auctionData.startTime <= new Date() ? "started" : "scheduled"
-            } successfully!`
+            t(
+              auctionData.startTime <= new Date()
+                ? "auctions.auctionStartedSuccess"
+                : "auctions.auctionScheduledSuccess",
+            ),
           );
       }
       if (success) {
@@ -90,9 +94,9 @@ const PutOnSaleModal = ({
     if (success) {
       onClose();
       triggerRefetchAuction();
-      toast.success("Auction ended!");
+      toast.success(t("auctions.auctionEndedSuccess"));
     } else {
-      toast.error("Failed to end auction.");
+      toast.error(t("auctions.auctionEndError"));
     }
   };
 
@@ -104,20 +108,20 @@ const PutOnSaleModal = ({
             className={activeTab === "fixed" ? "active" : ""}
             onClick={() => setActiveTab("fixed")}
           >
-            Fixed Price
+            {t("auctions.fixedPrice")}
           </button>
           <button
             className={activeTab === "auction" ? "active" : ""}
             onClick={() => setActiveTab("auction")}
           >
-            Auction
+            {t("auctions.auctionTab")}
           </button>
         </div>
 
         {activeTab === "fixed" && (
           <div className="psm-fixed-form">
             <div className="psm-form-field">
-              <label htmlFor="psm-fixed-price">Price:</label>
+              <label htmlFor="psm-fixed-price">{t("auctions.priceLabel")}</label>
               <input
                 type="number"
                 id="psm-fixed-price"
@@ -126,7 +130,7 @@ const PutOnSaleModal = ({
               />
             </div>
             <div className="psm-form-field">
-              <label htmlFor="currency">Currency:</label>
+              <label htmlFor="currency">{t("auctions.currencyLabel")}</label>
               <select
                 id="currency"
                 value={fixedCurrency}
@@ -165,10 +169,10 @@ const PutOnSaleModal = ({
 
         <div className="psm-buttons">
           <button id="psm-cancel" onClick={onClose}>
-            Cancel
+            {t("common.cancel")}
           </button>
           <button id="psm-save" onClick={handleSave}>
-            Save
+            {t("common.save")}
           </button>
         </div>
       </div>

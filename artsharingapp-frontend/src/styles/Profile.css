@@ -66,6 +66,7 @@
     color: var(--gray-light);
     width: 100%;
     text-align: center;
+    white-space: pre-line;
 }
 
 .biography-editing-button {

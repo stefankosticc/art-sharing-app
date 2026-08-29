@@ -1,4 +1,5 @@
 import { useNavigate } from "react-router-dom";
+import { useTranslation } from "react-i18next";
 import {
   acceptOffer,
   OfferResponse,
@@ -20,14 +21,11 @@ const OfferCard = ({
   onClose,
   refetchOffers,
 }: OfferCardProps) => {
+  const { t } = useTranslation();
   const navigate = useNavigate();
 
   const handleAccept = async () => {
-    if (
-      window.confirm(
-        "Are you sure you want to accept this offer? This action cannot be undone.",
-      )
-    ) {
+    if (window.confirm(t("auctions.acceptOfferConfirm"))) {
       const success = await acceptOffer(offer.id);
       if (success) {
         onClose();
@@ -38,13 +36,10 @@ const OfferCard = ({
               userName: offer.userName,
               profilePhoto: offer.userProfilePhoto,
             },
-            input: `Hello, I am accepting your offer of ${offer.amount.toLocaleString(
-              "en-US",
-            )} ${
-              currency !== undefined && Currency[currency]
-            } for the artwork. Please provide your payment details so we can proceed with the transaction.
-             If you have already made the payment, please share the evidence of payment to confirm the transaction. 
-             Thank you!`,
+            input: t("auctions.acceptOfferMessage", {
+              amount: offer.amount.toLocaleString("en-US"),
+              currency: currency !== undefined ? Currency[currency] : "",
+            }),
           },
         });
       }
@@ -58,8 +53,10 @@ const OfferCard = ({
 
   return (
     <div className="oc-container">
-      <p className="oc-top-offer">🔥 Top Offer</p>
-      <span className="oc-status">{OfferStatus[offer.status]}</span>
+      <p className="oc-top-offer">🔥 {t("auctions.topOffer")}</p>
+      <span className="oc-status">
+        {t(`auctions.offerStatus.${OfferStatus[offer.status].toLowerCase()}`)}
+      </span>
       <p>@{offer.userName}</p>
       <p>
         {offer.amount.toLocaleString("en-US")}{" "}
@@ -69,19 +66,19 @@ const OfferCard = ({
       <div className="oc-actions">
         <button
           id="accept-offer"
-          title="Accept"
+          title={t("auctions.accept")}
           onClick={handleAccept}
           disabled={offer.status != OfferStatus.SUBMITTED ? true : false}
         >
-          Accept
+          {t("auctions.accept")}
         </button>
         <button
           id="reject-offer"
-          title="Reject"
+          title={t("auctions.reject")}
           onClick={handleReject}
           disabled={offer.status != OfferStatus.SUBMITTED ? true : false}
         >
-          Reject
+          {t("auctions.reject")}
         </button>
       </div>
     </div>

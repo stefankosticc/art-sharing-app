@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState } from "react";
+import { useTranslation } from "react-i18next";
 import chatService, { ChatMessage, ChatUser } from "../services/chat";
 import { useLoggedInUser } from "../hooks/useLoggedInUser";
 import "../styles/ChatPage.css";
@@ -10,6 +11,7 @@ import { useChatUsers } from "../hooks/useChatUserConversations";
 import { useLocation } from "react-router-dom";
 
 const ChatPage = () => {
+  const { t } = useTranslation();
   const { loggedInUser } = useLoggedInUser();
   const location = useLocation();
 
@@ -166,10 +168,12 @@ const ChatPage = () => {
     <div className="fixed-page">
       <div className="chat-page">
         <div className="chat-sidebar" ref={chatUsersContainerRef}>
-          <h3>Your chats</h3>
+          <h3>{t("chat.yourChats")}</h3>
           <div className="chat-users-list">
             {chatUsers.length === 0 && (
-              <div className="chat-not-found">No conversations yet.</div>
+              <div className="chat-not-found">
+                {t("chat.noConversationsYet")}
+              </div>
             )}
             {chatUsers.map((user) => (
               <div
@@ -251,12 +255,12 @@ const ChatPage = () => {
                   name="message"
                   value={input}
                   onChange={(e) => setInput(e.target.value)}
-                  placeholder="Type a message..."
+                  placeholder={t("chat.typeMessagePlaceholder")}
                   disabled={!selectedUser}
                 />
                 <button
                   type="submit"
-                  title="Send"
+                  title={t("chat.sendTitle")}
                   disabled={!input.trim() || loading}
                 >
                   <AiOutlineSend />
@@ -265,7 +269,7 @@ const ChatPage = () => {
             </>
           ) : (
             <div className="chat-not-found">
-              Select a conversation to start chatting.
+              {t("chat.selectConversationPrompt")}
             </div>
           )}
         </div>

@@ -1,3 +1,4 @@
+import { useTranslation } from "react-i18next";
 import {
   ARTIST_FALLBACK_IMAGE,
   IMAGE_SERVICE_BASE_URL,
@@ -11,6 +12,7 @@ type ArtistSearchCardProps = {
 };
 
 const ArtistSearchCard = ({ artist, onClick }: ArtistSearchCardProps) => {
+  const { t } = useTranslation();
   if (!artist) return null;
   return (
     <div className="artist-sc-container" onClick={onClick}>
@@ -21,7 +23,7 @@ const ArtistSearchCard = ({ artist, onClick }: ArtistSearchCardProps) => {
               ? `${IMAGE_SERVICE_BASE_URL}${artist.profilePhoto}`
               : ARTIST_FALLBACK_IMAGE
           }
-          alt="Default profile picture"
+          alt={t("search.defaultProfilePictureAlt")}
           className="artist-sc-picture"
           onError={(e) => {
             e.currentTarget.src = ARTIST_FALLBACK_IMAGE;

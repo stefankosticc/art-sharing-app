@@ -1,4 +1,5 @@
 import { useNavigate } from "react-router-dom";
+import { useTranslation } from "react-i18next";
 import { HighStakesAuctionResponse } from "../../services/discover";
 import "./styles/HighStakesAuctionsSection.css";
 import { Currency } from "../../services/enums";
@@ -11,6 +12,7 @@ const HighStakesAuctionsSection = ({
   auctions,
 }: HighStakesAuctionsSectionProps) => {
   const navigate = useNavigate();
+  const { t } = useTranslation();
 
   return (
     <div className="hsa-container discover-container">
@@ -23,7 +25,7 @@ const HighStakesAuctionsSection = ({
           <div className="hsa-title">{auction.artworkTitle}</div>
           <div className="hsa-info">
             <div className="hsa-info-column">
-              <p>Current Price</p>
+              <p>{t("common.currentPrice")}</p>
               <span>
                 {auction.currentPrice.toLocaleString("en-US")}{" "}
                 {Currency[auction.currency]}
@@ -31,7 +33,7 @@ const HighStakesAuctionsSection = ({
             </div>
 
             <div className="hsa-info-column">
-              <p>No. of Offers</p>
+              <p>{t("common.offerCount")}</p>
               <span>{auction.offerCount}</span>
             </div>
           </div>

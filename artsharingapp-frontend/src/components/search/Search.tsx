@@ -1,4 +1,5 @@
 import "./styles/Search.css";
+import { useTranslation } from "react-i18next";
 import { FiSearch } from "react-icons/fi";
 import { FaLandmark } from "react-icons/fa6";
 import { FaCity, FaUser } from "react-icons/fa";
@@ -27,6 +28,7 @@ const setFilterOptionColors = (
 };
 
 const Search = ({ onClose }: { onClose: () => void }) => {
+  const { t } = useTranslation();
   const [searchString, setSearchString] = useState<string>("");
   const [filter, setFilter] = useState<string>("artwork");
 
@@ -47,7 +49,7 @@ const Search = ({ onClose }: { onClose: () => void }) => {
           <input
             type="text"
             id="search-input"
-            placeholder="Search for artworks, artists, or galleries..."
+            placeholder={t("search.placeholder")}
             value={searchString}
             onChange={(e) => setSearchString(e.target.value)}
             autoFocus
@@ -57,7 +59,7 @@ const Search = ({ onClose }: { onClose: () => void }) => {
           </button>
         </div>
         <div className="search-filters">
-          <p>Filters:</p>
+          <p>{t("search.filtersLabel")}</p>
           <div className="search-filter-options">
             <label
               htmlFor="sf-artwork"
@@ -78,7 +80,7 @@ const Search = ({ onClose }: { onClose: () => void }) => {
                 }}
               />
               <RiDashboardFill />
-              Artworks
+              {t("search.filterArtworks")}
             </label>
             <label
               style={setFilterOptionColors(
@@ -97,7 +99,7 @@ const Search = ({ onClose }: { onClose: () => void }) => {
                 }}
               />
               <FaUser />
-              Artists
+              {t("search.filterArtists")}
             </label>
             <label
               style={setFilterOptionColors(
@@ -116,7 +118,7 @@ const Search = ({ onClose }: { onClose: () => void }) => {
                 }}
               />
               <FaCity />
-              Cities
+              {t("search.filterCities")}
             </label>
             <label
               style={setFilterOptionColors(
@@ -135,7 +137,7 @@ const Search = ({ onClose }: { onClose: () => void }) => {
                 }}
               />
               <FaLandmark />
-              Galleries
+              {t("search.filterGalleries")}
             </label>
           </div>
         </div>
@@ -179,7 +181,9 @@ const Search = ({ onClose }: { onClose: () => void }) => {
               }
             })
           ) : (
-            <p className="search-no-results">No results found.</p>
+            <p className="search-no-results">
+              {t("search.noResultsFound")}
+            </p>
           )}
         </div>
       </div>

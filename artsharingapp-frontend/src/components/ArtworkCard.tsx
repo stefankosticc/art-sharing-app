@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { useTranslation } from "react-i18next";
 import { ArtworkCardData, FavoriteArtwork } from "../services/artwork";
 import "../styles/ArtworkCard.css";
 import { useNavigate } from "react-router-dom";
@@ -10,6 +11,7 @@ type ArtworkCardProps = {
 };
 
 const ArtworkCard = ({ artwork, loading = false }: ArtworkCardProps) => {
+  const { t } = useTranslation();
   const navigate = useNavigate();
 
   const getTitle = (): string | null => {
@@ -49,11 +51,11 @@ const ArtworkCard = ({ artwork, loading = false }: ArtworkCardProps) => {
       <img
         className="artwork-card-image"
         src={imgSrc}
-        alt={getTitle() || "artwork image not found"}
+        alt={getTitle() || t("common.artworkImageFallbackAlt")}
         onError={() => setImgSrc(ARTWORK_FALLBACK_IMAGE)}
       />
       <div className="artwork-card-details">
-        <p>{getTitle() || "Error: Title Not Found"}</p>
+        <p>{getTitle() || t("common.artworkTitleNotFound")}</p>
       </div>
     </div>
   );

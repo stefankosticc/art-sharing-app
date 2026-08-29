@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState } from "react";
+import { useTranslation } from "react-i18next";
 import Dock from "../components/Dock";
 import TopArtistsSection from "../components/discover-page/TopArtistsSection";
 import { useScroll } from "../hooks/useScroll";
@@ -11,6 +12,7 @@ import TrendingArtworksSection from "../components/discover-page/TrendingArtwork
 import DiscoverNavbar from "../components/DiscoverNavbar";
 
 const DiscoverPage = () => {
+  const { t } = useTranslation();
   const [discoverData, setDiscoverData] = useState<DiscoverData | null>(null);
   const [loadingDiscoverData, setLoadingDiscoverData] =
     useState<boolean>(false);
@@ -68,14 +70,14 @@ const DiscoverPage = () => {
           <>
             {discoverData?.topArtistsByLikes && (
               <>
-                <h1>🧑‍🎨 Top Artists</h1>
+                <h1>🧑‍🎨 {t("discover.topArtists")}</h1>
                 <TopArtistsSection artists={discoverData.topArtistsByLikes} />
               </>
             )}
 
             {discoverData?.highStakeAuctions && (
               <>
-                <h2>🔥 High Stakes Auctions</h2>
+                <h2>🔥 {t("discover.highStakesAuctions")}</h2>
                 <HighStakesAuctionsSection
                   auctions={discoverData.highStakeAuctions}
                 />
@@ -84,21 +86,23 @@ const DiscoverPage = () => {
 
             {discoverData?.trendingArtworks && (
               <>
-                <h2>✨ On The Rise</h2>
+                <h2>✨ {t("discover.onTheRise")}</h2>
                 <TrendingArtworksSection
                   artworks={discoverData.trendingArtworks}
                 />
               </>
             )}
 
-            <h2>Fresh Finds</h2>
+            <h2>{t("discover.freshFinds")}</h2>
             <div className="discover-feed">
               {artworks.map((artwork) => (
                 <ArtworkFeedCard artwork={artwork} key={artwork.id} />
               ))}
 
               {!loadingArtworks && artworks.length === 0 && (
-                <p className="discover-no-results">No artworks found.</p>
+                <p className="discover-no-results">
+                  {t("common.noArtworksFound")}
+                </p>
               )}
 
               {loadingArtworks && <div className="discover-loader" />}

@@ -1,3 +1,4 @@
+import { useTranslation } from "react-i18next";
 import { AuctionStartRequest } from "../../services/auction";
 import { Currency } from "../../services/enums";
 
@@ -10,11 +11,15 @@ const NewAuctionForm = ({
   auctionData,
   setAuctionData,
 }: NewAuctionFormProps) => {
+  const { t } = useTranslation();
+
   return (
     <div className="psm-auction-form">
-      <h4 className="psm-auction-title">Schedule New Auction</h4>
+      <h4 className="psm-auction-title">{t("auctions.scheduleNewAuction")}</h4>
       <div className="psm-form-field">
-        <label htmlFor="auction-starting-price">Starting Price:</label>
+        <label htmlFor="auction-starting-price">
+          {t("auctions.startingPriceLabel")}
+        </label>
         <input
           type="number"
           id="auction-starting-price"
@@ -28,7 +33,7 @@ const NewAuctionForm = ({
         />
       </div>
       <div className="psm-form-field">
-        <label htmlFor="auction-currency">Currency:</label>
+        <label htmlFor="auction-currency">{t("auctions.currencyLabel")}</label>
         <select
           value={auctionData.currency}
           id="auction-currency"
@@ -52,7 +57,7 @@ const NewAuctionForm = ({
 
       <div className="psm-auction-time">
         <div className="psm-form-field">
-          <label htmlFor="auction-start">Start Time:</label>
+          <label htmlFor="auction-start">{t("auctions.startTimeLabel")}</label>
           <input
             id="auction-start"
             type="datetime-local"
@@ -67,7 +72,7 @@ const NewAuctionForm = ({
         </div>
         <span>→</span>
         <div className="psm-form-field">
-          <label htmlFor="auction-end">End Time:</label>
+          <label htmlFor="auction-end">{t("auctions.endTimeLabel")}</label>
           <input
             id="auction-end"
             type="datetime-local"

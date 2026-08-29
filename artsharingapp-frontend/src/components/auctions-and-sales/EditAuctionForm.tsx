@@ -1,3 +1,4 @@
+import { useTranslation } from "react-i18next";
 import { AuctionResponse, AuctionUpdateRequest } from "../../services/auction";
 import { Currency } from "../../services/enums";
 import "./styles/EditAuctionForm.css";
@@ -15,19 +16,23 @@ const EditAuctionForm = ({
   setAuctionData,
   handleEndAuction,
 }: NewAuctionFormProps) => {
+  const { t } = useTranslation();
+
   return (
     <div className="psm-auction-form">
-      <h4 className="psm-auction-title">Edit Current Auction</h4>
+      <h4 className="psm-auction-title">{t("auctions.editCurrentAuction")}</h4>
 
       <div className="psm-form-field">
-        <p className="psm-edit-auction-label">Starting Price:</p>
+        <p className="psm-edit-auction-label">
+          {t("auctions.startingPriceLabel")}
+        </p>
         <div className="psm-edit-auction-data">
           {auction.currentPrice.toLocaleString("en-US")}
         </div>
       </div>
 
       <div className="psm-form-field">
-        <p className="psm-edit-auction-label">Currency:</p>
+        <p className="psm-edit-auction-label">{t("auctions.currencyLabel")}</p>
         <div className="psm-currency-select psm-edit-auction-currency">
           {Currency[auction.currency]}
         </div>
@@ -35,7 +40,7 @@ const EditAuctionForm = ({
 
       <div className="psm-auction-time">
         <div className="psm-form-field">
-          <p className="psm-edit-auction-label">Start Time:</p>
+          <p className="psm-edit-auction-label">{t("auctions.startTimeLabel")}</p>
           <div className="psm-edit-auction-data">
             {new Date(auction.startTime).toLocaleString("en-GB", {
               year: "numeric",
@@ -48,7 +53,7 @@ const EditAuctionForm = ({
         </div>
         <span>→</span>
         <div className="psm-form-field">
-          <label htmlFor="auction-end">End Time:</label>
+          <label htmlFor="auction-end">{t("auctions.endTimeLabel")}</label>
           <input
             id="auction-end"
             type="datetime-local"
@@ -72,7 +77,7 @@ const EditAuctionForm = ({
         </div>
       </div>
       <button id="psm-end-auction-btn" onClick={handleEndAuction}>
-        End Auction
+        {t("auctions.endAuctionButton")}
       </button>
     </div>
   );

@@ -1,5 +1,6 @@
 import { IoCloseCircleOutline } from "react-icons/io5";
 import { FaLandmark } from "react-icons/fa6";
+import { useTranslation } from "react-i18next";
 import { useNavigate } from "react-router-dom";
 import { GalleryMapPoint } from "../../services/map";
 import { ARTWORK_FALLBACK_IMAGE, IMAGE_SERVICE_BASE_URL } from "../../config/constants";
@@ -12,6 +13,7 @@ type GalleryMapSidebarProps = {
 };
 
 const GalleryMapSidebar = ({ gallery, onClose }: GalleryMapSidebarProps) => {
+  const { t } = useTranslation();
   const navigate = useNavigate();
   const { galleryArtworks, loadingGalleryArtworks } = useGalleryArtworks(
     gallery.id,
@@ -45,10 +47,12 @@ const GalleryMapSidebar = ({ gallery, onClose }: GalleryMapSidebarProps) => {
           className="map-sidebar-view-gallery"
           onClick={() => navigate(`/gallery/${gallery.id}`)}
         >
-          View gallery page
+          {t("map.viewGalleryPage")}
         </button>
 
-        <h4 className="map-sidebar-artworks-heading">Artworks</h4>
+        <h4 className="map-sidebar-artworks-heading">
+          {t("map.artworksHeading")}
+        </h4>
         <div className="ms-artwork-grid">
           {loadingGalleryArtworks && (
             <div className="ms-artworks-loading">
@@ -57,7 +61,7 @@ const GalleryMapSidebar = ({ gallery, onClose }: GalleryMapSidebarProps) => {
           )}
           {!loadingGalleryArtworks && galleryArtworks?.length === 0 && (
             <p className="map-sidebar-empty">
-              No artworks in this gallery yet.
+              {t("map.noArtworksInGallery")}
             </p>
           )}
           {!loadingGalleryArtworks &&

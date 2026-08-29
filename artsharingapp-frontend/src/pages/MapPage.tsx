@@ -8,6 +8,8 @@ import {
 import L from "leaflet";
 import "leaflet/dist/leaflet.css";
 import { toast } from "react-toastify";
+import { useTranslation } from "react-i18next";
+import i18n from "../i18n/i18n";
 import Dock from "../components/Dock";
 import GalleryMarker from "../components/map/GalleryMarker";
 import GalleryMapSidebar from "../components/map/GalleryMapSidebar";
@@ -27,7 +29,7 @@ const getInitialViewport = (): SavedViewport => {
     const saved = sessionStorage.getItem(MAP_VIEWPORT_STORAGE_KEY);
     if (saved) return JSON.parse(saved);
   } catch (err) {
-    toast.error("Failed to restore your last map position.");
+    toast.error(i18n.t("map.restoreViewportError"));
   }
   return { lat: WORLD_CENTER[0], lng: WORLD_CENTER[1], zoom: WORLD_ZOOM };
 };
@@ -94,6 +96,7 @@ const ViewportWatcher = ({
 };
 
 const MapPage = () => {
+  const { t } = useTranslation();
   const [initialViewport] = useState(getInitialViewport);
   const [points, setPoints] = useState<GalleryMapPoint[]>([]);
   const [loadingPoints, setLoadingPoints] = useState(false);
@@ -188,9 +191,11 @@ const MapPage = () => {
         </MapContainer>
 
         {zoom < MIN_ZOOM_TO_FETCH && (
-          <div className="map-zoom-hint">Zoom in to explore galleries</div>
+          <div className="map-zoom-hint">{t("map.zoomInHint")}</div>
         )}
-        {loadingPoints && <div className="map-loading-indicator">Loading…</div>}
+        {loadingPoints && (
+          <div className="map-loading-indicator">{t("map.loading")}</div>
+        )}
 
         {selectedGallery && (
           <GalleryMapSidebar gallery={selectedGallery} onClose={closeSidebar} />

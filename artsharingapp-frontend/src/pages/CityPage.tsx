@@ -1,4 +1,5 @@
 import { FaCity } from "react-icons/fa";
+import { useTranslation } from "react-i18next";
 import "../styles/CityPage.css";
 import Dock from "../components/Dock";
 import { useParams } from "react-router-dom";
@@ -9,14 +10,15 @@ import { useCityArtworks } from "../hooks/useCityArtworks";
 import { useCityGalleries } from "../hooks/useCityGalleries";
 
 const CityPage = () => {
+  const { t } = useTranslation();
   const { cityId } = useParams();
 
   const { city } = useCity(cityId ? parseInt(cityId) : -1);
   const { cityArtworks, loadingCityArtworks } = useCityArtworks(
-    cityId ? parseInt(cityId) : -1
+    cityId ? parseInt(cityId) : -1,
   );
   const { cityGalleries, loadingCityGalleries } = useCityGalleries(
-    cityId ? parseInt(cityId) : -1
+    cityId ? parseInt(cityId) : -1,
   );
 
   return (
@@ -36,9 +38,9 @@ const CityPage = () => {
 
         <div className="cp-content">
           {/* GALLERIES */}
-          <h3>Galleries in {city?.name}</h3>
+          <h3>{t("city.galleriesInCity", { cityName: city?.name })}</h3>
           <div className="cp-city-galleries">
-            {cityGalleries ? (
+            {cityGalleries && cityGalleries.length != 0 ? (
               cityGalleries?.map((gallery) => (
                 <GalleryCard
                   key={gallery.id}
@@ -48,7 +50,7 @@ const CityPage = () => {
               ))
             ) : (
               <p className="cp-city-galleries-not-found">
-                No galleries have been added for this city yet.
+                {t("city.noGalleriesFound")}
               </p>
             )}
           </div>

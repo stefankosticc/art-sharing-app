@@ -36,13 +36,19 @@ const GalleryMarker = ({ point, onSelect }: GalleryMarkerProps) => {
         click: (e) => {
           L.DomEvent.stopPropagation(e);
           if (map.getZoom() < 12) {
-            map.flyTo([point.latitude, point.longitude], CLICK_ZOOM, { duration: 0.75 });
+            map.flyTo([point.latitude, point.longitude], CLICK_ZOOM, {
+              duration: 0.75,
+            });
           }
           onSelect(point);
         },
       }}
     >
-      <Tooltip direction="top" offset={[0, -32]}>
+      <Tooltip
+        direction="top"
+        offset={[0, -32]}
+        className="map-gallery-tooltip"
+      >
         {point.name}
       </Tooltip>
     </Marker>
