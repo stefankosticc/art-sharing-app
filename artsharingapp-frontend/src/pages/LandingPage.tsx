@@ -32,8 +32,7 @@ const LandingPage = () => {
           <div>
             <p className="lp-quote">
               “There are painters who transform the sun into a yellow spot, but
-              there are others who, thanks to their art and intelligence,
-              transform a yellow spot into the sun.”
+              there are others who transform a yellow spot into the sun.”
             </p>
             <p className="lp-quote-author">- Pablo Picasso</p>
           </div>

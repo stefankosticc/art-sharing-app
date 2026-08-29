@@ -63,4 +63,11 @@ public class GalleryController : Controller
     {
         return Ok(await _galleryService.GetGalleriesByName(name));
     }
+
+    [HttpGet("galleries/map")]
+    public async Task<IActionResult> GetGalleriesInBoundingBox(
+        [FromQuery] double south, [FromQuery] double west, [FromQuery] double north, [FromQuery] double east)
+    {
+        return Ok(await _galleryService.GetGalleriesInBoundingBox(south, west, north, east));
+    }
 }

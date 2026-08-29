@@ -1,0 +1,145 @@
+.map-sidebar {
+    position: absolute;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    z-index: 1000;
+    width: 22rem;
+    max-width: 90vw;
+    background-color: var(--black);
+    border-left: 0.5px solid var(--gray);
+    overflow-y: auto;
+}
+
+.map-sidebar-close {
+    position: absolute;
+    top: 1rem;
+    right: 1rem;
+    z-index: 1;
+    font-size: 1.4rem;
+    color: var(--gray);
+    cursor: pointer;
+}
+
+.map-sidebar-close:hover {
+    color: var(--black-highlight);
+}
+
+.ms-header {
+    background: var(--orange);
+    height: 9rem;
+    position: relative;
+}
+
+.ms-icon-wrapper {
+    position: absolute;
+    left: 1.4rem;
+    right: 1.4rem;
+    bottom: 0.8rem;
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+}
+
+.ms-icon-wrapper svg {
+    flex-shrink: 0;
+    color: var(--black);
+    font-size: 3rem;
+}
+
+.ms-icon-wrapper span {
+    font-size: 1.3rem;
+    font-weight: bold;
+    line-height: 1.15;
+}
+
+.ms-content {
+    padding: 1.2rem 1.4rem 1.5rem;
+}
+
+.ms-info {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.6rem;
+    margin-bottom: 1rem;
+}
+
+.ms-info p {
+    padding: 0.2rem 0.8rem;
+    border: 1px solid var(--gray-light);
+    color: var(--gray-light);
+    border-radius: 1rem;
+    width: fit-content;
+    font-size: 0.8rem;
+}
+
+.ms-city-name:hover {
+    background-color: rgba(30, 144, 255, 0.2);
+    color: var(--blue);
+    border-color: var(--blue);
+    cursor: pointer;
+}
+
+.map-sidebar-view-gallery {
+    width: 100%;
+    background: var(--purple);
+    color: var(--black);
+    padding: 0.5rem;
+    border: none;
+    border-radius: 0.4rem;
+    font-weight: 700;
+    cursor: pointer;
+}
+
+.map-sidebar-artworks-heading {
+    margin-top: 1.6rem;
+    margin-bottom: 0.6rem;
+    font-size: 0.95rem;
+}
+
+.map-sidebar-empty {
+    color: var(--gray-light);
+    font-size: 0.85rem;
+}
+
+.ms-artwork-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 0.8rem;
+}
+
+.ms-artworks-loading {
+    grid-column: 1 / -1;
+    display: flex;
+    justify-content: center;
+    padding: 5rem 0;
+}
+
+.ms-artworks-loading .loading-spinner {
+    width: 20px;
+}
+
+.ms-artwork-card {
+    cursor: pointer;
+}
+
+.ms-artwork-card img {
+    width: 100%;
+    aspect-ratio: 3.4/4;
+    object-fit: cover;
+    border-radius: 0.6rem;
+    border: 0.5px solid var(--gray);
+    display: block;
+}
+
+.ms-artwork-card p {
+    margin-top: 0.3rem;
+    font-size: 0.8rem;
+    font-weight: bold;
+    color: var(--white);
+    display: -webkit-box;
+    line-clamp: 2;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+}

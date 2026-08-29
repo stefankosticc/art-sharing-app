@@ -13,5 +13,9 @@ public class GalleryProfile : AutoMapper.Profile
 
         CreateMap<GalleryRequestDTO, Gallery>()
             .ForMember(dest => dest.City, opt => opt.Ignore());
+
+        CreateMap<Gallery, GalleryMapPointDTO>()
+            .ForMember(dest => dest.CityName, opt =>
+                opt.MapFrom(src => src.City != null ? src.City.Name : null));
     }
 }

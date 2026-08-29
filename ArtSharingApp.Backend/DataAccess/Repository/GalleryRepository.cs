@@ -15,4 +15,11 @@ public class GalleryRepository : GenericRepository<Gallery>, IGalleryRepository
         return await _dbSet.Where(g => g.Name.ToLower().Contains(name.ToLower()))
             .Include(g => g.City).ToListAsync();
     }
+
+    public async Task<IEnumerable<Gallery>> GetGalleriesInBoundingBox(double south, double west, double north, double east)
+    {
+        return await _dbSet.Where(g => g.Latitude >= south && g.Latitude <= north
+                                        && g.Longitude >= west && g.Longitude <= east)
+            .Include(g => g.City).ToListAsync();
+    }
 }
