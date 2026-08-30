@@ -54,7 +54,11 @@ const OfferCard = ({
   return (
     <div className="oc-container">
       <p className="oc-top-offer">🔥 {t("auctions.topOffer")}</p>
-      <span className="oc-status">
+      <span
+        className={`oc-status oc-status-${OfferStatus[
+          offer.status
+        ].toLowerCase()}`}
+      >
         {t(`auctions.offerStatus.${OfferStatus[offer.status].toLowerCase()}`)}
       </span>
       <p>@{offer.userName}</p>
