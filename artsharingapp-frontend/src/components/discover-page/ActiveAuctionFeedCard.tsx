@@ -40,12 +40,6 @@ const ActiveAuctionFeedCard = ({ listing }: ActiveAuctionFeedCardProps) => {
   return (
     <div
       className="aac-container"
-      style={
-        {
-          "--artwork-color":
-            listing.type === "auction" ? "var(--purple)" : "var(--cyan)",
-        } as React.CSSProperties
-      }
       onClick={() => navigate(`/artwork/${artworkId}`)}
     >
       <img

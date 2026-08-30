@@ -89,6 +89,7 @@ export interface DiscoverArtworkResponse {
   title: string;
   image: string;
   postedByUserName: string;
+  color: string;
 }
 
 export interface OnSaleArtworkResponse {

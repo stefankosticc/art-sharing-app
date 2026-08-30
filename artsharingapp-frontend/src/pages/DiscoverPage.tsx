@@ -68,14 +68,14 @@ const DiscoverPage = () => {
           </div>
         ) : (
           <>
-            {discoverData?.topArtistsByLikes && (
+            {discoverData?.topArtistsByLikes.length !== 0 && discoverData && (
               <>
                 <h1>🧑‍🎨 {t("discover.topArtists")}</h1>
                 <TopArtistsSection artists={discoverData.topArtistsByLikes} />
               </>
             )}
 
-            {discoverData?.highStakeAuctions && (
+            {discoverData?.highStakeAuctions.length !== 0 && discoverData && (
               <>
                 <h2>🔥 {t("discover.highStakesAuctions")}</h2>
                 <HighStakesAuctionsSection
@@ -84,7 +84,7 @@ const DiscoverPage = () => {
               </>
             )}
 
-            {discoverData?.trendingArtworks && (
+            {discoverData?.trendingArtworks.length !== 0 && discoverData && (
               <>
                 <h2>✨ {t("discover.onTheRise")}</h2>
                 <TrendingArtworksSection

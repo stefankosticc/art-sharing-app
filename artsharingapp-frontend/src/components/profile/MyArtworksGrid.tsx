@@ -23,12 +23,13 @@ const MyArtworksGrid = ({
   const [showPublicArtworks, setShowPublicArtworks] = useState<boolean>(true);
 
   useEffect(() => {
-    if (!user) return;
+    const userId = user?.id;
+    if (!userId) return;
 
     const fetchArtworks = async () => {
       try {
         setLoading(true);
-        const response = await getUserArtworks(user.id);
+        const response = await getUserArtworks(userId);
         setArtworks(response);
       } catch (err) {
         setLoading(true);
@@ -38,7 +39,7 @@ const MyArtworksGrid = ({
     };
 
     fetchArtworks();
-  }, [user]);
+  }, [user?.id]);
 
   if (loading) {
     return <div className="profile-artwork-grid-loader"></div>;

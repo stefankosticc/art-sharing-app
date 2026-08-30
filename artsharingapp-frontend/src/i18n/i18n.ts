@@ -8,7 +8,6 @@ i18n
   .use(LanguageDetector)
   .use(initReactI18next)
   .init({
-    // lng: "es", // TODO: remove to restore auto-detection
     fallbackLng: "en",
     supportedLngs: ["en", "sr", "es"],
     ns: ["translation"],

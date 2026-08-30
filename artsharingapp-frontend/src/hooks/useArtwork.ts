@@ -3,7 +3,9 @@ import { Artwork, getArtwork } from "../services/artwork";
 
 export const useArtwork = (artworkId: number, refetch: boolean = false) => {
   const [artwork, setArtwork] = useState<Artwork | null>(null);
-  const [loadingArtwork, setLoadingArtwork] = useState<boolean>(false);
+  const [loadingArtwork, setLoadingArtwork] = useState<boolean>(
+    () => artworkId > 0,
+  );
 
   useEffect(() => {
     let isCancelled = false;

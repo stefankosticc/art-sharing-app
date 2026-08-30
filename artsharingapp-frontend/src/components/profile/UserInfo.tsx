@@ -46,8 +46,7 @@ const UserInfo = ({
     if (user?.profilePhoto) {
       setImgSrc(`${IMAGE_SERVICE_BASE_URL}${user.profilePhoto}?t=${Date.now()}`);
     }
-    if (user?.isFollowedByLoggedInUser)
-      setIsFollowing(user.isFollowedByLoggedInUser);
+    setIsFollowing(!!user?.isFollowedByLoggedInUser);
   }, [user]);
 
   const handleFollow = async () => {
@@ -59,6 +58,7 @@ const UserInfo = ({
           ? {
               ...prev,
               followersCount: prev.followersCount + 1,
+              isFollowedByLoggedInUser: followed,
             }
           : prev
       );
@@ -74,6 +74,7 @@ const UserInfo = ({
           ? {
               ...prev,
               followersCount: prev.followersCount - 1,
+              isFollowedByLoggedInUser: false,
             }
           : prev
       );

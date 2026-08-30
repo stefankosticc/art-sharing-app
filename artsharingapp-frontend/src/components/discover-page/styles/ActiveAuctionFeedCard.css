@@ -10,11 +10,7 @@
 }
 
 .aac-container:hover {
-    --_artwork-color: var(--artwork-color, var(--gray-light));
-    border-color: var(--_artwork-color);
-    box-shadow: 0px 5px 60px -20px var(--_artwork-color);
-    -webkit-box-shadow: 0px 5px 60px -20px var(--_artwork-color);
-    -moz-box-shadow: 0px 5px 60px -20px var(--_artwork-color);
+    border-color: var(--gray-light);
 }
 
 .aac-img {
