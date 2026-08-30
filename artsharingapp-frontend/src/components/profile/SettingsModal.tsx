@@ -5,10 +5,12 @@ import { useTranslation } from "react-i18next";
 import { logout, User } from "../../services/auth";
 import { useNavigate } from "react-router-dom";
 import AccountSettings from "./AccountSettings";
+import PreferencesSettings from "./PreferencesSettings";
 import notificationService from "../../services/notifications";
 
 const TABS: { key: string; labelKey: string }[] = [
   { key: "Account", labelKey: "profile.settingsTabs.account" },
+  { key: "Preferences", labelKey: "profile.settingsTabs.preferences" },
 ];
 
 type SettingsModalProps = {
@@ -51,6 +53,8 @@ const SettingsModal = ({
             onClose={onClose}
           />
         );
+      case "Preferences":
+        return <PreferencesSettings />;
       default:
         return null;
     }

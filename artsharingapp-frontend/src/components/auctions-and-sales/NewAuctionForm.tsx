@@ -33,7 +33,7 @@ const NewAuctionForm = ({
         />
       </div>
       <div className="psm-form-field">
-        <label htmlFor="auction-currency">{t("auctions.currencyLabel")}</label>
+        <label htmlFor="auction-currency">{t("common.currencyLabel")}</label>
         <select
           value={auctionData.currency}
           id="auction-currency"

@@ -11,6 +11,7 @@
     "delete": "Eliminar",
     "onSale": "EN VENTA",
     "closeTitle": "Cerrar",
+    "currencyLabel": "Moneda:",
     "startTypingPlaceholder": "Empieza a escribir aquí...",
     "dock": {
       "map": "Mapa",
@@ -55,11 +56,15 @@
     "noArtworksYet": "Aún no tienes obras.",
     "noFavoritesYet": "Aún no tienes favoritos.",
     "settingsTabs": {
-      "account": "Cuenta"
+      "account": "Cuenta",
+      "preferences": "Preferencias"
     },
     "logOut": "Cerrar sesión",
     "accountSettingsTitle": "Configuración de la cuenta",
     "updateProfileHere": "Actualiza tu perfil aquí.",
+    "preferencesTitle": "Preferencias",
+    "preferencesDescription": "Elige tu idioma y moneda preferidos.",
+    "languageLabel": "Idioma:",
     "replaceProfilePhoto": "Cambiar foto de perfil",
     "removeProfilePhoto": "Quitar foto de perfil",
     "remove": "Quitar",
@@ -166,7 +171,6 @@
     "interestedMessage": "Hola, estoy interesado/a en comprar tu obra \"{{title}}\". ¿Podrías darme más detalles?",
     "auctionTab": "Subasta",
     "priceLabel": "Precio:",
-    "currencyLabel": "Moneda:",
     "auctionUpdatedSuccess": "¡Subasta actualizada correctamente!",
     "auctionStartedSuccess": "¡Subasta iniciada correctamente!",
     "auctionScheduledSuccess": "¡Subasta programada correctamente!",

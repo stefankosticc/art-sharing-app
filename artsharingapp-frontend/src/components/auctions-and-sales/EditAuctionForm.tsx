@@ -32,7 +32,7 @@ const EditAuctionForm = ({
       </div>
 
       <div className="psm-form-field">
-        <p className="psm-edit-auction-label">{t("auctions.currencyLabel")}</p>
+        <p className="psm-edit-auction-label">{t("common.currencyLabel")}</p>
         <div className="psm-currency-select psm-edit-auction-currency">
           {Currency[auction.currency]}
         </div>

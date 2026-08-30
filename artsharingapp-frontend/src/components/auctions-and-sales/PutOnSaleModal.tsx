@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import "./styles/PutOnSaleModal.css";
 import { Currency } from "../../services/enums";
+import { getPreferredCurrency } from "../../utils/preferences";
 import {
   putArtworkOnSale,
   PutArtworkOnSaleRequest,
@@ -31,14 +32,16 @@ const PutOnSaleModal = ({
   const { t } = useTranslation();
   const [activeTab, setActiveTab] = useState<string>("fixed");
   const [fixedPrice, setFixedPrice] = useState<number>(0);
-  const [fixedCurrency, setFixedCurrency] = useState<Currency>(Currency.USD);
+  const [fixedCurrency, setFixedCurrency] = useState<Currency>(
+    getPreferredCurrency()
+  );
   const { auction, triggerRefetchAuction } = useAuctionContext();
 
   const [auctionData, setAuctionData] = useState<AuctionStartRequest>({
     startTime: new Date(),
     endTime: new Date(),
     startingPrice: 0,
-    currency: Currency.USD,
+    currency: getPreferredCurrency(),
   });
 
   const [editActiveAuctionData, setEditActiveAuctionData] =
@@ -130,7 +133,7 @@ const PutOnSaleModal = ({
               />
             </div>
             <div className="psm-form-field">
-              <label htmlFor="currency">{t("auctions.currencyLabel")}</label>
+              <label htmlFor="currency">{t("common.currencyLabel")}</label>
               <select
                 id="currency"
                 value={fixedCurrency}

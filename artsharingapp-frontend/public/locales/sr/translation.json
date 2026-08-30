@@ -11,6 +11,7 @@
     "delete": "Obriši",
     "onSale": "NA PRODAJI",
     "closeTitle": "Zatvori",
+    "currencyLabel": "Valuta:",
     "startTypingPlaceholder": "Počnite da kucate ovde...",
     "dock": {
       "map": "Mapa",
@@ -55,11 +56,15 @@
     "noArtworksYet": "Još uvek nemate dela.",
     "noFavoritesYet": "Još uvek nemate omiljenih dela.",
     "settingsTabs": {
-      "account": "Nalog"
+      "account": "Nalog",
+      "preferences": "Personalizacija"
     },
     "logOut": "Odjavi se",
     "accountSettingsTitle": "Podešavanja naloga",
     "updateProfileHere": "Ovde možete izmeniti svoj profil.",
+    "preferencesTitle": "Personalizacija",
+    "preferencesDescription": "Izaberite željeni jezik i valutu.",
+    "languageLabel": "Jezik:",
     "replaceProfilePhoto": "Zameni profilnu sliku",
     "removeProfilePhoto": "Ukloni profilnu sliku",
     "remove": "Ukloni",
@@ -166,7 +171,6 @@
     "interestedMessage": "Zdravo, zainteresovan/a sam za kupovinu vašeg dela „{{title}}“. Da li možete da mi date više detalja?",
     "auctionTab": "Aukcija",
     "priceLabel": "Cena:",
-    "currencyLabel": "Valuta:",
     "auctionUpdatedSuccess": "Aukcija je uspešno izmenjena!",
     "auctionStartedSuccess": "Aukcija je uspešno pokrenuta!",
     "auctionScheduledSuccess": "Aukcija je uspešno zakazana!",

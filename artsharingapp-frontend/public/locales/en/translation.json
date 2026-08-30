@@ -11,6 +11,7 @@
     "delete": "Delete",
     "onSale": "ON SALE",
     "closeTitle": "Close",
+    "currencyLabel": "Currency:",
     "startTypingPlaceholder": "Start typing here...",
     "dock": {
       "map": "Map",
@@ -55,11 +56,15 @@
     "noArtworksYet": "You have no artworks yet.",
     "noFavoritesYet": "You have no favorites yet.",
     "settingsTabs": {
-      "account": "Account"
+      "account": "Account",
+      "preferences": "Preferences"
     },
     "logOut": "Log out",
     "accountSettingsTitle": "Account Settings",
     "updateProfileHere": "Update your profile here.",
+    "preferencesTitle": "Preferences",
+    "preferencesDescription": "Choose your preferred language and currency.",
+    "languageLabel": "Language:",
     "replaceProfilePhoto": "Replace profile photo",
     "removeProfilePhoto": "Remove profile photo",
     "remove": "Remove",
@@ -166,7 +171,6 @@
     "interestedMessage": "Hello, I am interested in purchasing your artwork \"{{title}}\". Could you please provide more details?",
     "auctionTab": "Auction",
     "priceLabel": "Price:",
-    "currencyLabel": "Currency:",
     "auctionUpdatedSuccess": "Auction updated successfully!",
     "auctionStartedSuccess": "Auction started successfully!",
     "auctionScheduledSuccess": "Auction scheduled successfully!",
