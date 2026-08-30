@@ -176,6 +176,8 @@
     "auctionScheduledSuccess": "Auction scheduled successfully!",
     "auctionEndedSuccess": "Auction ended!",
     "auctionEndError": "Failed to end auction.",
+    "pastEndTimeConfirm": "Setting a past date and time will end the auction. Do you want to continue?",
+    "endAuctionConfirm": "Are you sure you want to end this auction? This action cannot be undone.",
     "transferConfirm": "Are you sure you want to transfer this artwork to @{{userName}}?",
     "transferSuccess": "Artwork successfully transferred to @{{userName}}!",
     "transferSearchPlaceholder": "Search artist for transfer...",

@@ -16,9 +16,9 @@ public class UserProfilePhotoController : ControllerBase
 
     [HttpPost]
     [RequestSizeLimit(5 * 1024 * 1024)]
-    public async Task<IActionResult> Upload([FromQuery] int userRefId, IFormFile file)
+    public async Task<IActionResult> Upload([FromQuery] int userRefId, IFormFile image)
     {
-        var result = await _userProfilePhotoService.UploadAsync(userRefId, file);
+        var result = await _userProfilePhotoService.UploadAsync(userRefId, image);
         return Ok(result);
     }
 
@@ -31,9 +31,9 @@ public class UserProfilePhotoController : ControllerBase
 
     [HttpPut("{photoId:guid}")]
     [RequestSizeLimit(5 * 1024 * 1024)]
-    public async Task<IActionResult> Replace(Guid photoId, IFormFile file)
+    public async Task<IActionResult> Replace(Guid photoId, IFormFile image)
     {
-        var result = await _userProfilePhotoService.ReplaceAsync(photoId, file);
+        var result = await _userProfilePhotoService.ReplaceAsync(photoId, image);
         return Ok(result);
     }
 

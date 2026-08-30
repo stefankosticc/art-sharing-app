@@ -176,6 +176,8 @@
     "auctionScheduledSuccess": "¡Subasta programada correctamente!",
     "auctionEndedSuccess": "¡Subasta finalizada!",
     "auctionEndError": "No se pudo finalizar la subasta.",
+    "pastEndTimeConfirm": "Establecer una fecha y hora pasada finalizará la subasta. ¿Deseas continuar?",
+    "endAuctionConfirm": "¿Seguro que quieres finalizar esta subasta? Esta acción no se puede deshacer.",
     "transferConfirm": "¿Seguro que quieres transferir esta obra a @{{userName}}?",
     "transferSuccess": "¡Obra transferida correctamente a @{{userName}}!",
     "transferSearchPlaceholder": "Buscar artista para transferir...",

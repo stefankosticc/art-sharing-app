@@ -197,7 +197,7 @@ const ArtworkPage = ({ isNew = false }: ArtworkPageProps) => {
         toast.error(t("artwork.imageRequiredError"));
         return;
       }
-      await addNewArtwork(
+      const success = await addNewArtwork(
         {
           ...editingArtworkData,
           createdByArtistId: loggedInUser?.id ?? -1,
@@ -205,13 +205,21 @@ const ArtworkPage = ({ isNew = false }: ArtworkPageProps) => {
         },
         artworkImageFile,
       );
-      toast.success(t("artwork.addedSuccess"));
-      navigate(`/${loggedInUser?.userName}`);
+      if (success) {
+        toast.success(t("artwork.addedSuccess"));
+        navigate(`/${loggedInUser?.userName}`);
+      }
     } else if (artwork) {
-      await updateArtwork(artwork.id, editingArtworkData, artworkImageFile);
-      setRefetchArtwork((prev) => !prev);
-      setIsEditing(false);
-      toast.success(t("artwork.updatedSuccess"));
+      const success = await updateArtwork(
+        artwork.id,
+        editingArtworkData,
+        artworkImageFile,
+      );
+      if (success) {
+        setRefetchArtwork((prev) => !prev);
+        setIsEditing(false);
+        toast.success(t("artwork.updatedSuccess"));
+      }
     }
   };
 

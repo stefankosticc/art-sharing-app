@@ -70,6 +70,12 @@ const PutOnSaleModal = ({
       }
     } else {
       if (activeTab === "auction" && auction) {
+        if (
+          editActiveAuctionData.endTime <= new Date() &&
+          !window.confirm(t("auctions.pastEndTimeConfirm"))
+        ) {
+          return;
+        }
         success = await updateAuction(auction.id, editActiveAuctionData);
         if (success) toast.success(t("auctions.auctionUpdatedSuccess"));
       } else {
@@ -92,6 +98,7 @@ const PutOnSaleModal = ({
 
   const handleEndAuction = async () => {
     if (!auction) return;
+    if (!window.confirm(t("auctions.endAuctionConfirm"))) return;
 
     const success = await updateAuction(auction.id, { endTime: new Date() });
     if (success) {

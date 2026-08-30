@@ -176,6 +176,8 @@
     "auctionScheduledSuccess": "Aukcija je uspešno zakazana!",
     "auctionEndedSuccess": "Aukcija je završena!",
     "auctionEndError": "Nije uspelo završavanje aukcije.",
+    "pastEndTimeConfirm": "Podešavanje datuma i vremena u prošlosti će završiti aukciju. Da li želite da nastavite?",
+    "endAuctionConfirm": "Da li ste sigurni da želite da završite ovu aukciju? Ova akcija se ne može poništiti.",
     "transferConfirm": "Da li ste sigurni da želite da prenesete ovo delo korisniku @{{userName}}?",
     "transferSuccess": "Delo je uspešno preneto korisniku @{{userName}}!",
     "transferSearchPlaceholder": "Pretražite umetnika za prenos...",

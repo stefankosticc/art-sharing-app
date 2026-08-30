@@ -31,9 +31,9 @@ public class ArtworkImageController : ControllerBase
 
     [HttpPut("{imageId:guid}")]
     [RequestSizeLimit(5 * 1024 * 1024)]
-    public async Task<IActionResult> Replace(Guid imageId, IFormFile file)
+    public async Task<IActionResult> Replace(Guid imageId, IFormFile image)
     {
-        var result = await _artworkImageService.ReplaceAsync(imageId, file);
+        var result = await _artworkImageService.ReplaceAsync(imageId, image);
         return Ok(result);
     }
 

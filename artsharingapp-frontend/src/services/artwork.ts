@@ -1,3 +1,4 @@
+import { toast } from "react-toastify";
 import authAxios from "./authAxios";
 import { Currency } from "./enums";
 
@@ -159,7 +160,7 @@ export async function updateArtwork(
   artworkId: number,
   request: ArtworkRequest,
   artworkImage: File | null
-): Promise<void> {
+): Promise<boolean> {
   try {
     const formData = new FormData();
     for (const key in request) {
@@ -174,19 +175,22 @@ export async function updateArtwork(
     await authAxios.put(`/artwork/${artworkId}`, formData, {
       headers: { "Content-Type": "multipart/form-data" },
     });
+    return true;
   } catch (error: any) {
     const message =
       error?.response?.data?.error ||
       error?.message ||
       "An unknown error occurred while updating artwork.";
     console.error("Error:", message);
+    toast.error(message);
+    return false;
   }
 }
 
 export async function addNewArtwork(
   artwork: ArtworkRequest,
   artworkImage: File
-): Promise<void> {
+): Promise<boolean> {
   try {
     const formData = new FormData();
     for (const key in artwork) {
@@ -198,12 +202,15 @@ export async function addNewArtwork(
     await authAxios.post(`/artwork`, formData, {
       headers: { "Content-Type": "multipart/form-data" },
     });
+    return true;
   } catch (error: any) {
     const message =
       error?.response?.data?.error ||
       error?.message ||
       "An unknown error occurred.";
     console.error("Error:", message);
+    toast.error(message);
+    return false;
   }
 }
 
