@@ -1,10 +1,11 @@
 import { useState } from "react";
+import { useTranslation } from "react-i18next";
 import {
   DiscoverArtworkResponse,
   FollowedUserArtworkResponse,
 } from "../../services/artwork";
 import "./styles/ArtworkFeedCard.css";
-import { ARTWORK_FALLBACK_IMAGE, BACKEND_BASE_URL } from "../../config/constants";
+import { ARTWORK_FALLBACK_IMAGE, IMAGE_SERVICE_BASE_URL } from "../../config/constants";
 import { useNavigate } from "react-router-dom";
 
 type ArtworkFeedCardProps = {
@@ -12,8 +13,9 @@ type ArtworkFeedCardProps = {
 };
 
 const ArtworkFeedCard = ({ artwork }: ArtworkFeedCardProps) => {
+  const { t } = useTranslation();
   const [imgSrc, setImgSrc] = useState<string>(
-    `${BACKEND_BASE_URL}${artwork.image}`
+    `${IMAGE_SERVICE_BASE_URL}${artwork.image}`
   );
 
   const navigate = useNavigate();
@@ -34,7 +36,7 @@ const ArtworkFeedCard = ({ artwork }: ArtworkFeedCardProps) => {
     >
       <img
         src={imgSrc}
-        alt={artwork.title || "artwork image"}
+        alt={artwork.title || t("common.artworkImageFallbackAlt")}
         onError={() => setImgSrc(ARTWORK_FALLBACK_IMAGE)}
         className="afc-img"
       />

@@ -60,7 +60,7 @@ public class ArtworkModelTests
     [InlineData("#123456")]
     public void Color_ValidHex_PassesValidation(string color)
     {
-        var artwork = new Artwork { Title = "Test", Image = new byte[1], Color = color };
+        var artwork = new Artwork { Title = "Test", ImageId = "test-image-id", Color = color };
         var ctx = new ValidationContext(artwork);
         Validator.ValidateObject(artwork, ctx, validateAllProperties: true);
     }
@@ -73,7 +73,7 @@ public class ArtworkModelTests
     [InlineData("123456")] // Missing hash
     public void Color_InvalidHex_FailsValidation(string color)
     {
-        var artwork = new Artwork { Title = "Test", Image = new byte[1], Color = color };
+        var artwork = new Artwork { Title = "Test", ImageId = "test-image-id", Color = color };
         var ctx = new ValidationContext(artwork);
         Assert.Throws<ValidationException>(() => Validator.ValidateObject(artwork, ctx, true));
     }
@@ -84,7 +84,7 @@ public class ArtworkModelTests
     [InlineData(null)]
     public void Title_Required_FailsValidationIfNullOrEmpty(string? title)
     {
-        var artwork = new Artwork { Title = title, Image = new byte[1] };
+        var artwork = new Artwork { Title = title, ImageId = "test-image-id" };
         var ctx = new ValidationContext(artwork);
         Assert.Throws<ValidationException>(() => Validator.ValidateObject(artwork, ctx, true));
     }
@@ -92,7 +92,7 @@ public class ArtworkModelTests
     [Fact]
     public void Title_TooLong_FailsValidation()
     {
-        var artwork = new Artwork { Title = new string('a', 201), Image = new byte[1] };
+        var artwork = new Artwork { Title = new string('a', 201), ImageId = "test-image-id" };
         var ctx = new ValidationContext(artwork);
         Assert.Throws<ValidationException>(() => Validator.ValidateObject(artwork, ctx, true));
     }
@@ -100,23 +100,15 @@ public class ArtworkModelTests
     [Fact]
     public void Title_MaxLength_PassesValidation()
     {
-        var artwork = new Artwork { Title = new string('a', 200), Image = new byte[1] };
+        var artwork = new Artwork { Title = new string('a', 200), ImageId = "test-image-id" };
         var ctx = new ValidationContext(artwork);
         Validator.ValidateObject(artwork, ctx, validateAllProperties: true);
     }
 
     [Fact]
-    public void Image_Required_FailsValidationIfNull()
+    public void ImageId_PassesValidation_WhenSet()
     {
-        var artwork = new Artwork { Title = "Test" };
-        var ctx = new ValidationContext(artwork);
-        Assert.Throws<ValidationException>(() => Validator.ValidateObject(artwork, ctx, true));
-    }
-
-    [Fact]
-    public void Image_Required_PassesValidationIfNotNull()
-    {
-        var artwork = new Artwork { Title = "Test", Image = new byte[1] };
+        var artwork = new Artwork { Title = "Test", ImageId = "test-image-id" };
         var ctx = new ValidationContext(artwork);
         Validator.ValidateObject(artwork, ctx, validateAllProperties: true);
     }
@@ -127,7 +119,7 @@ public class ArtworkModelTests
         var artwork = new Artwork
         {
             Title = "Test",
-            Image = new byte[1],
+            ImageId = "test-image-id",
             IsOnSale = true,
             Price = -1,
             Currency = Currency.EUR
@@ -144,7 +136,7 @@ public class ArtworkModelTests
         var artwork = new Artwork
         {
             Title = "Test",
-            Image = new byte[1],
+            ImageId = "test-image-id",
             IsOnSale = true,
             Price = price,
             Currency = Currency.EUR
@@ -159,7 +151,7 @@ public class ArtworkModelTests
         var artwork = new Artwork
         {
             Title = "Test",
-            Image = new byte[1],
+            ImageId = "test-image-id",
             IsOnSale = true,
             Price = decimal.MaxValue,
             Currency = Currency.EUR

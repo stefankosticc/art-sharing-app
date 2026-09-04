@@ -1,0 +1,30 @@
+.preferences-info {
+    margin: 2rem 0;
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    font-size: 0.9rem;
+    color: var(--gray-light);
+    width: 40%;
+}
+
+.preferences-field {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+}
+
+.preferences-field select {
+    background-color: transparent;
+    border: 0.5px solid var(--gray-light);
+    border-radius: 0.2rem;
+    padding: 0.2rem 0.4rem;
+    outline: none;
+    color: var(--white);
+    width: 8rem;
+}
+
+.preferences-field select:focus {
+    border-color: var(--gray-lighter);
+}

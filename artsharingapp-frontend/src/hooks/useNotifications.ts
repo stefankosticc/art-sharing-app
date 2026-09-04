@@ -1,13 +1,13 @@
 import { useState, useEffect } from "react";
-import {
+import notificationService, {
   getNotifications,
   NotificationResponse,
 } from "../services/notifications";
 import { NotificationStatus } from "../services/enums";
 
-export const useNotifications = (refetch: boolean = false) => {
+export const useNotifications = () => {
   const [notifications, setNotifications] = useState<NotificationResponse[]>(
-    []
+    [],
   );
   const [loadingNotifications, setLoadingNotifications] =
     useState<boolean>(false);
@@ -44,7 +44,18 @@ export const useNotifications = (refetch: boolean = false) => {
     return () => {
       isCancelled = true;
     };
-  }, [refetch]);
+  }, []);
+
+  useEffect(() => {
+    return notificationService.subscribe((notification) => {
+      if (!notification) return;
+      setNotifications((prev) =>
+        prev.some((n) => n.id === notification.id)
+          ? prev
+          : [notification, ...prev],
+      );
+    });
+  }, []);
 
   const loadMoreNotifications = async () => {
     if (loadingNotifications || !hasMore) return;
@@ -65,8 +76,8 @@ export const useNotifications = (refetch: boolean = false) => {
   const markAsReadLocally = (notificationId: number) => {
     setNotifications((prev) =>
       prev.map((n) =>
-        n.id === notificationId ? { ...n, status: NotificationStatus.READ } : n
-      )
+        n.id === notificationId ? { ...n, status: NotificationStatus.READ } : n,
+      ),
     );
   };
 

@@ -18,6 +18,13 @@ public interface INotificationService
     Task<IEnumerable<NotificationResponseDTO>?> GetNotificationsAsync(int loggedInUserId, int skip = 0, int take = 10);
 
     /// <summary>
+    /// Gets the number of unread notifications for the logged-in user.
+    /// </summary>
+    /// <param name="loggedInUserId">The ID of the logged-in user.</param>
+    /// <returns>The count of notifications with an <c>UNREAD</c> status.</returns>
+    Task<int> GetUnreadCountAsync(int loggedInUserId);
+
+    /// <summary>
     /// Creates a new notification for a user.
     /// </summary>
     /// <param name="request">Notification creation data.</param>

@@ -14,7 +14,9 @@ public class OfferRepository : GenericRepository<Offer>, IOfferRepository
     public async Task<decimal> GetMaxOfferAmountAsync(int auctionId)
     {
         var maxOfferAmount = await _dbSet
-            .Where(o => o.AuctionId == auctionId)
+            .Where(o => o.AuctionId == auctionId &&
+                        o.Status != OfferStatus.REJECTED &&
+                        o.Status != OfferStatus.WITHDRAWN)
             .MaxAsync(o => (decimal?)o.Amount);
         return maxOfferAmount ?? 0;
     }
@@ -36,11 +38,28 @@ public class OfferRepository : GenericRepository<Offer>, IOfferRepository
 
     public async Task<int> GetOfferCountByAuctionIdAsync(int auctionId)
     {
-        return await _dbSet.Where(o => o.AuctionId == auctionId).CountAsync();
+        return await _dbSet
+            .Where(o => o.AuctionId == auctionId &&
+                        o.Status != OfferStatus.REJECTED &&
+                        o.Status != OfferStatus.WITHDRAWN)
+            .CountAsync();
     }
 
     public async Task<bool> AuctionHasAcceptedOffer(int auctionId)
     {
         return await _dbSet.AnyAsync(o => o.AuctionId == auctionId && o.Status == OfferStatus.ACCEPTED);
+    }
+
+    public async Task<IEnumerable<Offer>> GetOffersByUserIdAsync(int userId, int skip, int take)
+    {
+        return await _dbSet
+            .Where(o => o.UserId == userId)
+            .Include(o => o.Auction)
+            .ThenInclude(a => a.Artwork)
+            .ThenInclude(artwork => artwork.PostedByUser)
+            .OrderByDescending(o => o.Timestamp)
+            .Skip(skip)
+            .Take(take)
+            .ToListAsync();
     }
 }

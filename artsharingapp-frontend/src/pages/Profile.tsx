@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { useTranslation } from "react-i18next";
 import "../styles/Profile.css";
 import { useLoggedInUser } from "../hooks/useLoggedInUser";
 import Dock from "../components/Dock";
@@ -15,14 +16,15 @@ import Loading from "./Loading";
 
 const TABS: {
   key: string;
-  label: string;
+  labelKey: string;
 }[] = [
-  { key: "artworks", label: "Artworks" },
-  { key: "favorites", label: "Favorites" },
-  { key: "biography", label: "Biography" },
+  { key: "artworks", labelKey: "profile.tabs.artworks" },
+  { key: "favorites", labelKey: "profile.tabs.favorites" },
+  { key: "biography", labelKey: "profile.tabs.biography" },
 ];
 
 const Profile = () => {
+  const { t } = useTranslation();
   const { username } = useParams();
   const [activeTab, setActiveTab] = useState<string>("artworks");
   const [isEditingBiography, setIsEditingBiography] = useState<boolean>(false);
@@ -98,9 +100,9 @@ const Profile = () => {
               className={`profile-tab${activeTab === tab.key ? " active" : ""}`}
               onClick={() => setActiveTab(tab.key)}
               type="button"
-              title={tab.label + " tab"}
+              title={t("profile.tabTitle", { label: t(tab.labelKey) })}
             >
-              {tab.label}
+              {t(tab.labelKey)}
             </button>
           ))}
         </div>
@@ -115,7 +117,7 @@ const Profile = () => {
         {/* FAVORITES */}
         <FavoriteArtworksGrid activeTab={activeTab} user={profileUser} />
 
-        {/* BIOPGRAPHY */}
+        {/* BIOGRAPHY */}
         <div
           className={`profile-content${
             activeTab === "biography" ? " active" : ""
@@ -138,24 +140,26 @@ const Profile = () => {
                 <MdEdit
                   className="biography-edit-icon"
                   onClick={() => setIsEditingBiography(!isEditingBiography)}
-                  title="Edit"
+                  title={t("common.edit")}
                 />
               )}
             </div>
           ) : isMyProfile ? (
             <p className="profile-content-text not-found">
-              You haven't added a biography yet. <br />
-              To add one, click the "Edit" button below. <br />
+              {t("profile.biographyEmptyOwn", {
+                editLabel: t("common.edit"),
+              })}
+              <br />
               <button
                 className="biography-editing-button"
                 onClick={() => setIsEditingBiography(true)}
               >
-                Edit
+                {t("common.edit")}
               </button>
             </p>
           ) : (
             <p className="profile-content-text not-found">
-              Biography has not been added yet.
+              {t("profile.biographyEmptyOther")}
             </p>
           )}
           {isEditingBiography && isMyProfile && (
@@ -167,9 +171,9 @@ const Profile = () => {
                   setBiography(profileUser?.biography || "");
                   setIsEditingBiography(false);
                 }}
-                title="Cancel"
+                title={t("common.cancel")}
               >
-                Cancel
+                {t("common.cancel")}
               </button>
               <button
                 className="biography-editing-button"
@@ -178,9 +182,9 @@ const Profile = () => {
                   await updateUserBiography({ biography });
                   setIsEditingBiography(false);
                 }}
-                title="Save changes"
+                title={t("profile.saveChangesTitle")}
               >
-                Save
+                {t("common.save")}
               </button>
             </div>
           )}

@@ -34,3 +34,16 @@ public class HighStakesAuctionDTO
     public int OfferCount { get; set; }
     public Currency Currency { get; set; }
 }
+
+public class ActiveAuctionDTO
+{
+    public int AuctionId { get; set; }
+    public int ArtworkId { get; set; }
+    public string ArtworkTitle { get; set; }
+    public string ArtworkImage { get; set; }
+    public string PostedByUserName { get; set; }
+    public decimal CurrentPrice { get; set; }
+    public int OfferCount { get; set; }
+    public Currency Currency { get; set; }
+    public DateTime EndTime { get; set; }
+}

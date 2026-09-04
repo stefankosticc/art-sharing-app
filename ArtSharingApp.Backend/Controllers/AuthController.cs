@@ -36,6 +36,7 @@ public class AuthController : AuthenticatedUserBaseController
         {
             return Ok(result);
         }
+
         return BadRequest(result);
     }
 
@@ -69,6 +70,7 @@ public class AuthController : AuthenticatedUserBaseController
             Name = loggedInUser.Name,
             Email = loggedInUser.Email,
             UserName = loggedInUser.UserName,
+            ProfilePhoto = loggedInUser.ProfilePhoto,
             Biography = loggedInUser.Biography,
             RoleId = loggedInUser.RoleId,
             RoleName = loggedInUser.RoleName,

@@ -15,16 +15,15 @@ public static class CreateHelper
     /// <param name="roleId"> Role ID, default is 1 (Admin) </param>
     /// <param name="name"> User's full name, default is "Test User" </param>
     /// <param name="userName"> Username, default is "user{id}" </param>
-    /// <param name="profilePhoto"> Profile photo in byte array format, default is null </param>
-    /// <param name="contentType"> Content type of the profile photo, default is null </param>
+    /// <param name="profilePhotoId"> Profile photo ID from the image service, default is null </param>
+    /// <param name="biography"> User biography, default is "This is a test user." </param>
     /// <returns> A new User object </returns>
     public static User CreateUser(
         int id,
         int roleId = 1,
         string name = "Test User",
         string? userName = null,
-        byte[]? profilePhoto = null,
-        string? contentType = null,
+        string? profilePhotoId = null,
         string? biography = "This is a test user.")
     {
         return new User
@@ -34,8 +33,7 @@ public static class CreateHelper
             Email = $"user{id}@gmail.com",
             Name = name,
             RoleId = roleId,
-            ProfilePhoto = profilePhoto,
-            ContentType = contentType,
+            ProfilePhotoId = profilePhotoId,
             Biography = biography
         };
     }
@@ -46,8 +44,7 @@ public static class CreateHelper
     /// <param name="title"> Title of the artwork </param>
     /// <param name="postedByUserId"> ID of the user who posted the artwork </param>
     /// <param name="createdByArtistId"> ID of the artist who created the artwork </param>
-    /// <param name="image"> Image data in byte array format, default is a single byte array </param>
-    /// <param name="contentType"> Content type of the image, default is "image/jpeg" </param>
+    /// <param name="imageId"> Image ID from the image service, default is "test-image-id" </param>
     /// <param name="story"> Story behind the artwork, default is "Test story" </param>
     /// <param name="tipsAndTricks"> Techniques or insights used during creation, default is "Test tips" </param>
     /// <param name="isPrivate"> Indicates if the artwork is private, default is false </param>
@@ -57,13 +54,12 @@ public static class CreateHelper
     /// <param name="color"> Dominant color of the artwork, default is null </param>
     /// <param name="cityId"> ID of the city associated with the artwork, default is null </param>
     /// <param name="galleryId"> ID of the gallery where the artwork is displayed, default is null </param>
-    /// <returns></returns>
+    /// <returns> A new Artwork object </returns>
     public static Artwork CreateArtwork(
         string title,
         int postedByUserId,
         int createdByArtistId,
-        byte[]? image = null,
-        string? contentType = null,
+        string? imageId = null,
         string? story = null,
         string? tipsAndTricks = null,
         bool isPrivate = false,
@@ -80,8 +76,7 @@ public static class CreateHelper
             Title = title,
             PostedByUserId = postedByUserId,
             CreatedByArtistId = createdByArtistId,
-            Image = image ?? new byte[] { 1 },
-            ContentType = contentType ?? "image/jpeg",
+            ImageId = imageId ?? "test-image-id",
             Date = DateOnly.FromDateTime(System.DateTime.UtcNow),
             Story = story ?? "Test story",
             TipsAndTricks = tipsAndTricks ?? "Test tips",

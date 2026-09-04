@@ -108,14 +108,6 @@ public interface IArtworkService
     Task<UserArtworksDTO> GetUserArtworksAsync(int userId, int loggedInUserId);
 
     /// <summary>
-    /// Retrieves the image and content type for an artwork.
-    /// </summary>
-    /// <param name="id">The artwork ID.</param>
-    /// <returns>A tuple containing the image bytes and content type.</returns>
-    /// <exception cref="NotFoundException">Thrown if the image is not found.</exception>
-    Task<(byte[] Image, string ContentType)> GetArtworkImageAsync(int id);
-
-    /// <summary>
     /// Extracts the dominant color from an image file.
     /// </summary>
     /// <param name="image">The image file.</param>
@@ -131,4 +123,12 @@ public interface IArtworkService
     /// <param name="take">The number of artworks to take.</param>
     /// <returns>A collection of <see cref="DiscoverArtworkDTO"/> for discovery.</returns>
     Task<IEnumerable<DiscoverArtworkDTO>?> GetDiscoverArtworksAsync(int loggedInUserId, int skip, int take);
+
+    /// <summary>
+    /// Retrieves artworks currently on sale with a fixed price.
+    /// </summary>
+    /// <param name="skip">The number of artworks to skip.</param>
+    /// <param name="take">The number of artworks to take.</param>
+    /// <returns>A collection of <see cref="OnSaleArtworkDTO"/>.</returns>
+    Task<IEnumerable<OnSaleArtworkDTO>?> GetOnSaleArtworksAsync(int skip, int take);
 }

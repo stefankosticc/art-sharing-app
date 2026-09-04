@@ -1,6 +1,8 @@
 using ArtSharingApp.Backend.DataAccess.Repository.RepositoryInterface;
 using ArtSharingApp.Backend.DTO;
+using ArtSharingApp.Backend.DTO.ImageService;
 using ArtSharingApp.Backend.Exceptions;
+using ArtSharingApp.Backend.Infrastructure;
 using ArtSharingApp.Backend.Models;
 using ArtSharingApp.Backend.Models.Enums;
 using ArtSharingApp.Backend.Service;
@@ -8,6 +10,7 @@ using ArtSharingApp.Backend.Service.ServiceInterface;
 using AutoMapper;
 using Microsoft.AspNetCore.Http;
 using Moq;
+using Refit;
 using UnauthorizedAccessException = ArtSharingApp.Backend.Exceptions.UnauthorizedAccessException;
 
 namespace ArtSharingApp.Tests.UnitTests.Services;
@@ -19,6 +22,7 @@ public class ArtworkServiceTests
     private readonly Mock<IUserRepository> _mockUserRepository;
     private readonly Mock<IFavoritesRepository> _mockFavoritesRepository;
     private readonly Mock<IMapper> _mockMapper;
+    private readonly Mock<IImageServiceClient> _mockImageServiceClient;
 
     public ArtworkServiceTests()
     {
@@ -26,12 +30,22 @@ public class ArtworkServiceTests
         _mockUserRepository = new Mock<IUserRepository>();
         _mockFavoritesRepository = new Mock<IFavoritesRepository>();
         _mockMapper = new Mock<IMapper>();
+        _mockImageServiceClient = new Mock<IImageServiceClient>();
+
+        _mockImageServiceClient
+            .Setup(c => c.UploadArtworkImageAsync(It.IsAny<int>(), It.IsAny<StreamPart>()))
+            .ReturnsAsync(new ArtworkImageDTO { ImageId = Guid.NewGuid(), Url = "/images/artworks/test" });
+
+        _mockImageServiceClient
+            .Setup(c => c.ReplaceArtworkImageAsync(It.IsAny<string>(), It.IsAny<StreamPart>()))
+            .ReturnsAsync(new ArtworkImageDTO { ImageId = Guid.NewGuid(), Url = "/images/artworks/test" });
 
         _artworkService = new ArtworkService(
             _mockArtworkRepository.Object,
             _mockUserRepository.Object,
             _mockMapper.Object,
-            _mockFavoritesRepository.Object
+            _mockFavoritesRepository.Object,
+            _mockImageServiceClient.Object
         );
     }
 

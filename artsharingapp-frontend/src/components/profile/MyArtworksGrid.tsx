@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { useTranslation } from "react-i18next";
 import { getUserArtworks, UserArtworksResponse } from "../../services/artwork";
 import ArtworkCard from "../ArtworkCard";
 import "./styles/MyArtworksGrid.css";
@@ -16,17 +17,19 @@ const MyArtworksGrid = ({
   user,
   isMyProfile,
 }: MyArtworksGridProps) => {
+  const { t } = useTranslation();
   const [artworks, setArtworks] = useState<UserArtworksResponse | null>(null);
   const [loading, setLoading] = useState<boolean>(true);
   const [showPublicArtworks, setShowPublicArtworks] = useState<boolean>(true);
 
   useEffect(() => {
-    if (!user) return;
+    const userId = user?.id;
+    if (!userId) return;
 
     const fetchArtworks = async () => {
       try {
         setLoading(true);
-        const response = await getUserArtworks(user.id);
+        const response = await getUserArtworks(userId);
         setArtworks(response);
       } catch (err) {
         setLoading(true);
@@ -36,7 +39,7 @@ const MyArtworksGrid = ({
     };
 
     fetchArtworks();
-  }, [user]);
+  }, [user?.id]);
 
   if (loading) {
     return <div className="profile-artwork-grid-loader"></div>;
@@ -56,10 +59,10 @@ const MyArtworksGrid = ({
               onClick={() => setShowPublicArtworks((prev) => !prev)}
             >
               {showPublicArtworks ? (
-                <CiLock title="Show Private Artworks" />
+                <CiLock title={t("profile.showPrivateArtworks")} />
               ) : (
                 <CiUnlock
-                  title="Show Public Artwroks"
+                  title={t("profile.showPublicArtworks")}
                   id="public-artworks-card"
                 />
               )}
@@ -74,7 +77,7 @@ const MyArtworksGrid = ({
         </div>
       ) : (
         <p className="profile-content-text not-found">
-          You have no artworks yet.
+          {t("profile.noArtworksYet")}
         </p>
       )}
     </div>

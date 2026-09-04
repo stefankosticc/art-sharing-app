@@ -19,7 +19,6 @@
 .threeDots-menu-option {
     padding: 0.6rem 1rem;
     cursor: pointer;
-    white-space: nowrap;
 }
 
 .threeDots-menu-option:first-child {

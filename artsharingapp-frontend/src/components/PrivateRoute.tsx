@@ -1,4 +1,4 @@
-import { JSX, useEffect, useState } from "react";
+import { JSX, Suspense, useEffect, useState } from "react";
 import { Navigate } from "react-router-dom";
 import Loading from "../pages/Loading";
 import authAxios from "../services/authAxios";
@@ -30,7 +30,11 @@ function PrivateRoute({ children }: { children: JSX.Element }) {
     return <Loading />;
   }
 
-  return auth ? children : <Navigate to="/login" />;
+  return auth ? (
+    <Suspense fallback={<Loading />}>{children}</Suspense>
+  ) : (
+    <Navigate to="/login" />
+  );
 }
 
 export default PrivateRoute;

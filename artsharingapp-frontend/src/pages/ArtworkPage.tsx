@@ -1,4 +1,5 @@
 import Dock from "../components/Dock";
+import { useTranslation } from "react-i18next";
 import "../styles/ArtworkPage.css";
 import { useArtwork } from "../hooks/useArtwork";
 import { PiDotsThreeOutlineVerticalFill } from "react-icons/pi";
@@ -23,7 +24,7 @@ import TextEditor from "../components/TextEditor";
 import {
   ARTIST_FALLBACK_IMAGE,
   ARTWORK_FALLBACK_IMAGE,
-  BACKEND_BASE_URL,
+  IMAGE_SERVICE_BASE_URL,
 } from "../config/constants";
 import AuctionSection from "../components/auctions-and-sales/AuctionSection";
 import ThreeDotsMenu from "../components/ThreeDotsMenu";
@@ -54,6 +55,7 @@ const getInitialArtworkData = (userId: number): ArtworkRequest => ({
 });
 
 const ArtworkPage = ({ isNew = false }: ArtworkPageProps) => {
+  const { t } = useTranslation();
   const { artworkId } = useParams();
   const navigate = useNavigate();
   const { loggedInUser } = useLoggedInUser();
@@ -71,17 +73,17 @@ const ArtworkPage = ({ isNew = false }: ArtworkPageProps) => {
   // Fetch artwork if not new
   const { artwork, loadingArtwork } = useArtwork(
     !isNew && artworkId ? parseInt(artworkId) : -1,
-    refetchArtwork
+    refetchArtwork,
   );
 
   const [editingArtworkData, setEditingArtworkData] = useState<ArtworkRequest>(
-    getInitialArtworkData(loggedInUser?.id ?? -1)
+    getInitialArtworkData(loggedInUser?.id ?? -1),
   );
 
   useEffect(() => {
     if (!artwork) return;
 
-    setImgSrc(`${BACKEND_BASE_URL}${artwork.image}?t=${Date.now()}`);
+    setImgSrc(`${IMAGE_SERVICE_BASE_URL}${artwork.image}?t=${Date.now()}`);
     setExtractedColor(artwork.color);
 
     setIsLiked(!!artwork.isLikedByLoggedInUser);
@@ -122,7 +124,7 @@ const ArtworkPage = ({ isNew = false }: ArtworkPageProps) => {
   }, [artworkId]);
 
   const handleInputChange = (
-    e: React.ChangeEvent<HTMLTextAreaElement | HTMLInputElement>
+    e: React.ChangeEvent<HTMLTextAreaElement | HTMLInputElement>,
   ) => {
     const { name, value } = e.target;
     setEditingArtworkData((prev) => ({ ...prev, [name]: value }));
@@ -158,7 +160,7 @@ const ArtworkPage = ({ isNew = false }: ArtworkPageProps) => {
         color: artwork.color || null,
       });
       setExtractedColor(artwork.color);
-      setImgSrc(`${BACKEND_BASE_URL}${artwork.image}?t=${Date.now()}`);
+      setImgSrc(`${IMAGE_SERVICE_BASE_URL}${artwork.image}?t=${Date.now()}`);
     } else if (isNew) {
       navigate(-1);
     }
@@ -182,34 +184,42 @@ const ArtworkPage = ({ isNew = false }: ArtworkPageProps) => {
 
   const handleSave = async () => {
     if (!editingArtworkData.title.trim()) {
-      toast.error("Title is required.");
+      toast.error(t("artwork.titleRequiredError"));
       return;
     }
     if (editingArtworkData.title.length > 100) {
-      toast.error("Title must be under 100 characters.");
+      toast.error(t("artwork.titleTooLongError"));
       return;
     }
 
     if (isNew) {
       if (!artworkImageFile) {
-        toast.error("Please upload an image.");
+        toast.error(t("artwork.imageRequiredError"));
         return;
       }
-      await addNewArtwork(
+      const success = await addNewArtwork(
         {
           ...editingArtworkData,
           createdByArtistId: loggedInUser?.id ?? -1,
           postedByUserId: loggedInUser?.id ?? -1,
         },
-        artworkImageFile
+        artworkImageFile,
       );
-      toast.success("Artwork added successfully!");
-      navigate(`/${loggedInUser?.userName}`);
+      if (success) {
+        toast.success(t("artwork.addedSuccess"));
+        navigate(`/${loggedInUser?.userName}`);
+      }
     } else if (artwork) {
-      await updateArtwork(artwork.id, editingArtworkData, artworkImageFile);
-      setRefetchArtwork((prev) => !prev);
-      setIsEditing(false);
-      toast.success("Artwork updated successfully!");
+      const success = await updateArtwork(
+        artwork.id,
+        editingArtworkData,
+        artworkImageFile,
+      );
+      if (success) {
+        setRefetchArtwork((prev) => !prev);
+        setIsEditing(false);
+        toast.success(t("artwork.updatedSuccess"));
+      }
     }
   };
 
@@ -241,7 +251,7 @@ const ArtworkPage = ({ isNew = false }: ArtworkPageProps) => {
   }
 
   return (
-    <AuctionProvider>
+    <AuctionProvider artworkId={artwork?.id ?? -1}>
       <div className="artwork-page fixed-page">
         <div
           className="ap-image-container"
@@ -255,7 +265,7 @@ const ArtworkPage = ({ isNew = false }: ArtworkPageProps) => {
             <div className="ap-image-wrapper">
               <img
                 src={imgSrc}
-                alt={artwork?.title || "artwork image"}
+                alt={artwork?.title || t("common.artworkImageFallbackAlt")}
                 onError={() => setImgSrc(ARTWORK_FALLBACK_IMAGE)}
                 className="ap-image"
               />
@@ -263,7 +273,7 @@ const ArtworkPage = ({ isNew = false }: ArtworkPageProps) => {
                 <>
                   <div
                     className="ap-image ap-replace-image-overlay"
-                    title="Replace image"
+                    title={t("artwork.replaceImage")}
                   >
                     <HiArrowPathRoundedSquare />
                     <input
@@ -279,7 +289,7 @@ const ArtworkPage = ({ isNew = false }: ArtworkPageProps) => {
                       type="color"
                       name="color"
                       className="ap-color-picker"
-                      title="Change color background"
+                      title={t("artwork.changeColorBackground")}
                       value={extractedColor || artwork?.color || "#5c5c5c"}
                       onChange={(e) => {
                         handleInputChange(e);
@@ -288,7 +298,7 @@ const ArtworkPage = ({ isNew = false }: ArtworkPageProps) => {
                     />
                     <button
                       className="ap-color-btn"
-                      title="Remove color background"
+                      title={t("artwork.removeColorBackground")}
                       onClick={() => {
                         setExtractedColor(null);
                         setEditingArtworkData((prev) => ({
@@ -297,23 +307,26 @@ const ArtworkPage = ({ isNew = false }: ArtworkPageProps) => {
                         }));
                       }}
                     >
-                      Clear Color
+                      {t("artwork.clearColor")}
                     </button>
                     <button
                       className="ap-color-btn"
-                      title="Revert color background"
+                      title={t("artwork.revertColorBackground")}
                       onClick={() => {
                         if (artwork) setExtractedColor(artwork.color);
                       }}
                     >
-                      Revert Color
+                      {t("artwork.revertColor")}
                     </button>
                   </div>
                 </>
               )}
             </div>
           ) : isNew && !loadingArtwork ? (
-            <div className="ap-upload-image ap-image" title="Upload image">
+            <div
+              className="ap-upload-image ap-image"
+              title={t("artwork.uploadImage")}
+            >
               <FiUpload />
               <input
                 type="file"
@@ -337,26 +350,28 @@ const ArtworkPage = ({ isNew = false }: ArtworkPageProps) => {
                 onChange={handleInputChange}
                 rows={1}
                 maxLength={100}
-                placeholder="Title"
+                placeholder={t("artwork.titlePlaceholder")}
               />
             ) : (
               <h1 className="ap-title">{artwork?.title || ""}</h1>
             )}
             <div className="ap-info-header-right-group">
-              {artwork?.isOnSale && <div className="ap-on-sale">ON SALE</div>}
+              {artwork?.isOnSale && (
+                <div className="ap-on-sale">{t("common.onSale")}</div>
+              )}
 
               {!isNew &&
                 (isLiked ? (
                   <IoMdHeart
                     className="ap-info-header-icon"
                     id="ap-liked-artwork-icon"
-                    title="Dislike"
+                    title={t("artwork.dislike")}
                     onClick={handleDislike}
                   />
                 ) : (
                   <IoMdHeartEmpty
                     className="ap-info-header-icon"
-                    title="Like"
+                    title={t("artwork.like")}
                     onClick={handleLike}
                   />
                 ))}
@@ -366,26 +381,26 @@ const ArtworkPage = ({ isNew = false }: ArtworkPageProps) => {
                   {isPrivate ? (
                     <CiLock
                       className="ap-info-header-icon"
-                      title="Private"
+                      title={t("artwork.private")}
                       onClick={() => handleChangeVisibility("public")}
                     />
                   ) : (
                     <CiUnlock
                       className="ap-info-header-icon"
-                      title="Public"
+                      title={t("artwork.public")}
                       onClick={() => handleChangeVisibility("private")}
                     />
                   )}
                   <MdEdit
                     className="ap-info-header-icon"
-                    title="Edit"
+                    title={t("common.edit")}
                     onClick={() => setIsEditing((prev) => !prev)}
                   />
                   <>
                     <PiDotsThreeOutlineVerticalFill
                       className="ap-info-header-icon"
                       id="ap-3-dots-menu"
-                      title="Options"
+                      title={t("artwork.options")}
                       onClick={(e) => {
                         e.stopPropagation();
                         setIs3DotsMenuOpen((prev) => !prev);
@@ -408,24 +423,23 @@ const ArtworkPage = ({ isNew = false }: ArtworkPageProps) => {
 
           <div className="ap-details">
             <div className="ap-date">
-              <p className="ap-details-label">DATE</p>
+              <p className="ap-details-label">{t("artwork.dateLabel")}</p>
               <p className="ap-details-text">
                 {artwork?.date?.toString() ||
                   (isEditing ? editingArtworkData.date.toString() : "-")}
               </p>
             </div>
             <div className="ap-user-profile">
-              <p className="ap-details-label">CREATED BY</p>
+              <p className="ap-details-label">{t("artwork.createdByLabel")}</p>
               {artwork?.createdByArtistUserName ||
               (isEditing && loggedInUser?.userName) ? (
                 <div className="ap-user-info">
                   <img
-                    src={`${BACKEND_BASE_URL}/api/user/${
-                      artwork?.createdByArtistId || loggedInUser?.id
-                    }/profile-photo`}
+                    src={`${IMAGE_SERVICE_BASE_URL}${artwork?.createdByArtistProfilePhoto ?? loggedInUser?.profilePhoto}`}
                     alt=""
                     className="ap-user-profile-picture"
                     onError={(e) => {
+                      console.log(loggedInUser);
                       e.currentTarget.src = ARTIST_FALLBACK_IMAGE;
                     }}
                   />
@@ -440,14 +454,12 @@ const ArtworkPage = ({ isNew = false }: ArtworkPageProps) => {
               )}
             </div>
             <div className="ap-user-profile">
-              <p className="ap-details-label">POSTED BY</p>
+              <p className="ap-details-label">{t("artwork.postedByLabel")}</p>
               {artwork?.postedByUserName ||
               (isEditing && loggedInUser?.userName) ? (
                 <div className="ap-user-info">
                   <img
-                    src={`${BACKEND_BASE_URL}/api/user/${
-                      artwork?.postedByUserId || loggedInUser?.id
-                    }/profile-photo`}
+                    src={`${IMAGE_SERVICE_BASE_URL}${artwork?.postedByUserProfilePhoto ?? loggedInUser?.profilePhoto}`}
                     alt=""
                     className="ap-user-profile-picture"
                     onError={(e) => {
@@ -467,11 +479,11 @@ const ArtworkPage = ({ isNew = false }: ArtworkPageProps) => {
 
           {artwork?.isOnSale && <FixedSaleSection artwork={artwork} />}
 
-          <AuctionSection artworkId={artwork?.id ?? 0} />
+          <AuctionSection />
 
           {((artwork?.story && artwork.story !== "<p></p>") || isEditing) && (
             <div className="ap-story">
-              <h3>Story</h3>
+              <h3>{t("artwork.storyHeading")}</h3>
               <TextEditor
                 content={isEditing ? editingArtworkData.story : artwork?.story}
                 editable={isEditing}
@@ -487,7 +499,7 @@ const ArtworkPage = ({ isNew = false }: ArtworkPageProps) => {
           {((artwork?.tipsAndTricks && artwork.tipsAndTricks !== "<p></p>") ||
             isEditing) && (
             <div className="ap-tips-and-tricks">
-              <h3>Tips and Tricks</h3>
+              <h3>{t("artwork.tipsAndTricksHeading")}</h3>
               <TextEditor
                 content={
                   isEditing
@@ -511,14 +523,14 @@ const ArtworkPage = ({ isNew = false }: ArtworkPageProps) => {
                 className="ap-cancel-edit-btn"
                 type="button"
               >
-                Cancel
+                {t("common.cancel")}
               </button>
               <button
                 className="ap-save-edit-btn"
                 onClick={handleSave}
                 type="button"
               >
-                Save
+                {t("common.save")}
               </button>
             </div>
           )}

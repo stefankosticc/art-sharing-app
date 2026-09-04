@@ -1,5 +1,6 @@
 using ArtSharingApp.Backend.DTO;
 using ArtSharingApp.Backend.Models;
+using ArtSharingApp.Backend.Utils;
 
 namespace ArtSharingApp.Backend.Profile;
 
@@ -15,7 +16,7 @@ public class FollowersProfile : AutoMapper.Profile
             .ForMember(dest => dest.Id, opt =>
                 opt.MapFrom(src => src.User.Id))
             .ForMember(dest => dest.ProfilePhoto, opt =>
-                opt.MapFrom(src => $"/api/user/{src.User.Id}/profile-photo"));
+                opt.MapFrom(src => ImagePaths.UserProfilePhoto(src.User.ProfilePhotoId)));
 
         CreateMap<Followers, FollowingDTO>()
             .ForMember(dest => dest.UserName, opt =>
@@ -25,6 +26,6 @@ public class FollowersProfile : AutoMapper.Profile
             .ForMember(dest => dest.Id, opt =>
                 opt.MapFrom(src => src.Follower.Id))
             .ForMember(dest => dest.ProfilePhoto, opt =>
-                opt.MapFrom(src => $"/api/user/{src.Follower.Id}/profile-photo"));
+                opt.MapFrom(src => ImagePaths.UserProfilePhoto(src.Follower.ProfilePhotoId)));
     }
 }

@@ -1,3 +1,4 @@
+import { toast } from "react-toastify";
 import authAxios from "./authAxios";
 import { Currency } from "./enums";
 
@@ -31,8 +32,10 @@ export interface Artwork {
   currency: Currency;
   createdByArtistId: number;
   createdByArtistUserName: string;
+  createdByArtistProfilePhoto: string | null;
   postedByUserId: number;
   postedByUserName: string;
+  postedByUserProfilePhoto: string | null;
   cityId: number | null;
   cityName: string | null;
   galleryId: number | null;
@@ -87,6 +90,16 @@ export interface DiscoverArtworkResponse {
   title: string;
   image: string;
   postedByUserName: string;
+  color: string;
+}
+
+export interface OnSaleArtworkResponse {
+  id: number;
+  title: string;
+  image: string;
+  postedByUserName: string;
+  price: number;
+  currency: Currency;
 }
 
 export interface UserArtworksResponse {
@@ -147,7 +160,7 @@ export async function updateArtwork(
   artworkId: number,
   request: ArtworkRequest,
   artworkImage: File | null
-): Promise<void> {
+): Promise<boolean> {
   try {
     const formData = new FormData();
     for (const key in request) {
@@ -162,19 +175,22 @@ export async function updateArtwork(
     await authAxios.put(`/artwork/${artworkId}`, formData, {
       headers: { "Content-Type": "multipart/form-data" },
     });
+    return true;
   } catch (error: any) {
     const message =
       error?.response?.data?.error ||
       error?.message ||
       "An unknown error occurred while updating artwork.";
     console.error("Error:", message);
+    toast.error(message);
+    return false;
   }
 }
 
 export async function addNewArtwork(
   artwork: ArtworkRequest,
   artworkImage: File
-): Promise<void> {
+): Promise<boolean> {
   try {
     const formData = new FormData();
     for (const key in artwork) {
@@ -186,12 +202,15 @@ export async function addNewArtwork(
     await authAxios.post(`/artwork`, formData, {
       headers: { "Content-Type": "multipart/form-data" },
     });
+    return true;
   } catch (error: any) {
     const message =
       error?.response?.data?.error ||
       error?.message ||
       "An unknown error occurred.";
     console.error("Error:", message);
+    toast.error(message);
+    return false;
   }
 }
 
@@ -317,6 +336,16 @@ export async function getDiscoverArtworks(
   take = 30
 ): Promise<DiscoverArtworkResponse[]> {
   const response = await authAxios.get(`artworks/discover`, {
+    params: { skip, take },
+  });
+  return response.data;
+}
+
+export async function getOnSaleArtworks(
+  skip = 0,
+  take = 20
+): Promise<OnSaleArtworkResponse[]> {
+  const response = await authAxios.get(`artworks/on-sale`, {
     params: { skip, take },
   });
   return response.data;

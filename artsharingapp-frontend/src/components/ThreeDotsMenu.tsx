@@ -1,4 +1,5 @@
 import { useRef, useState } from "react";
+import { useTranslation } from "react-i18next";
 import { useClickOutside } from "../hooks/useClickOutside";
 import "../styles/ThreeDotsMenu.css";
 import { deleteArtwork, removeArtworkFromSale } from "../services/artwork";
@@ -19,6 +20,7 @@ const ThreeDotsMenu = ({
   artworkId,
   refetchArtwork,
 }: ThreeDotsMenuProps) => {
+  const { t } = useTranslation();
   const [isSaleModalOpen, setIsSaleModalOpen] = useState<boolean>(false);
   const [isAnalyticsModalOpen, setIsAnalyticsModalOpen] =
     useState<boolean>(false);
@@ -38,7 +40,7 @@ const ThreeDotsMenu = ({
     if (success) {
       onClose();
       refetchArtwork();
-      toast.success("Artwork removed from sale successfully.");
+      toast.success(t("artwork.removedFromSaleSuccess"));
     }
   };
 
@@ -47,19 +49,36 @@ const ThreeDotsMenu = ({
     if (success) {
       onClose();
       navigate(-1);
-      toast.success("Artwork deleted.");
+      toast.success(t("artwork.deletedSuccess"));
     }
   };
 
   const menuOptions: {
-    label: string;
+    key: string;
+    labelKey: string;
     action: () => any;
   }[] = [
-    { label: "Put On Sale", action: () => setIsSaleModalOpen(true) },
-    { label: "Remove From Sale", action: handleRemoveFromSale },
-    { label: "Auction Analytics", action: () => setIsAnalyticsModalOpen(true) },
-    { label: "Transfer", action: () => setIsTransferModalOpen(true) },
-    { label: "Delete", action: handleDelete },
+    {
+      key: "putOnSale",
+      labelKey: "artwork.putOnSale",
+      action: () => setIsSaleModalOpen(true),
+    },
+    {
+      key: "removeFromSale",
+      labelKey: "artwork.removeFromSale",
+      action: handleRemoveFromSale,
+    },
+    {
+      key: "auctionAnalytics",
+      labelKey: "artwork.auctionAnalytics",
+      action: () => setIsAnalyticsModalOpen(true),
+    },
+    {
+      key: "transfer",
+      labelKey: "artwork.transfer",
+      action: () => setIsTransferModalOpen(true),
+    },
+    { key: "delete", labelKey: "common.delete", action: handleDelete },
   ];
 
   return (
@@ -68,12 +87,12 @@ const ThreeDotsMenu = ({
         {menuOptions.map((option) => (
           <p
             className={`threeDots-menu-option ${
-              option.label === "Delete" ? "threeDots-menu-option-delete" : ""
+              option.key === "delete" ? "threeDots-menu-option-delete" : ""
             }`}
-            key={option.label}
+            key={option.key}
             onClick={option.action}
           >
-            {option.label}
+            {t(option.labelKey)}
           </p>
         ))}
       </div>
@@ -91,7 +110,6 @@ const ThreeDotsMenu = ({
 
       {isAnalyticsModalOpen && (
         <AuctionAnalyticsModal
-          artworkId={artworkId}
           onClose={() => {
             setIsAnalyticsModalOpen(false);
             onClose();

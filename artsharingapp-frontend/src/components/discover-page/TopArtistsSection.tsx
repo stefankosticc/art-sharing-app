@@ -1,7 +1,7 @@
 import { useNavigate } from "react-router-dom";
 import {
   ARTIST_FALLBACK_IMAGE,
-  BACKEND_BASE_URL,
+  IMAGE_SERVICE_BASE_URL,
 } from "../../config/constants";
 import { TopArtistResponse } from "../../services/discover";
 import "./styles/TopArtistsSection.css";
@@ -24,7 +24,7 @@ const TopArtistsSection = ({ artists }: TopArtistsSectionProps) => {
           <img
             src={
               artist.profilePhoto
-                ? `${BACKEND_BASE_URL}${artist.profilePhoto}`
+                ? `${IMAGE_SERVICE_BASE_URL}${artist.profilePhoto}`
                 : ARTIST_FALLBACK_IMAGE
             }
             alt={artist.name}

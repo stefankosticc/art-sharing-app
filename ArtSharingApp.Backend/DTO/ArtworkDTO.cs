@@ -16,8 +16,10 @@ public class ArtworkResponseDTO
     public Currency Currency { get; set; }
     public int CreatedByArtistId { get; set; }
     public string CreatedByArtistUserName { get; set; }
+    public string? CreatedByArtistProfilePhoto { get; set; }
     public int PostedByUserId { get; set; }
     public string PostedByUserName { get; set; }
+    public string? PostedByUserProfilePhoto { get; set; }
     public int? CityId { get; set; }
     public string? CityName { get; set; }
     public int? GalleryId { get; set; }
@@ -93,6 +95,17 @@ public class DiscoverArtworkDTO
     public string Title { get; set; }
     public string Image { get; set; }
     public string PostedByUserName { get; set; }
+    public string? Color { get; set; }
+}
+
+public class OnSaleArtworkDTO
+{
+    public int Id { get; set; }
+    public string Title { get; set; }
+    public string Image { get; set; }
+    public string PostedByUserName { get; set; }
+    public decimal Price { get; set; }
+    public Currency Currency { get; set; }
 }
 
 public class UserArtworksDTO

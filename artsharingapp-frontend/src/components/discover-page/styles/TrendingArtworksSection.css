@@ -4,6 +4,8 @@
     flex-direction: column;
     justify-content: space-between;
     flex: 0 0 auto;
+    --_artwork-color: var(--gray-light);
+    box-shadow: none;
 
     .afc-img {
         height: 70%;

@@ -58,6 +58,7 @@
 
 .aam-auction-not-found {
     color: var(--gray);
+    text-align: center;
 }
 
 .aam-auction-time {

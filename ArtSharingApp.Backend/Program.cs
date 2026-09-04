@@ -4,6 +4,7 @@ using ArtSharingApp.Backend.DataAccess;
 using ArtSharingApp.Backend.DataAccess.Repository.RepositoryInterface;
 using ArtSharingApp.Backend.Exceptions.ErrorHandler;
 using ArtSharingApp.Backend.Hubs;
+using ArtSharingApp.Backend.Infrastructure;
 using ArtSharingApp.Backend.Models;
 using ArtSharingApp.Backend.Profile;
 using ArtSharingApp.Backend.Seeders;
@@ -12,6 +13,7 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
+using Refit;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -69,7 +71,7 @@ builder.Services.AddAuthentication(options =>
                 var accessToken = context.Request.Query["access_token"];
 
                 var path = context.HttpContext.Request.Path;
-                if (!string.IsNullOrEmpty(accessToken) && path.StartsWithSegments("/hubs/chat"))
+                if (!string.IsNullOrEmpty(accessToken) && path.StartsWithSegments("/hubs"))
                 {
                     context.Token = accessToken;
                 }
@@ -79,7 +81,6 @@ builder.Services.AddAuthentication(options =>
         };
     });
 
-// builder.Services.AddAutoMapper(typeof(UserProfile).Assembly);
 builder.Services.AddAutoMapper(cfg => cfg.AddMaps(typeof(UserProfile).Assembly));
 
 builder.Services.AddScoped(typeof(IGenericRepository<>), typeof(GenericRepository<>));
@@ -105,6 +106,13 @@ builder.Services.AddScoped<IFollowersService, FollowersService>();
 builder.Services.AddScoped<INotificationService, NotificationService>();
 builder.Services.AddScoped<IAuctionService, AuctionService>();
 builder.Services.AddScoped<IChatService, ChatService>();
+
+builder.Services.AddRefitClient<IImageServiceClient>()
+    .ConfigureHttpClient(c =>
+    {
+        c.BaseAddress = new Uri(builder.Configuration["ImageService:BaseUrl"]!);
+        c.DefaultRequestHeaders.Add("X-Api-Key", builder.Configuration["ImageService:ApiKey"]);
+    });
 
 builder.Services.AddSignalR();
 
@@ -137,5 +145,9 @@ app.UseAuthorization();
 app.MapControllers();
 
 app.MapHub<ChatHub>("/hubs/chat");
+
+app.MapHub<NotificationHub>("/hubs/notifications");
+
+app.MapHub<AuctionHub>("/hubs/auction");
 
 app.Run();

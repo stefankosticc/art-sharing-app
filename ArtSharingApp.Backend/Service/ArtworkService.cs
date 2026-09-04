@@ -4,7 +4,9 @@ using ArtSharingApp.Backend.Service.ServiceInterface;
 using ArtSharingApp.Backend.DTO;
 using AutoMapper;
 using ArtSharingApp.Backend.Exceptions;
+using ArtSharingApp.Backend.Infrastructure;
 using ArtSharingApp.Backend.Utils;
+using Refit;
 using UnauthorizedAccessException = ArtSharingApp.Backend.Exceptions.UnauthorizedAccessException;
 
 namespace ArtSharingApp.Backend.Service;
@@ -18,6 +20,7 @@ public class ArtworkService : IArtworkService
     private readonly IUserRepository _userRepository;
     private readonly IMapper _mapper;
     private readonly IFavoritesRepository _favoritesRepository;
+    private readonly IImageServiceClient _imageServiceClient;
 
     /// <summary>
     /// Initializes a new instance of the <see cref="ArtworkService"/> class.
@@ -26,13 +29,15 @@ public class ArtworkService : IArtworkService
     /// <param name="userRepository">Repository for user data access.</param>
     /// <param name="mapper">AutoMapper instance for DTO mapping.</param>
     /// <param name="favoritesRepository">Repository for favorites data access.</param>
+    /// <param name="imageServiceClient">Client for the image microservice.</param>
     public ArtworkService(IArtworkRepository artworkRepository, IUserRepository userRepository, IMapper mapper,
-        IFavoritesRepository favoritesRepository)
+        IFavoritesRepository favoritesRepository, IImageServiceClient imageServiceClient)
     {
         _artworkRepository = artworkRepository;
         _userRepository = userRepository;
         _mapper = mapper;
         _favoritesRepository = favoritesRepository;
+        _imageServiceClient = imageServiceClient;
     }
 
     /// <inheritdoc />
@@ -63,17 +68,29 @@ public class ArtworkService : IArtworkService
             throw new BadRequestException("Image not provided correctly.");
 
         var artwork = _mapper.Map<Artwork>(artworkDto);
-
-        using (var ms = new MemoryStream())
-        {
-            await artworkImage.CopyToAsync(ms);
-            artwork.Image = ms.ToArray();
-        }
-
-        artwork.ContentType = artworkImage.ContentType;
+        artwork.ImageId =
+            "pending"; // Temporary value to reserve the image slot until we get the real ID from the image service
 
         await _artworkRepository.AddAsync(artwork);
         await _artworkRepository.SaveAsync();
+
+        try
+        {
+            var imageResult = await _imageServiceClient.UploadArtworkImageAsync(
+                artwork.Id,
+                new StreamPart(artworkImage.OpenReadStream(), artworkImage.FileName, artworkImage.ContentType)
+            );
+
+            artwork.ImageId = imageResult.ImageId.ToString();
+            artwork.Color = imageResult.DominantColor;
+            await _artworkRepository.SaveAsync();
+        }
+        catch
+        {
+            await _artworkRepository.DeleteAsync(artwork.Id);
+            await _artworkRepository.SaveAsync();
+            throw new BadRequestException("Failed to upload image. Artwork was not created.");
+        }
     }
 
     /// <inheritdoc />
@@ -90,13 +107,15 @@ public class ArtworkService : IArtworkService
 
         if (artworkImage != null && artworkImage.Length > 0)
         {
-            using (var ms = new MemoryStream())
-            {
-                await artworkImage.CopyToAsync(ms);
-                artwork.Image = ms.ToArray();
-            }
+            var filePart = new StreamPart(artworkImage.OpenReadStream(), artworkImage.FileName,
+                artworkImage.ContentType);
 
-            artwork.ContentType = artworkImage.ContentType;
+            var imageResult = string.IsNullOrEmpty(artwork.ImageId)
+                ? await _imageServiceClient.UploadArtworkImageAsync(artwork.Id, filePart)
+                : await _imageServiceClient.ReplaceArtworkImageAsync(artwork.ImageId, filePart);
+
+            artwork.ImageId = imageResult.ImageId.ToString();
+            artwork.Color = imageResult.DominantColor;
         }
 
         _artworkRepository.Update(artwork);
@@ -217,16 +236,6 @@ public class ArtworkService : IArtworkService
     }
 
     /// <inheritdoc />
-    public async Task<(byte[] Image, string ContentType)> GetArtworkImageAsync(int id)
-    {
-        var result = await _artworkRepository.GetArtworkImageAsync(id);
-        if (result.Image == null || result.Image.Length == 0)
-            throw new NotFoundException("Image not found.");
-
-        return (result.Image, string.IsNullOrWhiteSpace(result.ContentType) ? "image/jpeg" : result.ContentType);
-    }
-
-    /// <inheritdoc />
     public async Task<string?> ExtractColorAsync(IFormFile image)
     {
         if (image == null || image.Length == 0)
@@ -255,5 +264,12 @@ public class ArtworkService : IArtworkService
     {
         var artworks = await _artworkRepository.GetDiscoverArtworksAsync(loggedInUserId, skip, take);
         return _mapper.Map<IEnumerable<DiscoverArtworkDTO>>(artworks);
+    }
+
+    /// <inheritdoc />
+    public async Task<IEnumerable<OnSaleArtworkDTO>?> GetOnSaleArtworksAsync(int skip, int take)
+    {
+        var artworks = await _artworkRepository.GetOnSaleArtworksAsync(skip, take);
+        return _mapper.Map<IEnumerable<OnSaleArtworkDTO>>(artworks);
     }
 }

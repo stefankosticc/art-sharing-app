@@ -51,20 +51,9 @@ public class User : IdentityUser<int>
     public DateTime? RefreshTokenExpiresAt { get; set; }
 
     /// <summary>
-    /// User's profile photo in byte array format.
+    /// Identifier of the profile photo stored in the image service.
     /// </summary>
-    public byte[]? ProfilePhoto { get; set; }
-
-    /// <summary>
-    /// Content type of the profile photo.
-    /// <remarks>
-    /// This is used to determine how the profile photo should be displayed in the UI.
-    /// </remarks>
-    /// <example>
-    /// "image/jpeg"
-    /// </example>
-    /// </summary>
-    public string? ContentType { get; set; }
+    public string? ProfilePhotoId { get; set; }
 
     /// <summary>
     /// Collection of artworks created by the user.
@@ -126,28 +115,22 @@ public class User : IdentityUser<int>
     }
 
     /// <summary>
-    /// Updates the user's profile photo and content type.
+    /// Updates the user's profile photo by setting the new profile photo ID.
     /// </summary>
-    /// <param name="photo">The profile photo as a byte array.</param>
-    /// <param name="contentType">The content type of the photo (e.g., "image/jpeg").</param>
-    /// <exception cref="ArgumentException">
-    /// Thrown when the photo is null or empty.
-    /// </exception>
-    public void UpdateProfilePhoto(byte[] photo, string contentType)
+    /// <param name="profilePhotoId">
+    /// The unique identifier of the new profile photo stored in the image service.
+    /// </param>
+    public void UpdateUserProfilePhoto(string? profilePhotoId)
     {
-        if (photo == null || photo.Length == 0)
-            throw new ArgumentException("Profile photo cannot be null or empty.", nameof(photo));
-        ProfilePhoto = photo;
-        ContentType = contentType;
+        ProfilePhotoId = profilePhotoId;
     }
 
     /// <summary>
-    /// Removes the user's profile photo and content type.
+    /// Removes the user's profile photo by clearing the profile photo ID.
     /// </summary>
-    public void RemoveProfilePhoto()
+    public void RemoveUserProfilePhoto()
     {
-        ProfilePhoto = null;
-        ContentType = null;
+        ProfilePhotoId = null;
     }
 
     /// <summary>

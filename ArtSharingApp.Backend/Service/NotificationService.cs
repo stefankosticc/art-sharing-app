@@ -1,10 +1,12 @@
 using ArtSharingApp.Backend.DataAccess.Repository.RepositoryInterface;
 using ArtSharingApp.Backend.DTO;
 using ArtSharingApp.Backend.Exceptions;
+using ArtSharingApp.Backend.Hubs;
 using ArtSharingApp.Backend.Models;
 using ArtSharingApp.Backend.Models.Enums;
 using ArtSharingApp.Backend.Service.ServiceInterface;
 using AutoMapper;
+using Microsoft.AspNetCore.SignalR;
 using UnauthorizedAccessException = ArtSharingApp.Backend.Exceptions.UnauthorizedAccessException;
 
 namespace ArtSharingApp.Backend.Service;
@@ -17,6 +19,7 @@ public class NotificationService : INotificationService
     private readonly INotificationRepository _notificationRepository;
     private readonly IUserRepository _userRepository;
     private readonly IMapper _mapper;
+    private readonly IHubContext<NotificationHub> _hubContext;
 
     /// <summary>
     /// Initializes a new instance of the <see cref="NotificationService"/> class.
@@ -27,11 +30,13 @@ public class NotificationService : INotificationService
     public NotificationService(
         INotificationRepository notificationRepository,
         IUserRepository userRepository,
-        IMapper mapper)
+        IMapper mapper,
+        IHubContext<NotificationHub> hubContext)
     {
         _notificationRepository = notificationRepository;
         _userRepository = userRepository;
         _mapper = mapper;
+        _hubContext = hubContext;
     }
 
     /// <inheritdoc />
@@ -44,6 +49,12 @@ public class NotificationService : INotificationService
     }
 
     /// <inheritdoc />
+    public async Task<int> GetUnreadCountAsync(int loggedInUserId)
+    {
+        return await _notificationRepository.GetUnreadCountAsync(loggedInUserId);
+    }
+
+    /// <inheritdoc />
     public async Task CreateNotificationAsync(NotificationRequestDTO request)
     {
         if (string.IsNullOrEmpty(request.Text) || request.RecipientId <= 0)
@@ -52,12 +63,15 @@ public class NotificationService : INotificationService
         if (await _userRepository.GetByIdAsync(request.RecipientId) == null)
             throw new NotFoundException("Recipient not found.");
 
-        var notification = _mapper.Map<Notification>(request);
-        notification.CreatedAt = DateTime.UtcNow;
-        notification.Status = NotificationStatus.UNREAD;
+        // var notification = _mapper.Map<Notification>(request);
+        var notification = Notification.Create(request.Text, request.RecipientId);
 
         await _notificationRepository.AddAsync(notification);
         await _notificationRepository.SaveAsync();
+
+        var notificationResponse = _mapper.Map<NotificationResponseDTO>(notification);
+        await _hubContext.Clients.User(request.RecipientId.ToString())
+            .SendAsync("ReceiveNotification", notificationResponse);
     }
 
     /// <inheritdoc />

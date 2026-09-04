@@ -4,6 +4,7 @@ using Microsoft.Extensions.DependencyInjection;
 using ArtSharingApp.Backend.DataAccess;
 using ArtSharingApp.Backend.DataAccess.Repository;
 using ArtSharingApp.Backend.DataAccess.Repository.RepositoryInterface;
+using ArtSharingApp.Backend.Infrastructure;
 using ArtSharingApp.Backend.Service;
 using ArtSharingApp.Backend.Service.ServiceInterface;
 using ArtSharingApp.Backend.Profile;
@@ -46,7 +47,6 @@ public abstract class IntegrationTestBase : IAsyncLifetime
         services.AddDbContext<ApplicationDbContext>(options =>
             options.UseNpgsql(ConnectionString));
 
-        // services.AddAutoMapper(typeof(UserProfile).Assembly);
         services.AddAutoMapper(cfg => cfg.AddMaps(typeof(UserProfile).Assembly));
         services.AddScoped(typeof(IGenericRepository<>), typeof(GenericRepository<>));
         services.AddScoped<IUserRepository, UserRepository>();
@@ -71,6 +71,9 @@ public abstract class IntegrationTestBase : IAsyncLifetime
         services.AddScoped<INotificationService, NotificationService>();
         services.AddScoped<IAuctionService, AuctionService>();
         services.AddScoped<IChatService, ChatService>();
+
+        services.AddSingleton<IImageServiceClient, FakeImageServiceClient>();
+        services.AddSignalR();
 
         services.AddIdentity<User, Role>()
             .AddEntityFrameworkStores<ApplicationDbContext>()

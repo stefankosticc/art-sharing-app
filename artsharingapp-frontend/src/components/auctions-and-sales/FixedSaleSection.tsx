@@ -1,4 +1,5 @@
 import { useNavigate } from "react-router-dom";
+import { useTranslation } from "react-i18next";
 import { Artwork } from "../../services/artwork";
 import { Currency } from "../../services/enums";
 import "./styles/AuctionSection.css";
@@ -10,34 +11,37 @@ type FixedSaleSectionProps = {
 };
 
 const FixedSaleSection = ({ artwork }: FixedSaleSectionProps) => {
+  const { t } = useTranslation();
   const navigation = useNavigate();
 
   return (
     <div className="auction-section-container fixed-sale-section-container">
-      <h4>On Sale</h4>
+      <h4>{t("auctions.onSaleHeading")}</h4>
       <hr />
       <div className="auction-section-content">
         <div className="auction-section-column">
-          <p>Price</p>
+          <p>{t("auctions.price")}</p>
           <p className="auction-section-column-info">
             {artwork.price?.toLocaleString("en-US")}{" "}
             {Currency[artwork.currency]}
           </p>
         </div>
         <div className="auction-section-column">
-          <p>Send a message</p>
+          <p>{t("chat.sendMessage")}</p>
           <div className="auction-section-offer fixed-sale-section-message">
             <button
-              title="Send a message"
+              title={t("chat.sendMessage")}
               onClick={() =>
                 navigation("/chat", {
                   state: {
                     selectedUser: {
                       userId: artwork.postedByUserId,
                       userName: artwork.postedByUserName,
-                      profilePhoto: `/api/user/${artwork.postedByUserId}/profile-photo`,
+                      profilePhoto: artwork.postedByUserProfilePhoto,
                     },
-                    input: `Hello, I am interested in purchasing your artwork "${artwork.title}". Could you please provide more details?`,
+                    input: t("auctions.interestedMessage", {
+                      title: artwork.title,
+                    }),
                   },
                 })
               }
