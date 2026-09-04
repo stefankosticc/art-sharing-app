@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { useTranslation } from "react-i18next";
 import { MdOutlineChatBubble } from "react-icons/md";
 import { formatFollowCount } from "../../utils/formatting";
 import {
@@ -30,6 +31,7 @@ const UserInfo = ({
   loggedInUser,
   isMyProfile,
 }: UserInfoProps) => {
+  const { t } = useTranslation();
   const [imgSrc, setImgSrc] = useState<string>();
   const [isFollowing, setIsFollowing] = useState<boolean>(false);
   const [isSettingsOpen, setIsSettingsOpen] = useState<boolean>(false);
@@ -44,8 +46,7 @@ const UserInfo = ({
     if (user?.profilePhoto) {
       setImgSrc(`${IMAGE_SERVICE_BASE_URL}${user.profilePhoto}?t=${Date.now()}`);
     }
-    if (user?.isFollowedByLoggedInUser)
-      setIsFollowing(user.isFollowedByLoggedInUser);
+    setIsFollowing(!!user?.isFollowedByLoggedInUser);
   }, [user]);
 
   const handleFollow = async () => {
@@ -57,6 +58,7 @@ const UserInfo = ({
           ? {
               ...prev,
               followersCount: prev.followersCount + 1,
+              isFollowedByLoggedInUser: followed,
             }
           : prev
       );
@@ -72,6 +74,7 @@ const UserInfo = ({
           ? {
               ...prev,
               followersCount: prev.followersCount - 1,
+              isFollowedByLoggedInUser: false,
             }
           : prev
       );
@@ -124,7 +127,7 @@ const UserInfo = ({
               formatFollowCount(user?.followersCount)
             )}
           </span>{" "}
-          Followers
+          {t("profile.followersLabel")}
         </p>
 
         <p
@@ -143,7 +146,7 @@ const UserInfo = ({
               formatFollowCount(user?.followingCount)
             )}
           </span>{" "}
-          Following
+          {t("profile.followingLabel")}
         </p>
       </div>
 
@@ -153,20 +156,20 @@ const UserInfo = ({
             className="profile-follow-btn"
             onClick={() => setIsSettingsOpen(true)}
           >
-            Edit Profile
+            {t("profile.editProfile")}
           </button>
         ) : isFollowing ? (
           <button className="profile-follow-btn" onClick={handleUnfollow}>
-            Unfollow
+            {t("profile.unfollow")}
           </button>
         ) : (
           <button className="profile-follow-btn" onClick={handleFollow}>
-            Follow
+            {t("profile.follow")}
           </button>
         )}
         {!isMyProfile && (
           <MdOutlineChatBubble
-            title="Send a message"
+            title={t("chat.sendMessage")}
             onClick={() =>
               navigate("/chat", {
                 state: {
@@ -186,7 +189,7 @@ const UserInfo = ({
       {isMyProfile && (
         <div
           className="profile-settings"
-          title="Settings"
+          title={t("profile.settingsTitle")}
           onClick={() => setIsSettingsOpen((prev) => !prev)}
         >
           <IoSettingsOutline />

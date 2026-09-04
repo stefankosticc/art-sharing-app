@@ -1,4 +1,5 @@
 import { useRef } from "react";
+import { useTranslation } from "react-i18next";
 import { useNotifications } from "../hooks/useNotifications";
 import { NotificationStatus } from "../services/enums";
 import "../styles/Notifications.css";
@@ -18,6 +19,7 @@ interface NotificationsProps {
 }
 
 const Notifications = ({ onClose, onNotificationRead }: NotificationsProps) => {
+  const { t } = useTranslation();
   const {
     notifications,
     loadingNotifications,
@@ -68,7 +70,9 @@ const Notifications = ({ onClose, onNotificationRead }: NotificationsProps) => {
   return (
     <div className="notifications-menu" ref={notificationMenuRef}>
       {notifications.length === 0 && !loadingNotifications ? (
-        <p className="notifications-no-results">No notifications found.</p>
+        <p className="notifications-no-results">
+          {t("notifications.noNotificationsFound")}
+        </p>
       ) : (
         <>
           {notifications.map((notification) => (
@@ -86,13 +90,13 @@ const Notifications = ({ onClose, onNotificationRead }: NotificationsProps) => {
                   className="notification-icon-wrapper"
                   onClick={() => handleRead(notification)}
                 >
-                  <BsCheck2All title="Mark as read" />
+                  <BsCheck2All title={t("notifications.markAsRead")} />
                 </div>
                 <div
                   className="notification-icon-wrapper"
                   onClick={() => handleDelete(notification)}
                 >
-                  <FaTrashAlt title="Delete" />
+                  <FaTrashAlt title={t("common.delete")} />
                 </div>
               </div>
 

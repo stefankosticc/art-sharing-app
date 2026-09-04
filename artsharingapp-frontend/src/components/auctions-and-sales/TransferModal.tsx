@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { useTranslation } from "react-i18next";
 import { FiSearch } from "react-icons/fi";
 import "./styles/TransferModal.css";
 import { useSearch } from "../../hooks/useSearch";
@@ -18,6 +19,7 @@ const TransferModal = ({
   onClose,
   refetchArtwork,
 }: TransferModalProps) => {
+  const { t } = useTranslation();
   const [searchString, setSearchString] = useState<string>("");
 
   const { results } = useSearch({
@@ -31,14 +33,16 @@ const TransferModal = ({
   ) => {
     if (
       window.confirm(
-        `Are you sure you want to transfer this artwork to @${user.userName}?`
+        t("auctions.transferConfirm", { userName: user.userName })
       )
     ) {
       const success = await transferArtwork(artworkId, user.id);
       if (success) {
         onClose();
         refetchArtwork();
-        toast.success(`Artwork successfully transferred to @${user.userName}!`);
+        toast.success(
+          t("auctions.transferSuccess", { userName: user.userName })
+        );
       }
     }
   };
@@ -49,7 +53,7 @@ const TransferModal = ({
         <div className="search-bar">
           <input
             type="text"
-            placeholder="Search artist for transfer..."
+            placeholder={t("auctions.transferSearchPlaceholder")}
             value={searchString}
             onChange={(e) => setSearchString(e.target.value)}
             autoFocus
@@ -73,7 +77,7 @@ const TransferModal = ({
         </div>
 
         <button className="transfer-cancel-btn" onClick={onClose}>
-          Cancel
+          {t("common.cancel")}
         </button>
       </div>
     </div>

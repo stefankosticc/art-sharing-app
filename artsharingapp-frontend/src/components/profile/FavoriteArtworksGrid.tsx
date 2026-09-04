@@ -1,3 +1,4 @@
+import { useTranslation } from "react-i18next";
 import { useFavoriteArtworks } from "../../hooks/useFavoriteArtworks";
 import ArtworkCard from "../ArtworkCard";
 import { User } from "../../services/auth";
@@ -11,6 +12,7 @@ const FavoriteArtworksGrid = ({
   activeTab,
   user,
 }: FavoriteArtworksGridProps) => {
+  const { t } = useTranslation();
   const { favorites, loadingFavorites } = useFavoriteArtworks({
     likedByUser: user,
     activeTab,
@@ -32,7 +34,7 @@ const FavoriteArtworksGrid = ({
         </div>
       ) : (
         <p className="profile-content-text not-found">
-          You have no favorites yet.
+          {t("profile.noFavoritesYet")}
         </p>
       )}
     </div>

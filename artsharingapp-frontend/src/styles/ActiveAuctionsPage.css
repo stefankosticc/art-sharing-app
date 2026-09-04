@@ -17,6 +17,7 @@
 
 .aap-sidebar {
     width: 24%;
+    flex-shrink: 0;
     position: sticky;
     top: 1rem;
     display: flex;
@@ -46,6 +47,7 @@
 
 .aap-content {
     width: 76%;
+    min-width: 0;
     padding: 0 0.4rem;
 }
 

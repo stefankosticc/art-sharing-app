@@ -1,5 +1,6 @@
 import { useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { useTranslation } from "react-i18next";
 import { PiDotsThreeOutlineVerticalFill } from "react-icons/pi";
 import {
   ARTWORK_FALLBACK_IMAGE,
@@ -24,6 +25,7 @@ const MadeOfferFeedCard = ({
   onOpenChange,
   onWithdraw,
 }: MadeOfferFeedCardProps) => {
+  const { t } = useTranslation();
   const navigate = useNavigate();
   const menuRef = useRef<HTMLDivElement>(null);
   useClickOutside(menuRef, () => onOpenChange(false));
@@ -50,7 +52,7 @@ const MadeOfferFeedCard = ({
 
       <div className="moc-highlight">
         <p className="moc-time">
-          Time left: <Countdown endTime={offer.auctionEndTime} />
+          {t("auctions.timeLeft")} <Countdown endTime={offer.auctionEndTime} />
         </p>
         <p className="moc-amount">
           {offer.amount.toLocaleString("en-US")}{" "}
@@ -61,7 +63,9 @@ const MadeOfferFeedCard = ({
             offer.status
           ].toLowerCase()}`}
         >
-          {OfferStatus[offer.status]}
+          {t(
+            `auctions.offerStatus.${OfferStatus[offer.status].toLowerCase()}`,
+          )}
         </span>
       </div>
 
@@ -82,23 +86,19 @@ const MadeOfferFeedCard = ({
                 navigate(`/artwork/${offer.artworkId}`);
               }}
             >
-              Open Artwork
+              {t("auctions.openArtwork")}
             </p>
             {offer.status === OfferStatus.SUBMITTED && (
               <p
                 className="moc-menu-option moc-menu-option-danger"
                 onClick={() => {
                   onOpenChange(false);
-                  if (
-                    window.confirm(
-                      "Are you sure you want to withdraw this offer? This action cannot be undone.",
-                    )
-                  ) {
+                  if (window.confirm(t("auctions.withdrawConfirm"))) {
                     onWithdraw(offer.id);
                   }
                 }}
               >
-                Withdraw
+                {t("auctions.withdraw")}
               </p>
             )}
           </div>

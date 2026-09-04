@@ -1,3 +1,4 @@
+import { useTranslation } from "react-i18next";
 import { useAuctionContext } from "../../context/AuctionContext";
 import { useOffers } from "../../hooks/useOffers";
 import "./styles/AuctionAnalyticsModal.css";
@@ -10,6 +11,7 @@ type AuctionAnalyticsModalProps = {
 };
 
 const AuctionAnalyticsModal = ({ onClose }: AuctionAnalyticsModalProps) => {
+  const { t } = useTranslation();
   const [refetchOffers, setRefetchOffers] = useState<boolean>(false);
 
   const { auction } = useAuctionContext();
@@ -22,16 +24,16 @@ const AuctionAnalyticsModal = ({ onClose }: AuctionAnalyticsModalProps) => {
         <IoCloseCircleOutline
           className="aam-close"
           onClick={onClose}
-          title="Close"
+          title={t("common.closeTitle")}
         />
 
-        <h4>Auction Analytics</h4>
+        <h4>{t("artwork.auctionAnalytics")}</h4>
 
         <div className="aam-content">
           <div className="aam-sidebar">
             {auction ? (
               <>
-                <p className="aam-sidebar-section">Active</p>
+                <p className="aam-sidebar-section">{t("auctions.activeLabel")}</p>
                 <div className="aam-auction">
                   <p className="aam-auction-time">
                     {new Date(auction.startTime).toLocaleString("en-GB", {
@@ -56,7 +58,7 @@ const AuctionAnalyticsModal = ({ onClose }: AuctionAnalyticsModalProps) => {
               </>
             ) : (
               <p className="aam-auction-not-found">
-                There is no active auctions
+                {t("auctions.noActiveAuctionForArtwork")}
               </p>
             )}
           </div>

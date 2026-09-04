@@ -1,12 +1,17 @@
 import { IoCloseCircleOutline } from "react-icons/io5";
 import "./styles/SettingsModal.css";
 import { useState } from "react";
+import { useTranslation } from "react-i18next";
 import { logout, User } from "../../services/auth";
 import { useNavigate } from "react-router-dom";
 import AccountSettings from "./AccountSettings";
+import PreferencesSettings from "./PreferencesSettings";
 import notificationService from "../../services/notifications";
 
-const TABS: { key: string }[] = [{ key: "Account" }];
+const TABS: { key: string; labelKey: string }[] = [
+  { key: "Account", labelKey: "profile.settingsTabs.account" },
+  { key: "Preferences", labelKey: "profile.settingsTabs.preferences" },
+];
 
 type SettingsModalProps = {
   user: User;
@@ -19,6 +24,7 @@ const SettingsModal = ({
   triggerRefetchUser,
   onClose,
 }: SettingsModalProps) => {
+  const { t } = useTranslation();
   const [selectedTab, setSelectedTab] = useState<string>(TABS[0].key);
 
   const navigate = useNavigate();
@@ -47,6 +53,8 @@ const SettingsModal = ({
             onClose={onClose}
           />
         );
+      case "Preferences":
+        return <PreferencesSettings />;
       default:
         return null;
     }
@@ -56,7 +64,7 @@ const SettingsModal = ({
       <div className="modal-container sm-container">
         <IoCloseCircleOutline
           className="sm-close"
-          title="Close"
+          title={t("common.closeTitle")}
           onClick={onClose}
         />
 
@@ -68,12 +76,12 @@ const SettingsModal = ({
                 className={`sm-tab ${tab.key === selectedTab ? "active" : ""}`}
                 onClick={() => setSelectedTab(tab.key)}
               >
-                {tab.key}
+                {t(tab.labelKey)}
               </div>
             ))}
 
             <div className="sm-tab logout-tab" onClick={handleLogout}>
-              Log out
+              {t("profile.logOut")}
             </div>
           </div>
 

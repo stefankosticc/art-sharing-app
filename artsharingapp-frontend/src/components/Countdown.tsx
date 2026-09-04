@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { useTranslation } from "react-i18next";
 import "../styles/Countdown.css";
 
 type CountdownProps = {
@@ -6,6 +7,7 @@ type CountdownProps = {
 };
 
 const Countdown = ({ endTime }: CountdownProps) => {
+  const { t } = useTranslation();
   const calculateTimeLeft = () => {
     const end = new Date(endTime);
     const now = new Date();
@@ -40,7 +42,8 @@ const Countdown = ({ endTime }: CountdownProps) => {
     return () => clearInterval(interval);
   }, [timeLeft?.totalSeconds, endTime]);
 
-  if (!timeLeft) return <span className="countdown-expired">Expired</span>;
+  if (!timeLeft)
+    return <span className="countdown-expired">{t("auctions.expired")}</span>;
 
   const { days, hours, minutes, seconds, totalSeconds } = timeLeft;
   const isUrgent = totalSeconds <= 5 * 60;

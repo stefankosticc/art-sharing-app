@@ -108,4 +108,11 @@ public class GalleryService : IGalleryService
             return null;
         return _mapper.Map<IEnumerable<GalleryResponseDTO>>(galleries);
     }
+
+    /// <inheritdoc/>
+    public async Task<IEnumerable<GalleryMapPointDTO>> GetGalleriesInBoundingBox(double south, double west, double north, double east)
+    {
+        var galleries = await _galleryRepository.GetGalleriesInBoundingBox(south, west, north, east);
+        return _mapper.Map<IEnumerable<GalleryMapPointDTO>>(galleries);
+    }
 }

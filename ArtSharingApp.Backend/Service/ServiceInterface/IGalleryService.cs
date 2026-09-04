@@ -61,4 +61,14 @@ public interface IGalleryService
     /// <returns>A collection of <see cref="GalleryResponseDTO"/> matching the name, or null if none found.</returns>
     /// <exception cref="BadRequestException">Thrown if the name is not provided.</exception>
     Task<IEnumerable<GalleryResponseDTO>?> GetGalleriesByName(string name);
+
+    /// <summary>
+    /// Retrieves galleries located within a geographic bounding box.
+    /// </summary>
+    /// <param name="south">The southern latitude bound.</param>
+    /// <param name="west">The western longitude bound.</param>
+    /// <param name="north">The northern latitude bound.</param>
+    /// <param name="east">The eastern longitude bound.</param>
+    /// <returns>A collection of <see cref="GalleryMapPointDTO"/> within the bounding box.</returns>
+    Task<IEnumerable<GalleryMapPointDTO>> GetGalleriesInBoundingBox(double south, double west, double north, double east);
 }

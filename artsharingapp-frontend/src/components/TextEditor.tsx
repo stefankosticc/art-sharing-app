@@ -1,4 +1,5 @@
 import { useEditor, EditorContent, BubbleMenu } from "@tiptap/react";
+import { useTranslation } from "react-i18next";
 import StarterKit from "@tiptap/starter-kit";
 import "../styles/TextEditor.css";
 import Placeholder from "@tiptap/extension-placeholder";
@@ -26,13 +27,14 @@ const TextEditor = ({
   onUpdate,
   disableHeadings = false,
 }: TextEditorProps) => {
+  const { t } = useTranslation();
   const extensions = useMemo(
     () => [
       StarterKit.configure({
         heading: disableHeadings ? false : { levels: [1, 2] },
       }),
       Placeholder.configure({
-        placeholder: "Start typing here...",
+        placeholder: t("common.startTypingPlaceholder"),
       }),
       TextStyle,
       Color,

@@ -1,4 +1,5 @@
 import { useRef, useState } from "react";
+import { useTranslation } from "react-i18next";
 import DiscoverNavbar from "../components/DiscoverNavbar";
 import Dock from "../components/Dock";
 import ActiveAuctionFeedCard from "../components/discover-page/ActiveAuctionFeedCard";
@@ -12,6 +13,7 @@ import "../styles/ActiveAuctionsPage.css";
 type ActiveAuctionsTab = "auctions" | "fixed" | "offers";
 
 const ActiveAuctionsPage = () => {
+  const { t } = useTranslation();
   const [activeTab, setActiveTab] = useState<ActiveAuctionsTab>("auctions");
   const [openOfferId, setOpenOfferId] = useState<number | null>(null);
 
@@ -39,7 +41,7 @@ const ActiveAuctionsPage = () => {
     <div className="fixed-page">
       <div className="active-auctions-page" ref={activeAuctionsPageRef}>
         <DiscoverNavbar />
-        <h1>Auctions</h1>
+        <h1>{t("auctions.pageTitle")}</h1>
 
         <div className="aap-container">
           <div className="aap-sidebar">
@@ -49,7 +51,7 @@ const ActiveAuctionsPage = () => {
               }`}
               onClick={() => setActiveTab("auctions")}
             >
-              Active Auctions
+              {t("auctions.activeAuctionsTab")}
             </button>
             <button
               className={`aap-sidebar-btn${
@@ -57,7 +59,7 @@ const ActiveAuctionsPage = () => {
               }`}
               onClick={() => setActiveTab("fixed")}
             >
-              Fixed Price
+              {t("auctions.fixedPrice")}
             </button>
             <button
               className={`aap-sidebar-btn${
@@ -65,14 +67,16 @@ const ActiveAuctionsPage = () => {
               }`}
               onClick={() => setActiveTab("offers")}
             >
-              Made Offers
+              {t("auctions.madeOffersTab")}
             </button>
           </div>
 
           <div className="aap-content">
             {activeTab === "auctions" &&
               (!loadingAuctions && auctions.length === 0 ? (
-                <p className="aap-no-results">No active auctions found.</p>
+                <p className="aap-no-results">
+                  {t("auctions.noActiveAuctionsFound")}
+                </p>
               ) : (
                 <div className="aap-auctions-grid">
                   {auctions.map((auction) => (
@@ -89,7 +93,7 @@ const ActiveAuctionsPage = () => {
             {activeTab === "fixed" &&
               (!loadingFixedPriceArtworks && fixedPriceArtworks.length === 0 ? (
                 <p className="aap-no-results">
-                  No artworks for sale found.
+                  {t("auctions.noArtworksForSaleFound")}
                 </p>
               ) : (
                 <div className="aap-auctions-grid">
@@ -109,7 +113,7 @@ const ActiveAuctionsPage = () => {
             {activeTab === "offers" &&
               (!loadingOffers && offers.length === 0 ? (
                 <p className="aap-no-results">
-                  You haven't made any offers yet.
+                  {t("auctions.noOffersMade")}
                 </p>
               ) : (
                 <div className="aap-offers-list">

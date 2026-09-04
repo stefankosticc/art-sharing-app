@@ -182,6 +182,9 @@ public class AuctionService : IAuctionService
         offer.Accept();
         _offerRepository.UpdateOfferStatus(offer);
         await _offerRepository.SaveAsync();
+
+        await BroadcastAuctionUpdateAsync(auction);
+        await BroadcastOfferUpdateAsync(offer, auction.Artwork.PostedByUserId);
     }
 
     /// <inheritdoc />
@@ -198,6 +201,9 @@ public class AuctionService : IAuctionService
         offer.Reject();
         _offerRepository.UpdateOfferStatus(offer);
         await _offerRepository.SaveAsync();
+
+        await BroadcastAuctionUpdateAsync(auction);
+        await BroadcastOfferUpdateAsync(offer, auction.Artwork.PostedByUserId);
     }
 
     /// <inheritdoc />

@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { useTranslation } from "react-i18next";
 import {
   ARTWORK_FALLBACK_IMAGE,
   IMAGE_SERVICE_BASE_URL,
@@ -21,6 +22,7 @@ type ActiveAuctionFeedCardProps = {
 };
 
 const ActiveAuctionFeedCard = ({ listing }: ActiveAuctionFeedCardProps) => {
+  const { t } = useTranslation();
   const navigate = useNavigate();
 
   const imagePath =
@@ -38,12 +40,6 @@ const ActiveAuctionFeedCard = ({ listing }: ActiveAuctionFeedCardProps) => {
   return (
     <div
       className="aac-container"
-      style={
-        {
-          "--artwork-color":
-            listing.type === "auction" ? "var(--purple)" : "var(--cyan)",
-        } as React.CSSProperties
-      }
       onClick={() => navigate(`/artwork/${artworkId}`)}
     >
       <img
@@ -58,10 +54,12 @@ const ActiveAuctionFeedCard = ({ listing }: ActiveAuctionFeedCardProps) => {
           <p className="aac-title">{artworkTitle}</p>
           {listing.type === "auction" ? (
             <p className="aac-time">
-              Time left: <Countdown endTime={listing.endTime} />
+              {t("auctions.timeLeft")} <Countdown endTime={listing.endTime} />
             </p>
           ) : (
-            <p className="aac-time aac-fixed-badge">Fixed Price</p>
+            <p className="aac-time aac-fixed-badge">
+              {t("auctions.fixedPrice")}
+            </p>
           )}
         </div>
         <p className="aac-artist">@{listing.postedByUserName}</p>
@@ -71,21 +69,21 @@ const ActiveAuctionFeedCard = ({ listing }: ActiveAuctionFeedCardProps) => {
         {listing.type === "auction" ? (
           <div className="aac-info">
             <div className="aac-info-column">
-              <p>Current Price</p>
+              <p>{t("common.currentPrice")}</p>
               <p className="aac-info-value">
                 {listing.currentPrice.toLocaleString("en-US")}{" "}
                 {Currency[listing.currency]}
               </p>
             </div>
             <div className="aac-info-column">
-              <p>No. of Offers</p>
+              <p>{t("common.offerCount")}</p>
               <p className="aac-info-value">{listing.offerCount}</p>
             </div>
           </div>
         ) : (
           <div className="aac-info">
             <div className="aac-info-column">
-              <p>Price</p>
+              <p>{t("auctions.price")}</p>
               <p className="aac-info-value">
                 {listing.price.toLocaleString("en-US")}{" "}
                 {Currency[listing.currency]}

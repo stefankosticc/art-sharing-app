@@ -37,6 +37,16 @@ public class Gallery
     public City City { get; set; }
 
     /// <summary>
+    /// Latitude of the gallery's location
+    /// </summary>
+    public double Latitude { get; set; }
+
+    /// <summary>
+    /// Longitude of the gallery's location
+    /// </summary>
+    public double Longitude { get; set; }
+
+    /// <summary>
     /// Collection of artworks displayed in the gallery
     /// </summary>
     public ICollection<Artwork> Artworks { get; set; } = new List<Artwork>();

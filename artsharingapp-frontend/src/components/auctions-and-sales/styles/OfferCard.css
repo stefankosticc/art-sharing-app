@@ -5,7 +5,7 @@
     align-items: center;
     justify-content: space-between;
     padding: 1rem;
-    font-size: 0.9rem;
+    font-size: 0.8rem;
     border-radius: 0.4rem;
 }
 
@@ -33,7 +33,7 @@
     font-weight: bold;
     padding: 0.2rem 0.6rem;
     border-radius: 0.8rem;
-    font-size: 0.8rem;
+    font-size: 0.7rem;
 }
 
 #accept-offer:hover {
@@ -69,10 +69,26 @@
     }
 }
 
+.oc-container:has(.oc-status-withdrawn) {
+
+    #accept-offer:disabled,
+    #reject-offer:disabled {
+        color: var(--gray-light);
+        background-color: transparent;
+        cursor: not-allowed;
+    }
+}
+
 .oc-status {
-    background-color: var(--gray-light);
-    color: var(--gray-lighter);
+    background-color: var(--gray-lighter);
+    color: var(--gray-light);
     padding: 0.2rem 0.6rem;
     border-radius: 0.8rem;
     font-size: 0.7rem;
+    font-weight: 500;
+}
+
+.oc-status-withdrawn {
+    background-color: #b3d9ff;
+    color: var(--blue);
 }

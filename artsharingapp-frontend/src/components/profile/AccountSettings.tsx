@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { useTranslation } from "react-i18next";
 import { User } from "../../services/auth";
 import {
   updateUserProfile,
@@ -23,6 +24,7 @@ const AccountSettings = ({
   triggerRefetchUser,
   onClose,
 }: AccountSettingsProps) => {
+  const { t } = useTranslation();
   const [profilePhoto, setProfilePhoto] = useState<string>(
     `${IMAGE_SERVICE_BASE_URL}${user.profilePhoto}?t=${Date.now()}`
   ); // for img tag
@@ -61,11 +63,11 @@ const AccountSettings = ({
 
   const handleSave = async () => {
     if (!editingUserData.name.trim()) {
-      alert("Name is required.");
+      alert(t("profile.nameRequiredAlert"));
       return;
     }
     if (editingUserData.name.length > 50) {
-      alert("Name must be under 50 characters.");
+      alert(t("profile.nameTooLongAlert"));
       return;
     }
 
@@ -76,8 +78,8 @@ const AccountSettings = ({
 
   return (
     <div className="tab-panel">
-      <h5>Account Settings</h5>
-      <p>Update your profile here.</p>
+      <h5>{t("profile.accountSettingsTitle")}</h5>
+      <p>{t("profile.updateProfileHere")}</p>
 
       <div className="account-settings-container">
         <div className="settings-img-wrapper">
@@ -89,7 +91,7 @@ const AccountSettings = ({
           />
           <div
             className="settings-image settings-replace-image-overlay"
-            title="Replace profile photo"
+            title={t("profile.replaceProfilePhoto")}
           >
             <HiArrowPathRoundedSquare />
             <input
@@ -103,19 +105,19 @@ const AccountSettings = ({
 
         <button
           id="remove-profile-photo"
-          title="Remove profile photo"
+          title={t("profile.removeProfilePhoto")}
           onClick={() => {
             setProfilePhoto(ARTIST_FALLBACK_IMAGE);
             setProfilePhotoFile(null);
             setEditingUserData((prev) => ({ ...prev, removePhoto: true }));
           }}
         >
-          Remove
+          {t("profile.remove")}
         </button>
 
         <div className="account-info">
           <label htmlFor="name" className="account-info-field">
-            Name:{" "}
+            {t("profile.nameLabel")}{" "}
             <input
               type="text"
               name="name"
@@ -126,23 +128,23 @@ const AccountSettings = ({
             />
           </label>
           <p className="account-info-field">
-            Username: <span>@{user.userName}</span>
+            {t("profile.usernameLabel")} <span>@{user.userName}</span>
           </p>
           <p className="account-info-field">
-            Email: <span>{user.email}</span>
+            {t("profile.emailLabel")} <span>{user.email}</span>
           </p>
 
           <div className="account-btns">
-            <button onClick={handleCancel}>Cancel</button>
+            <button onClick={handleCancel}>{t("common.cancel")}</button>
             <button id="account-info-save-btn" onClick={handleSave}>
-              Save
+              {t("common.save")}
             </button>
           </div>
         </div>
       </div>
 
-      <button id="delete-account-btn">Delete Account</button>
-      <p>Permanently delete your account</p>
+      <button id="delete-account-btn">{t("profile.deleteAccount")}</button>
+      <p>{t("profile.deleteAccountDescription")}</p>
     </div>
   );
 };

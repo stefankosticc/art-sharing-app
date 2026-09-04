@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { useTranslation } from "react-i18next";
 import {
   DiscoverArtworkResponse,
   FollowedUserArtworkResponse,
@@ -12,6 +13,7 @@ type ArtworkFeedCardProps = {
 };
 
 const ArtworkFeedCard = ({ artwork }: ArtworkFeedCardProps) => {
+  const { t } = useTranslation();
   const [imgSrc, setImgSrc] = useState<string>(
     `${IMAGE_SERVICE_BASE_URL}${artwork.image}`
   );
@@ -34,7 +36,7 @@ const ArtworkFeedCard = ({ artwork }: ArtworkFeedCardProps) => {
     >
       <img
         src={imgSrc}
-        alt={artwork.title || "artwork image"}
+        alt={artwork.title || t("common.artworkImageFallbackAlt")}
         onError={() => setImgSrc(ARTWORK_FALLBACK_IMAGE)}
         className="afc-img"
       />

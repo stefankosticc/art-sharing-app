@@ -1,6 +1,7 @@
 import { IoCloseCircleOutline } from "react-icons/io5";
 import "./styles/FollowersModal.css";
 import { useEffect, useRef, useState } from "react";
+import { useTranslation } from "react-i18next";
 import { useFollowers } from "../../hooks/useFollowers";
 import ArtistSearchCard from "../search/ArtistSearchCard";
 import { useNavigate } from "react-router-dom";
@@ -17,6 +18,7 @@ const FollowersModal = ({
   tab = "followers",
   onClose,
 }: FollowersModalProps) => {
+  const { t } = useTranslation();
   const [activeTab, setActiveTab] = useState<"followers" | "following">(tab);
 
   const navigate = useNavigate();
@@ -39,7 +41,7 @@ const FollowersModal = ({
       <div className="modal-container fm-container" ref={followersModalRef}>
         <IoCloseCircleOutline
           className="fm-close"
-          title="Close"
+          title={t("common.closeTitle")}
           onClick={onClose}
         />
 
@@ -48,13 +50,13 @@ const FollowersModal = ({
             className={`${activeTab === "followers" && "active"}`}
             onClick={() => setActiveTab("followers")}
           >
-            Followers
+            {t("profile.followersLabel")}
           </button>
           <button
             className={`${activeTab === "following" && "active"}`}
             onClick={() => setActiveTab("following")}
           >
-            Following
+            {t("profile.followingLabel")}
           </button>
         </div>
 
@@ -72,8 +74,8 @@ const FollowersModal = ({
           ) : (
             <p className="fm-no-results">
               {activeTab === "followers"
-                ? "No followers yet."
-                : "Not following anyone yet."}
+                ? t("profile.noFollowersYet")
+                : t("profile.noFollowingYet")}
             </p>
           )}
         </div>
