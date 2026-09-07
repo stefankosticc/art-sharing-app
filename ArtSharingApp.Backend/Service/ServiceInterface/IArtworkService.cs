@@ -37,11 +37,13 @@ public interface IArtworkService
     /// Updates an existing artwork.
     /// </summary>
     /// <param name="id">The artwork ID.</param>
+    /// <param name="loggedInUserId">The ID of the currently logged-in user.</param>
     /// <param name="artworkDto">The updated artwork data.</param>
     /// <param name="artworkImage">The new image file for the artwork (optional).</param>
     /// <exception cref="BadRequestException">Thrown if parameters are invalid.</exception>
     /// <exception cref="NotFoundException">Thrown if the artwork is not found.</exception>
-    Task UpdateAsync(int id, ArtworkRequestDTO artworkDto, IFormFile? artworkImage);
+    /// <exception cref="UnauthorizedAccessException">Thrown if the user is not authorized to update this artwork.</exception>
+    Task UpdateAsync(int id, int loggedInUserId, ArtworkRequestDTO artworkDto, IFormFile? artworkImage);
 
     /// <summary>
     /// Deletes an artwork by its ID.

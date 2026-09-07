@@ -1,4 +1,5 @@
 using Microsoft.AspNetCore.Mvc;
+using ArtSharingApp.Backend.Controllers.Common;
 using ArtSharingApp.Backend.DTO;
 using ArtSharingApp.Backend.Service.ServiceInterface;
 using Microsoft.AspNetCore.Authorization;
@@ -8,7 +9,7 @@ namespace ArtSharingApp.Backend.Controllers;
 [ApiController]
 [Authorize]
 [Route("api")]
-public class GalleryController : Controller
+public class GalleryController : AuthenticatedUserBaseController
 {
     private readonly IGalleryService _galleryService;
 
@@ -54,7 +55,8 @@ public class GalleryController : Controller
     [HttpGet("gallery/{id}/artworks")]
     public async Task<IActionResult> GetArtworksByGalleryId(int id)
     {
-        var artworks = await _galleryService.GetArtworksByGalleryId(id);
+        var loggedInUserId = GetLoggedInUserId();
+        var artworks = await _galleryService.GetArtworksByGalleryId(id, loggedInUserId);
         return Ok(artworks);
     }
     

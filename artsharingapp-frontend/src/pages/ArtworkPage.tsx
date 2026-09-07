@@ -83,7 +83,8 @@ const ArtworkPage = ({ isNew = false }: ArtworkPageProps) => {
   useEffect(() => {
     if (!artwork) return;
 
-    setImgSrc(`${IMAGE_SERVICE_BASE_URL}${artwork.image}?t=${Date.now()}`);
+    const separator = artwork.image.includes("?") ? "&" : "?";
+    setImgSrc(`${IMAGE_SERVICE_BASE_URL}${artwork.image}${separator}t=${Date.now()}`);
     setExtractedColor(artwork.color);
 
     setIsLiked(!!artwork.isLikedByLoggedInUser);
@@ -160,7 +161,8 @@ const ArtworkPage = ({ isNew = false }: ArtworkPageProps) => {
         color: artwork.color || null,
       });
       setExtractedColor(artwork.color);
-      setImgSrc(`${IMAGE_SERVICE_BASE_URL}${artwork.image}?t=${Date.now()}`);
+      const separator = artwork.image.includes("?") ? "&" : "?";
+      setImgSrc(`${IMAGE_SERVICE_BASE_URL}${artwork.image}${separator}t=${Date.now()}`);
     } else if (isNew) {
       navigate(-1);
     }

@@ -48,7 +48,7 @@ public class GalleryServiceTests
             .Setup(repo => repo.GetByIdAsync(galleryId, It.IsAny<Expression<Func<Gallery, object>>[]>()))
             .ReturnsAsync(gallery);
 
-        _mockMapper.Setup(m => m.Map<IEnumerable<ArtworkResponseDTO>>(artworks))
+        _mockMapper.Setup(m => m.Map<IEnumerable<ArtworkResponseDTO>>(It.IsAny<IEnumerable<Artwork>>()))
             .Returns(new List<ArtworkResponseDTO>
             {
                 new ArtworkResponseDTO { Id = 10, Title = "Artwork 1" },
@@ -56,7 +56,7 @@ public class GalleryServiceTests
             });
 
         // Act
-        var result = await _galleryService.GetArtworksByGalleryId(galleryId);
+        var result = await _galleryService.GetArtworksByGalleryId(galleryId, 1);
 
         // Assert
         Assert.NotNull(result);
@@ -77,6 +77,6 @@ public class GalleryServiceTests
             .ReturnsAsync((Gallery)null);
 
         // Act & Assert
-        await Assert.ThrowsAsync<NotFoundException>(() => _galleryService.GetArtworksByGalleryId(galleryId));
+        await Assert.ThrowsAsync<NotFoundException>(() => _galleryService.GetArtworksByGalleryId(galleryId, 1));
     }
 }

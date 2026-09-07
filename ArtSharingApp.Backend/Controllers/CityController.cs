@@ -1,4 +1,5 @@
 using Microsoft.AspNetCore.Mvc;
+using ArtSharingApp.Backend.Controllers.Common;
 using ArtSharingApp.Backend.Service.ServiceInterface;
 using ArtSharingApp.Backend.DTO;
 using Microsoft.AspNetCore.Authorization;
@@ -8,7 +9,7 @@ namespace ArtSharingApp.Backend.Controllers;
 [ApiController]
 [Authorize]
 [Route("api")]
-public class CityController : Controller
+public class CityController : AuthenticatedUserBaseController
 {
     private readonly ICityService _cityService;
 
@@ -60,7 +61,8 @@ public class CityController : Controller
     [HttpGet("city/{id}/artworks")]
     public async Task<IActionResult> GetArtworksByCityId(int id)
     {
-        var artworks = await _cityService.GetArtworksByCityId(id);
+        var loggedInUserId = GetLoggedInUserId();
+        var artworks = await _cityService.GetArtworksByCityId(id, loggedInUserId);
         return Ok(artworks);
     }
     

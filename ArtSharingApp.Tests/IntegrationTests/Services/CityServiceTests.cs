@@ -194,7 +194,7 @@ public class CityServiceTests : IntegrationTestBase
         await context.SaveChangesAsync();
 
         // Act
-        var result = (await service.GetArtworksByCityId(city.Id))!.ToList();
+        var result = (await service.GetArtworksByCityId(city.Id, 1))!.ToList();
 
         // Assert
         Assert.Single(result);
@@ -208,7 +208,7 @@ public class CityServiceTests : IntegrationTestBase
         var service = ServiceProvider!.GetRequiredService<ICityService>();
 
         // Act & Assert
-        await Assert.ThrowsAsync<NotFoundException>(() => service.GetArtworksByCityId(999));
+        await Assert.ThrowsAsync<NotFoundException>(() => service.GetArtworksByCityId(999, 1));
     }
 
     [Fact]

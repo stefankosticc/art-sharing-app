@@ -9,6 +9,7 @@ using ArtSharingApp.Backend.Models;
 using ArtSharingApp.Backend.Profile;
 using ArtSharingApp.Backend.Seeders;
 using ArtSharingApp.Backend.Service.ServiceInterface;
+using ArtSharingApp.Backend.Utils;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
@@ -115,6 +116,8 @@ builder.Services.AddRefitClient<IImageServiceClient>()
     });
 
 builder.Services.AddSignalR();
+
+ImageUrlSigner.Configure(builder.Configuration["ImageService:SigningSecret"]!);
 
 var app = builder.Build();
 

@@ -18,6 +18,7 @@ public class ArtworkController : AuthenticatedUserBaseController
         _artworkService = artworkService;
     }
 
+    [Authorize(Roles = "Admin")]
     [HttpGet("artworks")]
     public async Task<IActionResult> GetAll()
     {
@@ -47,7 +48,8 @@ public class ArtworkController : AuthenticatedUserBaseController
     public async Task<IActionResult> Update(int id, [FromForm] ArtworkRequestDTO artworkDto,
         [FromForm] IFormFile? artworkImage)
     {
-        await _artworkService.UpdateAsync(id, artworkDto, artworkImage);
+        var loggedInUserId = GetLoggedInUserId();
+        await _artworkService.UpdateAsync(id, loggedInUserId, artworkDto, artworkImage);
         return Ok(new { message = "Artwork updated successfully." });
     }
 

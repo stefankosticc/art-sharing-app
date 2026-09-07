@@ -50,9 +50,10 @@ public interface IGalleryService
     /// Retrieves artworks associated with a gallery by gallery ID.
     /// </summary>
     /// <param name="id">The gallery ID.</param>
+    /// <param name="loggedInUserId">The ID of the currently logged-in user.</param>
     /// <returns>A collection of <see cref="ArtworkResponseDTO"/> representing artworks in the gallery.</returns>
     /// <exception cref="NotFoundException">Thrown if the gallery is not found.</exception>
-    Task<IEnumerable<ArtworkResponseDTO>?> GetArtworksByGalleryId(int id);
+    Task<IEnumerable<ArtworkResponseDTO>?> GetArtworksByGalleryId(int id, int loggedInUserId);
 
     /// <summary>
     /// Searches galleries by name.

@@ -57,9 +57,10 @@ public interface ICityService
     /// Retrieves artworks associated with a city by city ID.
     /// </summary>
     /// <param name="id">The city ID.</param>
+    /// <param name="loggedInUserId">The ID of the currently logged-in user.</param>
     /// <returns>A collection of <see cref="ArtworkResponseDTO"/> for the city.</returns>
     /// <exception cref="NotFoundException">Thrown if the city is not found.</exception>
-    Task<IEnumerable<ArtworkResponseDTO>?> GetArtworksByCityId(int id);
+    Task<IEnumerable<ArtworkResponseDTO>?> GetArtworksByCityId(int id, int loggedInUserId);
 
     /// <summary>
     /// Retrieves galleries associated with a city by city ID.

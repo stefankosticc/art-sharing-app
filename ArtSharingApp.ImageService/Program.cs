@@ -4,6 +4,7 @@ using ArtSharingApp.ImageService.Exceptions;
 using ArtSharingApp.ImageService.Middleware;
 using ArtSharingApp.ImageService.Profiles;
 using ArtSharingApp.ImageService.Services;
+using ArtSharingApp.ImageService.Utils;
 using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -34,6 +35,8 @@ builder.Services.AddScoped<IUserProfilePhotoRepository, UserProfilePhotoReposito
 
 builder.Services.AddScoped<IArtworkImageService, ArtworkImageService>();
 builder.Services.AddScoped<IUserProfilePhotoService, UserProfilePhotoService>();
+
+ImageUrlVerifier.Configure(builder.Configuration["SigningSecret"]!);
 
 var app = builder.Build();
 

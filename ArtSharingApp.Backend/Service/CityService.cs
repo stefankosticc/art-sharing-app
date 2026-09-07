@@ -89,12 +89,12 @@ public class CityService : ICityService
     }
 
     /// <inheritdoc />
-    public async Task<IEnumerable<ArtworkResponseDTO>?> GetArtworksByCityId(int id)
+    public async Task<IEnumerable<ArtworkResponseDTO>?> GetArtworksByCityId(int id, int loggedInUserId)
     {
         var city = await _cityRepository.GetByIdAsync(id, c => c.Artworks);
         if (city == null)
             throw new NotFoundException($"City with id {id} not found.");
-        var artworks = city.Artworks;
+        var artworks = city.Artworks.Where(a => !a.IsPrivate || a.PostedByUserId == loggedInUserId);
         return _mapper.Map<IEnumerable<ArtworkResponseDTO>>(artworks);
     }
 

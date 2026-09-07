@@ -1,4 +1,5 @@
 using ArtSharingApp.ImageService.Services;
+using ArtSharingApp.ImageService.Utils;
 using Microsoft.AspNetCore.Mvc;
 
 namespace ArtSharingApp.ImageService.Controllers;
@@ -23,8 +24,11 @@ public class ArtworkImageController : ControllerBase
     }
 
     [HttpGet("{imageId:guid}")]
-    public async Task<IActionResult> Get(Guid imageId)
+    public async Task<IActionResult> Get(Guid imageId, [FromQuery] long exp, [FromQuery] string? sig)
     {
+        if (!ImageUrlVerifier.IsValid(imageId, exp, sig))
+            return Unauthorized(new { error = "Invalid or expired image link." });
+
         var (data, contentType) = await _artworkImageService.GetByIdAsync(imageId);
         return File(data, contentType);
     }

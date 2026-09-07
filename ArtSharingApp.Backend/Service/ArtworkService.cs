@@ -53,6 +53,10 @@ public class ArtworkService : IArtworkService
         var artwork = await _artworkRepository.GetByIdAsync(id);
         if (artwork == null)
             throw new NotFoundException($"Artwork with id {id} not found.");
+
+        if (artwork.IsPrivate && artwork.PostedByUserId != loggedInUserId)
+            throw new NotFoundException($"Artwork with id {id} not found.");
+
         var response = _mapper.Map<ArtworkResponseDTO>(artwork);
         response.IsLikedByLoggedInUser = (await _favoritesRepository.GetAllAsync())
             .Any(f => f.UserId == loggedInUserId && f.ArtworkId == id);
@@ -94,7 +98,7 @@ public class ArtworkService : IArtworkService
     }
 
     /// <inheritdoc />
-    public async Task UpdateAsync(int id, ArtworkRequestDTO artworkDto, IFormFile? artworkImage)
+    public async Task UpdateAsync(int id, int loggedInUserId, ArtworkRequestDTO artworkDto, IFormFile? artworkImage)
     {
         if (artworkDto == null)
             throw new BadRequestException("Artwork parameters not provided correctly.");
@@ -102,6 +106,9 @@ public class ArtworkService : IArtworkService
         var artwork = await _artworkRepository.GetByIdAsync(id);
         if (artwork == null)
             throw new NotFoundException($"Artwork with id {id} not found.");
+
+        if (artwork.PostedByUserId != loggedInUserId)
+            throw new UnauthorizedAccessException("You are not authorized to update this artwork.");
 
         _mapper.Map(artworkDto, artwork);
 

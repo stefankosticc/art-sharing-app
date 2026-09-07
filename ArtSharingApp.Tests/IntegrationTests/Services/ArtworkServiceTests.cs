@@ -128,7 +128,7 @@ public class ArtworkServiceTests : IntegrationTestBase
         };
 
         // Act
-        await service.UpdateAsync(artwork.Id, dto, null);
+        await service.UpdateAsync(artwork.Id, 1, dto, null);
         var updated = await context.Artworks.FindAsync(artwork.Id);
 
         // Assert

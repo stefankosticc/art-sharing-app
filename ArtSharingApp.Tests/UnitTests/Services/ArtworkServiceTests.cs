@@ -90,13 +90,22 @@ public class ArtworkServiceTests
     {
         _mockArtworkRepository.Setup(r => r.GetByIdAsync(It.IsAny<int>())).ReturnsAsync((Artwork)null!);
         var dto = new ArtworkRequestDTO();
-        await Assert.ThrowsAsync<NotFoundException>(() => _artworkService.UpdateAsync(1, dto, null));
+        await Assert.ThrowsAsync<NotFoundException>(() => _artworkService.UpdateAsync(1, 1, dto, null));
     }
 
     [Fact]
     public async Task UpdateAsync_ThrowsBadRequest_WhenDtoIsNull()
     {
-        await Assert.ThrowsAsync<BadRequestException>(() => _artworkService.UpdateAsync(1, null!, null));
+        await Assert.ThrowsAsync<BadRequestException>(() => _artworkService.UpdateAsync(1, 1, null!, null));
+    }
+
+    [Fact]
+    public async Task UpdateAsync_ThrowsUnauthorized_WhenUserIsNotOwner()
+    {
+        var artwork = new Artwork { Id = 1, PostedByUserId = 1 };
+        _mockArtworkRepository.Setup(r => r.GetByIdAsync(It.IsAny<int>())).ReturnsAsync(artwork);
+        var dto = new ArtworkRequestDTO();
+        await Assert.ThrowsAsync<UnauthorizedAccessException>(() => _artworkService.UpdateAsync(1, 2, dto, null));
     }
 
     [Fact]

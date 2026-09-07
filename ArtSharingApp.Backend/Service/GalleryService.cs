@@ -89,12 +89,12 @@ public class GalleryService : IGalleryService
     }
 
     /// <inheritdoc/>
-    public async Task<IEnumerable<ArtworkResponseDTO>?> GetArtworksByGalleryId(int id)
+    public async Task<IEnumerable<ArtworkResponseDTO>?> GetArtworksByGalleryId(int id, int loggedInUserId)
     {
         var gallery = await _galleryRepository.GetByIdAsync(id, g => g.Artworks, g => g.City);
         if (gallery == null)
             throw new NotFoundException($"Gallery with id {id} not found.");
-        var artworks = gallery.Artworks;
+        var artworks = gallery.Artworks.Where(a => !a.IsPrivate || a.PostedByUserId == loggedInUserId);
         return _mapper.Map<IEnumerable<ArtworkResponseDTO>>(artworks);
     }
 
