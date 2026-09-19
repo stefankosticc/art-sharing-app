@@ -14,3 +14,15 @@
     background-color: var(--gray-light);
     color: var(--black);
 }
+
+@media (max-width: 768px) {
+    .transfer-modal-container {
+        width: 90%;
+        max-height: 75%;
+        padding: 1.5rem;
+    }
+
+    .transfer-cancel-btn {
+        width: 30%;
+    }
+}

@@ -7,15 +7,18 @@ type AuctionContextType = {
   loadingAuction: boolean;
   refetchAuction: number;
   triggerRefetchAuction: () => void;
+  artworkTitle: string;
 };
 
 const AuctionContext = createContext<AuctionContextType | undefined>(undefined);
 
 export const AuctionProvider = ({
   artworkId,
+  artworkTitle,
   children,
 }: {
   artworkId: number;
+  artworkTitle: string;
   children: ReactNode;
 }) => {
   const [refetchAuction, setRefetchAuction] = useState(0);
@@ -29,7 +32,13 @@ export const AuctionProvider = ({
 
   return (
     <AuctionContext.Provider
-      value={{ auction, loadingAuction, refetchAuction, triggerRefetchAuction }}
+      value={{
+        auction,
+        loadingAuction,
+        refetchAuction,
+        triggerRefetchAuction,
+        artworkTitle,
+      }}
     >
       {children}
     </AuctionContext.Provider>

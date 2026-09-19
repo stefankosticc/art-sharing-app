@@ -79,3 +79,33 @@
     display: flex;
     flex-direction: column;
 }
+
+@media (max-width: 768px) {
+    .active-auctions-page {
+        padding: 2rem 5% 4rem 5%;
+    }
+
+    .active-auctions-page h1 {
+        margin: 4rem 0 2rem 0.5rem;
+    }
+
+    .aap-container {
+        flex-direction: column;
+        gap: 1rem;
+        min-height: auto;
+    }
+
+    .aap-sidebar {
+        width: 100%;
+        flex-direction: row;
+        position: static;
+        padding: 0 0 1rem 0;
+        border-right: none;
+        border-bottom: 1px solid var(--black-highlight);
+    }
+
+    .aap-content {
+        width: 100%;
+        padding: 0;
+    }
+}

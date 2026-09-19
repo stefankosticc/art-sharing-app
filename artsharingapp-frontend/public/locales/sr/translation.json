@@ -193,7 +193,7 @@
     "accept": "Prihvati",
     "reject": "Odbij",
     "acceptOfferConfirm": "Da li ste sigurni da želite da prihvatite ovu ponudu? Ova akcija se ne može poništiti.",
-    "acceptOfferMessage": "Zdravo, prihvatam vašu ponudu od {{amount}} {{currency}} za ovo umetničko delo. Molim vas pošaljite podatke za plaćanje kako bismo nastavili sa transakcijom. Ako ste već izvršili uplatu, molim vas pošaljite dokaz o uplati radi potvrde transakcije. Hvala!",
+    "acceptOfferMessage": "Zdravo, prihvatam vašu ponudu od {{amount}} {{currency}} za delo „{{artworkTitle}}“. Javite mi kako želite da izvršite uplatu pa ću vam poslati svoje podatke za plaćanje. Kada izvršite uplatu, molim vas pošaljite dokaz o uplati radi potvrde transakcije. Hvala!",
     "expired": "Isteklo"
   }
 }

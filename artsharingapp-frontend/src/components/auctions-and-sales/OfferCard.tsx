@@ -7,6 +7,7 @@ import {
 } from "../../services/auction";
 import { Currency, OfferStatus } from "../../services/enums";
 import "./styles/OfferCard.css";
+import { useAuctionContext } from "../../context/AuctionContext";
 
 type OfferCardProps = {
   offer: OfferResponse;
@@ -23,6 +24,7 @@ const OfferCard = ({
 }: OfferCardProps) => {
   const { t } = useTranslation();
   const navigate = useNavigate();
+  const { artworkTitle } = useAuctionContext();
 
   const handleAccept = async () => {
     if (window.confirm(t("auctions.acceptOfferConfirm"))) {
@@ -39,6 +41,7 @@ const OfferCard = ({
             input: t("auctions.acceptOfferMessage", {
               amount: offer.amount.toLocaleString("en-US"),
               currency: currency !== undefined ? Currency[currency] : "",
+              artworkTitle,
             }),
           },
         });

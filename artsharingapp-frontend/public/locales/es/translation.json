@@ -193,7 +193,7 @@
     "accept": "Aceptar",
     "reject": "Rechazar",
     "acceptOfferConfirm": "¿Seguro que quieres aceptar esta oferta? Esta acción no se puede deshacer.",
-    "acceptOfferMessage": "Hola, acepto tu oferta de {{amount}} {{currency}} por la obra. Por favor, envíame tus datos de pago para continuar con la transacción. Si ya has realizado el pago, por favor comparte el comprobante para confirmar la transacción. ¡Gracias!",
+    "acceptOfferMessage": "Hola, acepto tu oferta de {{amount}} {{currency}} por \"{{artworkTitle}}\". Dime cómo prefieres pagar y te enviaré mis datos de pago. Una vez que hayas realizado el pago, por favor comparte el comprobante para confirmar la transacción. ¡Gracias!",
     "expired": "Expirada"
   }
 }

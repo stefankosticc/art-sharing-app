@@ -253,7 +253,7 @@ const ArtworkPage = ({ isNew = false }: ArtworkPageProps) => {
   }
 
   return (
-    <AuctionProvider artworkId={artwork?.id ?? -1}>
+    <AuctionProvider artworkId={artwork?.id ?? -1} artworkTitle={artwork?.title ?? ""}>
       <div className="artwork-page fixed-page">
         <div
           className="ap-image-container"

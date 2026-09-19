@@ -97,3 +97,27 @@
 .auction-section-offer button:hover {
     background-color: var(--purple);
 }
+
+@media (max-width: 768px) {
+    .auction-section-container {
+        margin-left: 0;
+        padding: 0.8rem;
+    }
+
+    .auction-section-header {
+        flex-wrap: wrap;
+        align-items: flex-start;
+        gap: 0.4rem;
+    }
+
+    .auction-section-content {
+        flex-wrap: wrap;
+        row-gap: 1.2rem;
+        column-gap: 1rem;
+    }
+
+    .auction-section-column {
+        width: auto;
+        flex: 1 1 30%;
+    }
+}

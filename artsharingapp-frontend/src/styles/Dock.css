@@ -55,3 +55,16 @@
     line-height: 1;
     pointer-events: none;
 }
+
+@media (max-width: 768px) {
+    .dock {
+        width: 78vw;
+        padding: 0.6rem 1rem;
+    }
+
+    .dock a,
+    #search-icon,
+    #notifications-icon {
+        font-size: 1.3rem;
+    }
+}

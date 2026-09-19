@@ -264,3 +264,50 @@
     font-size: 0.8rem;
     cursor: pointer;
 }
+
+@media (max-width: 768px) {
+    .artwork-page {
+        flex-direction: column;
+        justify-content: flex-start;
+        overflow-y: auto;
+    }
+
+    .ap-image-container {
+        width: 100%;
+        height: auto;
+        flex-shrink: 0;
+        border-radius: 0 0 1rem 1rem;
+    }
+
+    .ap-image {
+        width: 72vw;
+        max-height: 64vh;
+        margin: 1.5rem;
+    }
+
+    .ap-image-placeholder,
+    .ap-upload-image {
+        height: 64vh;
+    }
+
+    .ap-info {
+        height: auto;
+        overflow-y: visible;
+        padding: 2rem;
+    }
+
+    .ap-title,
+    .ap-title-editing {
+        max-width: 100%;
+        width: 100%;
+    }
+
+    .ap-details {
+        flex-wrap: wrap;
+        row-gap: 1rem;
+    }
+
+    .ap-info-edit-btns button {
+        width: 40%;
+    }
+}
